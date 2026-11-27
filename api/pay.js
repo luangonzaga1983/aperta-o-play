@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import {
   PLANS, ADMIN_EMAIL, CHANNEL_PAGAMENTOS,
   MpError, mp, create_pix_payment, settle_payment, is_paid,
-  discord_post, find_user_by_email, simple_hash, valid_doc, only_digits,
+  discord_post, find_user_by_email, verify_password, valid_doc, only_digits,
 } from "../lib/mercadopago.js";
 
 export const config = { api: { bodyParser: { sizeLimit: "2mb" } } };
@@ -81,7 +81,7 @@ async function handle(req, res) {
     const { email, password, amount, pix_key, pix_type } = body;
 
     const admin = await find_user_by_email(email || "");
-    if (!admin || String(email).toLowerCase() !== ADMIN_EMAIL || admin.password_hash !== simple_hash(String(password || ""))) {
+    if (!admin || String(email).toLowerCase() !== ADMIN_EMAIL || !verify_password(String(password || ""), admin.password_hash)) {
       return res.status(403).json({ error: "Acesso negado" });
     }
 

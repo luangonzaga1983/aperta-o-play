@@ -261,8 +261,11 @@ const state = {
 };
 
 async function api(endpoint, body) {
-  const r = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-  return r.json();
+  const token = state.user?.token;
+  const r = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(token ? { token, ...body } : body) });
+  const data = await r.json();
+  if (data?.code === 'auth' && state.user) { toast('Sessão expirada. Entre novamente.'); logout(); }
+  return data;
 }
 const dc  = (body) => api(API_DISCORD, body);
 const pay = (body) => api(API_PAY, body);
@@ -287,7 +290,11 @@ function spinner_block() {
   return '<div class="center" style="padding:1.5rem"><span class="spinner lg"></span></div>';
 }
 
-function save_user(u) { state.user = u; localStorage.setItem('ap_user', JSON.stringify(u)); }
+function save_user(u) {
+  u = { ...u, token: u.token || state.user?.token };
+  state.user = u;
+  localStorage.setItem('ap_user', JSON.stringify(u));
+}
 
 function logout() {
   state.user = null;
@@ -569,7 +576,12 @@ function render_auth() {
         <div class="row gap-3" style="margin-bottom:1.5rem">${logo_html(44)}<span class="brand-text" style="font-size:1.5rem">Aperta o Play</span></div>
         ${!login && ref ? `<p class="notice">Você foi indicado com o código <b class="text-primary">${esc(ref)}</b></p>` : ''}
         <div id="auth-alert"></div>
+        <div id="g-wrap" style="display:none">
+          <div id="g-btn" class="center" style="min-height:44px"></div>
+          <p class="tiny center" style="margin:1rem 0 0">ou use seu e-mail</p>
+        </div>
         <label class="field">E-mail<input type="email" id="auth-email" name="email" autocomplete="email" autocapitalize="none" required placeholder="seu@email.com"></label>
+        ${login ? '' : `<label class="field">WhatsApp<input type="tel" id="auth-wa" inputmode="numeric" autocomplete="tel" placeholder="(11) 99999-9999" maxlength="15" oninput="this.value = fmt_phone(this.value)" required></label>`}
         <div class="field">
           <label for="auth-pass">Senha</label>
           <div class="input-wrap">
@@ -585,6 +597,81 @@ function render_auth() {
         </div>
       </form>
     </div>`);
+  init_google();
+}
+
+function fmt_phone(v) {
+  const d = String(v || '').replace(/\D/g, '').slice(0, 11);
+  if (d.length <= 2) return d;
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
+// ---------- Continuar com Google ----------
+let _cfg = null;
+async function get_cfg() {
+  if (!_cfg) { try { _cfg = await dc({ action: 'get_config' }); } catch { _cfg = {}; } }
+  return _cfg;
+}
+
+function load_gsi() {
+  return new Promise((resolve, reject) => {
+    if (window.google?.accounts?.id) return resolve();
+    const el = document.createElement('script');
+    el.src = 'https://accounts.google.com/gsi/client';
+    el.async = true;
+    el.onload = resolve;
+    el.onerror = reject;
+    document.head.appendChild(el);
+  });
+}
+
+async function init_google() {
+  const cfg = await get_cfg();
+  const box = document.getElementById('g-btn');
+  if (!cfg.google_client_id || !box) return;       // sem GOOGLE_CLIENT_ID o botão nem aparece
+  try { await load_gsi(); } catch { return; }
+  google.accounts.id.initialize({ client_id: cfg.google_client_id, callback: google_done });
+  const wrap = document.getElementById('g-wrap');
+  if (wrap) wrap.style.display = 'block';
+  google.accounts.id.renderButton(box, { theme: 'filled_black', size: 'large', text: 'continue_with', shape: 'pill', logo_alignment: 'left', locale: 'pt-BR', width: Math.min(Math.max(box.clientWidth || 300, 200), 400) });
+}
+
+async function google_done(resp) {
+  const ref_code = new URLSearchParams(location.search).get('ref') || localStorage.getItem('ap_ref') || '';
+  const data = await dc({ action: 'google_login', credential: resp.credential, referral_code: ref_code });
+  if (data.error) { if (document.getElementById('auth-alert')) auth_err(data.error); else toast(data.error); return; }
+  save_user(data.user);
+  localStorage.removeItem('ap_ref');
+  history.replaceState({}, '', '/');
+  set_page('painel');
+}
+
+// pede o WhatsApp de quem entrou pelo Google (ou de contas antigas sem WhatsApp)
+function maybe_ask_whatsapp() {
+  if (!state.user || state.user.whatsapp || state._asked_wa) return;
+  state._asked_wa = true;
+  open_modal(`
+    <h3 class="modal-title">Qual é o seu WhatsApp?</h3>
+    <p class="muted center mt-2 xs">Para completar o seu cadastro.</p>
+    <form onsubmit="save_whatsapp(event)">
+      <div id="wa-alert" class="mt-3"></div>
+      <label class="field">WhatsApp<input type="tel" id="wa-input" inputmode="numeric" placeholder="(11) 99999-9999" maxlength="15" oninput="this.value = fmt_phone(this.value)" required></label>
+      <button class="btn-brand w-full mt-4" id="wa-btn">Salvar</button>
+    </form>`);
+}
+
+async function save_whatsapp(e) {
+  e.preventDefault();
+  const btn = document.getElementById('wa-btn');
+  btn.disabled = true;
+  const data = await dc({ action: 'update_profile', whatsapp: document.getElementById('wa-input').value });
+  btn.disabled = false;
+  if (data.error) { document.getElementById('wa-alert').innerHTML = `<div class="notice err">${esc(data.error)}</div>`; return; }
+  save_user(data.user);
+  close_modal();
+  toast('WhatsApp salvo!');
 }
 
 function toggle_pass() {
@@ -606,8 +693,10 @@ async function auth_submit(e, mode) {
   const email    = document.getElementById('auth-email').value.trim().toLowerCase();
   const password = document.getElementById('auth-pass').value;
   const ref_code = document.getElementById('auth-ref')?.value.trim();
+  const whatsapp = document.getElementById('auth-wa')?.value.replace(/\D/g, '');
 
   if (!email || !password) { auth_err('Preencha todos os campos'); return; }
+  if (mode !== 'login' && (!whatsapp || whatsapp.length < 10)) { auth_err('Informe um WhatsApp válido com DDD'); return; }
 
   const btn = document.getElementById('auth-btn');
   btn.disabled = true;
@@ -615,7 +704,7 @@ async function auth_submit(e, mode) {
 
   const data = mode === 'login'
     ? await dc({ action: 'login', email, password })
-    : await dc({ action: 'register', email, password, referral_code: ref_code });
+    : await dc({ action: 'register', email, password, whatsapp, referral_code: ref_code });
 
   if (data.error) {
     auth_err(data.error);
@@ -661,6 +750,7 @@ function render_painel() {
   carousel_reset_timer();
   load_banners();
   load_commissions_panel();
+  maybe_ask_whatsapp();
 }
 
 function toggle_hidden() {
@@ -679,7 +769,7 @@ function commission_row(c, with_plan) {
 }
 
 async function load_commissions_panel() {
-  const data = await dc({ action: 'get_commissions', email: state.user.email });
+  const data = await dc({ action: 'get_commissions' });
   const el = document.getElementById('commissions-list');
   if (!el) return;
   if (!data.commissions?.length) { el.innerHTML = '<p class="muted" style="padding:1rem 0;text-align:center">Nenhuma comissão ainda. Elas aparecem aqui.</p>'; return; }
@@ -779,7 +869,7 @@ async function check_pix(manual) {
     stop_pix_poll();
     toast('Pagamento confirmado! Plano ativado.');
     close_modal();
-    const u = await dc({ action: 'get_user', email: state.user.email });
+    const u = await dc({ action: 'get_user' });
     if (u.user) save_user(u.user);
     render();
     return;
@@ -813,72 +903,114 @@ async function render_indicados() {
     <div class="list" style="margin-top:.5rem">${data.commissions.map((c) => commission_row(c, true)).join('')}</div>`;
 }
 
-function render_saque() {
-  const bal = Number(state.user.balance || 0);
+const PIX_LABEL = { CPF: 'CPF', CNPJ: 'CNPJ', EMAIL: 'E-mail', PHONE: 'Telefone', EVP: 'Chave aleatória' };
+const mask_key = (k) => !k ? '' : (k.length <= 8 ? k : `${k.slice(0, 3)}•••${k.slice(-4)}`);
+
+async function render_saque() {
+  const cfg = await get_cfg();
+  const u = state.user;
+  const bal = Number(u.balance || 0);
+  const auto = !!cfg.payouts;
+  const saved = u.pix_key ? `${PIX_LABEL[u.pix_type] || u.pix_type} · ${mask_key(u.pix_key)}` : null;
   mount(shell('Saque Pix', `
     <section class="glass-strong">
       <p style="font-size:.875rem">Saldo disponível</p>
       <p style="margin-top:.5rem;font-size:2.25rem;font-weight:800">${brl(bal)}</p>
     </section>
-    <form class="card" onsubmit="solicitar_saque(event)">
-      <h2>Sacar por Pix</h2>
-      <p class="tiny mt-2" style="font-size:.75rem">O pagamento é processado em até 24h após a solicitação.</p>
-      <div id="saque-alert" class="mt-3"></div>
-      <label class="field">Valor<input type="number" id="saque-valor" inputmode="decimal" placeholder="0,00" min="1" max="${bal}" step="0.01" required></label>
+
+    <form class="card" onsubmit="salvar_chave(event)">
+      <h2>Minha chave Pix</h2>
+      <p class="tiny mt-2" style="font-size:.75rem">${saved ? `Chave salva: <b>${esc(saved)}</b>. Preencha de novo para trocar.` : 'Salve a chave onde você quer receber.'}</p>
+      <div id="chave-alert" class="mt-3"></div>
       <label class="field">Tipo de chave Pix
-        <select id="saque-tipo">
-          <option value="cpf">CPF</option>
-          <option value="cnpj">CNPJ</option>
-          <option value="email">E-mail</option>
-          <option value="phone">Telefone</option>
-          <option value="random">Chave aleatória</option>
+        <select id="chave-tipo" onchange="document.getElementById('chave-doc-wrap').style.display = ['cpf','cnpj'].includes(this.value) ? 'none' : 'block'">
+          <option value="cpf" ${u.pix_type === 'CPF' ? 'selected' : ''}>CPF</option>
+          <option value="cnpj" ${u.pix_type === 'CNPJ' ? 'selected' : ''}>CNPJ</option>
+          <option value="email" ${u.pix_type === 'EMAIL' ? 'selected' : ''}>E-mail</option>
+          <option value="phone" ${u.pix_type === 'PHONE' ? 'selected' : ''}>Telefone</option>
+          <option value="random" ${u.pix_type === 'EVP' ? 'selected' : ''}>Chave aleatória</option>
         </select>
       </label>
-      <label class="field">Chave Pix<input type="text" id="saque-chave" placeholder="Sua chave Pix" required></label>
-      <button class="btn-brand w-full mt-5" id="saque-btn">Solicitar saque</button>
+      <label class="field">Chave Pix<input type="text" id="chave-valor" placeholder="Sua chave Pix" required></label>
+      <div id="chave-doc-wrap" style="display:${['CPF', 'CNPJ', undefined].includes(u.pix_type) ? 'none' : 'block'}">
+        <label class="field">CPF do titular da chave<input type="text" id="chave-doc" inputmode="numeric" placeholder="000.000.000-00" maxlength="18" oninput="this.value = fmt_cpf(this.value)"></label>
+      </div>
+      <label class="row gap-3" style="margin-top:1rem;align-items:flex-start;font-size:.875rem">
+        <input type="checkbox" id="chave-auto" ${u.auto_payout ? 'checked' : ''} style="margin-top:.2rem">
+        <span>Receber minhas comissões direto no Pix, assim que alguém ativar pelo meu link${auto ? '' : ' <span class="tiny">(disponível quando o saque automático estiver ativo)</span>'}.</span>
+      </label>
+      <button class="btn-brand w-full mt-4" id="chave-btn">Salvar chave Pix</button>
+    </form>
+
+    <form class="card" onsubmit="solicitar_saque(event)">
+      <h2>Sacar por Pix</h2>
+      <p class="tiny mt-2" style="font-size:.75rem">${auto ? 'O Pix é enviado na hora para a sua chave salva.' : 'O pagamento é processado em até 24h após a solicitação.'}</p>
+      <div id="saque-alert" class="mt-3"></div>
+      <p class="muted xs">Destino: <b>${saved ? esc(saved) : 'nenhuma chave salva'}</b></p>
+      <label class="field">Valor<input type="number" id="saque-valor" inputmode="decimal" placeholder="0,00" min="1" max="${bal}" step="0.01" required></label>
+      <button class="btn-brand w-full mt-5" id="saque-btn" ${saved ? '' : 'disabled'}>Sacar agora</button>
     </form>
     <section class="card"><h2>Histórico de saques</h2><div id="saques-list" class="list mt-3">${spinner_block()}</div></section>`));
 
   load_withdrawals();
 }
 
+async function salvar_chave(e) {
+  e.preventDefault();
+  const alert_el = document.getElementById('chave-alert');
+  const btn = document.getElementById('chave-btn');
+  btn.disabled = true;
+  const data = await dc({
+    action: 'update_profile',
+    pix_type: document.getElementById('chave-tipo').value,
+    pix_key: document.getElementById('chave-valor').value.trim(),
+    owner_doc: document.getElementById('chave-doc').value,
+    auto_payout: document.getElementById('chave-auto').checked,
+  });
+  btn.disabled = false;
+  if (data.error) { alert_el.innerHTML = `<div class="notice err">${esc(data.error)}</div>`; return; }
+  save_user(data.user);
+  toast('Chave Pix salva!');
+  render_saque();
+}
+
 async function solicitar_saque(e) {
   e.preventDefault();
   const valor = parseFloat(document.getElementById('saque-valor').value);
-  const tipo  = document.getElementById('saque-tipo').value;
-  const chave = document.getElementById('saque-chave').value.trim();
   const alert_el = document.getElementById('saque-alert');
   const fail = (msg) => { alert_el.innerHTML = `<div class="notice err">${msg}</div>`; };
 
   if (!valor || valor <= 0)       { fail('Valor inválido'); return; }
   if (valor > state.user.balance) { fail('Saldo insuficiente'); return; }
-  if (!chave)                     { fail('Informe a chave Pix'); return; }
 
   const btn = document.getElementById('saque-btn');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Aguarde…';
+  btn.innerHTML = '<span class="spinner"></span> Enviando…';
 
-  const data = await dc({ action: 'request_withdrawal', email: state.user.email, amount: valor, pix_key: chave, pix_type: tipo });
+  const data = await dc({ action: 'request_withdrawal', amount: valor });
 
   btn.disabled = false;
-  btn.innerHTML = 'Solicitar saque';
+  btn.innerHTML = 'Sacar agora';
 
   if (data.error) { fail(esc(data.error)); return; }
 
-  save_user({ ...state.user, balance: state.user.balance - valor });
-  alert_el.innerHTML = '<div class="notice ok">Saque solicitado! Processado em até 24h.</div>';
-  document.getElementById('saque-valor').value = '';
-  document.getElementById('saque-chave').value = '';
-  load_withdrawals();
+  const fresh = await dc({ action: 'get_user' });
+  if (fresh.user) save_user(fresh.user);
+  const msg = {
+    approved:   'Saque enviado! O Pix já foi para a sua conta.',
+    processing: 'Saque em processamento. Você será pago em instantes.',
+    pending:    'Saque solicitado! Será pago em até 24h.',
+  }[data.status] || 'Saque solicitado!';
+  render_saque().then(() => { document.getElementById('saque-alert').innerHTML = `<div class="notice ok">${msg}</div>`; });
 }
 
 async function load_withdrawals() {
-  const data = await dc({ action: 'get_withdrawals', email: state.user.email });
+  const data = await dc({ action: 'get_withdrawals' });
   const el = document.getElementById('saques-list');
   if (!el) return;
   if (!data.withdrawals?.length) { el.innerHTML = '<p class="muted" style="padding:1rem 0;text-align:center">Nenhum saque ainda.</p>'; return; }
-  const tone  = { pending: 'yellow', approved: 'green', rejected: 'red' };
-  const label = { pending: 'Pendente', approved: 'Aprovado', rejected: 'Rejeitado' };
+  const tone  = { pending: 'yellow', processing: 'yellow', approved: 'green', rejected: 'red' };
+  const label = { pending: 'Pendente', processing: 'Processando', approved: 'Pago', rejected: 'Recusado' };
   el.innerHTML = data.withdrawals.map((w) => `
     <div class="li">
       <span class="avatar-ic">${icon('wallet', 'ic-sm')}</span>

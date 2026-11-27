@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "api/discord.js": { "runtime": "nodejs20.x" },
+    "api/assas.js": { "runtime": "nodejs20.x" }
+  },
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
+}

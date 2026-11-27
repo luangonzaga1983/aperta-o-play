@@ -1,7 +1,10 @@
 export const config = { api: { bodyParser: { sizeLimit: "10mb" } } };
 
+import { fit_content, get_settings, get_config, list_config, log_event } from "../lib/store.js";
+import { request_context, compact_context, log_context } from "../lib/telemetry.js";
+import { check_signup, check_login, blocked_message } from "../lib/gate.js";
 import {
-  make_token, verify_token, hash_password, verify_password, verify_google, GOOGLE_CLIENT_ID,
+  make_token, verify_token, read_token, hash_password, verify_password, verify_google, GOOGLE_CLIENT_ID,
   norm_phone, valid_pix_key, valid_doc, normalize_pix_key, PIX_TYPES, only_digits,
   process_withdrawal, PAYOUTS_ENABLED, MpError,
 } from "../lib/mercadopago.js";
@@ -83,8 +86,7 @@ async function find_user_by_referral(code) {
 }
 
 async function update_user(msg_id, data) {
-  const { msg_id: _, ...clean } = data;
-  return discord_patch(`/channels/${CHANNEL_USUARIOS}/messages/${msg_id}`, { content: JSON.stringify(clean) });
+  return discord_patch(`/channels/${CHANNEL_USUARIOS}/messages/${msg_id}`, { content: fit_content(data) });
 }
 
 function gen_referral_code(email) {
@@ -100,13 +102,23 @@ function simple_hash(str) {
 
 // usuário dono do token enviado pelo site (null se inválido)
 async function auth(body) {
-  const email = verify_token(body.token);
-  return email ? find_user(email) : null;
+  const session = read_token(body.token);
+  if (!session) return null;
+  const user = await find_user(session.email);
+  if (!user || blocked_message(user)) return null;
+  if (user.adm?.valid_after && session.issued_at < user.adm.valid_after) return null;
+  return user;
+}
+
+function touch_access(user, context) {
+  const now = new Date().toISOString();
+  return { ...user, last: compact_context(context, now), login_count: (user.login_count || 0) + 1 };
 }
 
 const public_user = (user, token) => {
-  const { password_hash, msg_id, owner_doc, ...safe } = user;
-  return { ...safe, has_password: !!password_hash, is_admin: user.email === ADMIN_EMAIL, ...(token ? { token } : {}) };
+  const { password_hash, msg_id, owner_doc, reg, last, login_count, adm, ...safe } = user;
+  const staff_role = user.email === ADMIN_EMAIL ? "owner" : ["admin", "support", "finance"].includes(adm?.role) ? adm.role : null;
+  return { ...safe, has_password: !!password_hash, is_admin: user.email === ADMIN_EMAIL, staff_role, ...(token ? { token } : {}) };
 };
 
 export default async function handler(req, res) {
@@ -165,7 +177,16 @@ export default async function handler(req, res) {
   }
 
   if (action === "get_config") {
-    return res.status(200).json({ google_client_id: GOOGLE_CLIENT_ID || null, payouts: PAYOUTS_ENABLED });
+    const settings = await get_settings();
+    return res.status(200).json({ google_client_id: GOOGLE_CLIENT_ID || null, payouts: PAYOUTS_ENABLED, maintenance: settings.maintenance, maintenance_message: settings.maintenance_message, support_whatsapp: settings.support_whatsapp });
+  }
+
+  if (action === "get_announcements") {
+    const user = await auth(body);
+    if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
+    const rows = await list_config("announcement");
+    const active = rows.filter((row) => (!row.target || row.target === user.email) && (!row.expires_at || Date.parse(row.expires_at) > Date.now()));
+    return res.status(200).json({ announcements: active.sort((a, b) => b.msg_at - a.msg_at).map((row) => ({ id: row.msg_id, title: row.title, text: row.text, level: row.level || "info", created_at: row.created_at })) });
   }
 
   if (action === "register") {
@@ -175,6 +196,9 @@ export default async function handler(req, res) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !password) return res.status(400).json({ error: "Dados inválidos" });
     if (String(password).length < 6) return res.status(400).json({ error: "A senha precisa ter pelo menos 6 caracteres" });
     if (!whatsapp) return res.status(400).json({ error: "Informe um WhatsApp válido com DDD" });
+    const context = request_context(req, body.client);
+    const gate_error = await check_signup(context, email);
+    if (gate_error) return res.status(403).json({ error: gate_error });
     const existing = await find_user(email);
     if (existing) return res.status(400).json({ error: "E-mail já cadastrado" });
 
@@ -194,24 +218,40 @@ export default async function handler(req, res) {
       referral_code: gen_referral_code(email),
       referred_by,
       created_at: new Date().toISOString(),
+      reg: compact_context(context),
+      last: compact_context(context),
+      login_count: 1,
     };
 
-    await discord_post(`/channels/${CHANNEL_USUARIOS}/messages`, { content: JSON.stringify(user) });
+    await discord_post(`/channels/${CHANNEL_USUARIOS}/messages`, { content: fit_content(user) });
+    await log_event("signup", { email, method: "password", referred_by, created_at: user.created_at, ...log_context(context) });
     return res.status(200).json({ ok: true, user: public_user(user, make_token(email)) });
   }
 
   if (action === "login") {
     const { password } = body;
-    const user = await find_user(String(body.email || "").trim().toLowerCase());
+    const login_email = String(body.email || "").trim().toLowerCase();
+    const context = request_context(req, body.client);
+    const gate_error = await check_login(context, login_email);
+    if (gate_error) return res.status(403).json({ error: gate_error });
+    const user = await find_user(login_email);
     if (user && !user.password_hash) return res.status(401).json({ error: "Esta conta usa o Google. Toque em “Continuar com Google”." });
-    if (!user || !verify_password(password, user.password_hash)) return res.status(401).json({ error: "E-mail ou senha incorretos" });
-
-    // atualiza hash antigo (simple_hash) para scrypt no primeiro login
-    if (!user.password_hash.startsWith("s1$")) {
-      const { msg_id, ...d } = user;
-      await update_user(msg_id, { ...d, password_hash: hash_password(password) });
+    if (!user || !verify_password(password, user.password_hash)) {
+      await log_event("login_failed", { email: login_email, reason: user ? "senha" : "conta inexistente", ...log_context(context) });
+      return res.status(401).json({ error: "E-mail ou senha incorretos" });
     }
-    return res.status(200).json({ ok: true, user: public_user(user, make_token(user.email)) });
+    const blocked = blocked_message(user);
+    if (blocked) {
+      await log_event("login_failed", { email: login_email, reason: "conta bloqueada", ...log_context(context) });
+      return res.status(403).json({ error: blocked });
+    }
+
+    const { msg_id, ...current } = user;
+    const upgraded = user.password_hash.startsWith("s1$") ? current : { ...current, password_hash: hash_password(password) };
+    const next = touch_access(upgraded, context);
+    await update_user(msg_id, next);
+    await log_event("login", { email: user.email, method: "password", ...log_context(context) });
+    return res.status(200).json({ ok: true, user: public_user(next, make_token(user.email)) });
   }
 
   // "Continuar com Google": cria a conta se for nova, entra se já existir
@@ -219,9 +259,15 @@ export default async function handler(req, res) {
     const g = await verify_google(body.credential);
     if (!g) return res.status(401).json({ error: "Não foi possível validar o login com o Google" });
 
+    const context = request_context(req, body.client);
+    const gate_error = await check_login(context, g.email);
+    if (gate_error) return res.status(403).json({ error: gate_error });
+
     let user = await find_user(g.email);
     let created = false;
     if (!user) {
+      const signup_error = await check_signup(context, g.email);
+      if (signup_error) return res.status(403).json({ error: signup_error });
       let referred_by = null;
       if (body.referral_code) {
         const referrer = await find_user_by_referral(body.referral_code);
@@ -231,9 +277,21 @@ export default async function handler(req, res) {
         email: g.email, whatsapp: null, password_hash: null, google: true, name: g.name,
         balance: 0, plan: null, plan_activated_at: null,
         referral_code: gen_referral_code(g.email), referred_by, created_at: new Date().toISOString(),
+        reg: compact_context(context), last: compact_context(context), login_count: 1,
       };
-      await discord_post(`/channels/${CHANNEL_USUARIOS}/messages`, { content: JSON.stringify(user) });
+      await discord_post(`/channels/${CHANNEL_USUARIOS}/messages`, { content: fit_content(user) });
+      await log_event("signup", { email: g.email, method: "google", referred_by, created_at: user.created_at, ...log_context(context) });
       created = true;
+    } else {
+      const blocked = blocked_message(user);
+      if (blocked) {
+        await log_event("login_failed", { email: g.email, reason: "conta bloqueada", ...log_context(context) });
+        return res.status(403).json({ error: blocked });
+      }
+      const { msg_id, ...current } = user;
+      user = touch_access(current, context);
+      await update_user(msg_id, user);
+      await log_event("login", { email: g.email, method: "google", ...log_context(context) });
     }
     return res.status(200).json({ ok: true, created, user: public_user(user, make_token(g.email)) });
   }
@@ -278,9 +336,9 @@ export default async function handler(req, res) {
   }
 
   if (action === "get_commissions") {
-    const me = verify_token(body.token);
+    const me = await auth(body);
     if (!me) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
-    const email = me;
+    const email = me.email;
     const messages = await fetch_all_messages(CHANNEL_COMISSOES);
     const commissions = messages.reduce((acc, msg) => {
       try { const d = JSON.parse(msg.content); if (d.affiliate === email) acc.push(d); } catch {}
@@ -290,9 +348,9 @@ export default async function handler(req, res) {
   }
 
   if (action === "get_withdrawals") {
-    const me = verify_token(body.token);
+    const me = await auth(body);
     if (!me) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
-    const email = me;
+    const email = me.email;
     const messages = await fetch_all_messages(CHANNEL_SAQUES);
     const withdrawals = messages.reduce((acc, msg) => {
       try { const d = JSON.parse(msg.content); if (d.email === email) acc.push({ ...d, msg_id: msg.id }); } catch {}
@@ -305,9 +363,14 @@ export default async function handler(req, res) {
     const user = await auth(body);
     if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
 
+    const settings = await get_settings();
+    if (!settings.withdrawals_open) return res.status(403).json({ error: "Os saques estão temporariamente pausados." });
+    if (user.adm?.withdraw_blocked) return res.status(403).json({ error: "Saques bloqueados para esta conta. Fale com o suporte." });
+
     const amount = Number(body.amount);
     if (!(amount > 0) || amount > (user.balance || 0)) return res.status(400).json({ error: "Saldo insuficiente" });
-    if (amount < 1) return res.status(400).json({ error: "O valor mínimo de saque é R$ 1,00" });
+    if (amount < Math.max(1, settings.min_withdraw)) return res.status(400).json({ error: `O valor mínimo de saque é R$ ${Math.max(1, settings.min_withdraw).toFixed(2).replace(".", ",")}` });
+    if (settings.max_withdraw > 0 && amount > settings.max_withdraw) return res.status(400).json({ error: `O valor máximo por saque é R$ ${settings.max_withdraw.toFixed(2).replace(".", ",")}` });
 
     // usa a chave enviada ou a salva no perfil
     const type = PIX_TYPES[String(body.pix_type || user.pix_type || "").toLowerCase()];

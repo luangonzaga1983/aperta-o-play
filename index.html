@@ -201,6 +201,95 @@ body.menu-open .drawer-mask { opacity: 1; pointer-events: auto; }
 .mist { animation: mist-in 380ms ease-out; }
 @keyframes mist-in { from { opacity: 0; filter: blur(6px); transform: scale(1.01); } to { opacity: 1; filter: none; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .mist, .premium::after, .pill-glow::after, .pulse-dot { animation: none; } .track, .drawer { transition: none; } }
+.adm { display: flex; min-height: 100vh; background: var(--background); }
+.adm-side { width: 15.5rem; flex-shrink: 0; border-right: 1px solid var(--border); background: var(--card); padding: 1rem .75rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.adm-main { flex: 1; min-width: 0; }
+.adm-top { position: sticky; top: 0; z-index: 20; display: flex; gap: .75rem; align-items: center; padding: .75rem 1.25rem; background: color-mix(in oklab, var(--background) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+.adm-search { margin: 0 !important; flex: 1; max-width: 42rem; padding: .55rem 1rem !important; font-size: .875rem !important; }
+.adm-burger { display: none; }
+.adm-mask { display: none; }
+.adm-view { padding: 1.25rem; max-width: 96rem; margin: 0 auto; }
+.adm-nav button, .adm-navlink { display: flex; align-items: center; gap: .625rem; width: 100%; text-align: left; padding: .6rem .75rem; border-radius: .75rem; font-size: .9rem; color: var(--muted-foreground); }
+.adm-nav button:hover, .adm-navlink:hover { background: var(--secondary); color: var(--foreground); }
+.adm-nav button.on { background: color-mix(in oklab, var(--primary) 14%, transparent); color: var(--primary); font-weight: 600; }
+.adm-card { border: 1px solid var(--border); background: color-mix(in oklab, var(--card) 70%, transparent); border-radius: 1rem; padding: 1rem 1.125rem; margin-top: 1rem; min-width: 0; }
+.adm-card h2, .adm-h { font-size: .95rem; font-weight: 600; margin-bottom: .625rem; }
+.adm-big { font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-bottom: .75rem; word-break: break-word; }
+.adm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr)); gap: .75rem; margin-top: 1rem; }
+.adm-grid.fn { grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); margin-top: .5rem; }
+.adm-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); gap: 0 1rem; }
+.adm-kpi { text-align: left; border: 1px solid var(--border); background: color-mix(in oklab, var(--card) 70%, transparent); border-radius: 1rem; padding: .875rem 1rem; display: flex; flex-direction: column; gap: .125rem; }
+.adm-kpi:hover { border-color: var(--primary); }
+.adm-kpi b { font-size: 1.5rem; font-weight: 800; }
+.adm-kpi small { color: var(--muted-foreground); font-size: .75rem; }
+.adm-table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: .75rem; margin-top: .5rem; max-height: 75vh; }
+.adm-t { border-collapse: collapse; width: 100%; font-size: .8125rem; }
+.adm-t th, .adm-t td { padding: .5rem .75rem; text-align: left; border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent); vertical-align: top; }
+.adm-t th { position: sticky; top: 0; background: var(--secondary); font-size: .6875rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted-foreground); white-space: nowrap; z-index: 1; }
+.adm-t th.sortable { cursor: pointer; }
+.adm-t td { word-break: break-word; max-width: 24rem; }
+.adm-t tr:hover td { background: color-mix(in oklab, var(--primary) 5%, transparent); }
+.adm-heat td { text-align: center; min-width: 1.5rem; padding: .25rem; font-size: .7rem; }
+.adm-heat th { text-align: center; padding: .25rem .4rem; }
+.adm-ulink { color: var(--primary); text-decoration: underline; cursor: pointer; word-break: break-all; }
+.adm-mini { display: inline-flex; align-items: center; border-radius: .5rem; border: 1px solid var(--border); background: var(--background); padding: .25rem .6rem; font-size: .75rem; font-weight: 600; margin: 0 .25rem .25rem 0; white-space: nowrap; }
+.adm-mini:hover { border-color: var(--primary); }
+.adm-mini:disabled { opacity: .4; cursor: not-allowed; }
+.adm-acts { display: inline-flex; flex-wrap: wrap; }
+.adm-tabs { display: flex; gap: .375rem; flex-wrap: wrap; margin-top: 1rem; border-bottom: 1px solid var(--border); padding-bottom: .5rem; }
+.adm-tabs button { padding: .4rem .85rem; border-radius: 9999px; font-size: .8125rem; font-weight: 600; color: var(--muted-foreground); border: 1px solid transparent; }
+.adm-tabs button.on { background: color-mix(in oklab, var(--primary) 14%, transparent); border-color: color-mix(in oklab, var(--primary) 45%, transparent); color: var(--primary); }
+.adm-filters { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: .25rem .75rem; align-items: end; margin-top: 1rem; padding: .875rem; border: 1px solid var(--border); border-radius: 1rem; }
+.adm-filters .field { margin-top: .25rem; font-size: .75rem; }
+.adm-filters .field input, .adm-filters .field select, .adm-filters .field textarea { padding: .45rem .7rem; font-size: .8125rem; border-radius: .6rem; }
+.adm-filter-actions { display: flex; gap: .5rem; padding-bottom: .125rem; }
+.adm-check { display: flex; align-items: center; gap: .5rem; }
+.adm-check input { width: auto !important; margin: 0 !important; }
+.adm-toolbar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-top: 1rem; }
+.adm-pager { margin: .75rem 0 .25rem; flex-wrap: wrap; gap: .5rem; }
+.adm-dl > div { display: grid; grid-template-columns: minmax(8rem, 12rem) 1fr; gap: .75rem; padding: .375rem 0; border-bottom: 1px solid color-mix(in oklab, var(--border) 50%, transparent); font-size: .8125rem; }
+.adm-dl dt { color: var(--muted-foreground); }
+.adm-dl dd { word-break: break-word; min-width: 0; }
+.adm-bars { display: flex; align-items: flex-end; gap: 2px; height: 7rem; }
+.adm-bars i { flex: 1; background: var(--primary); border-radius: 2px 2px 0 0; min-height: 2px; opacity: .85; }
+.adm-bars i:hover { opacity: 1; }
+.adm-hbars { display: flex; flex-direction: column; gap: .375rem; }
+.adm-hb { display: grid; grid-template-columns: minmax(5rem, 12rem) 1fr auto; gap: .625rem; align-items: center; font-size: .8125rem; }
+.adm-hb .n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.adm-hb .b { height: .6rem; background: var(--secondary); border-radius: 9999px; overflow: hidden; }
+.adm-hb .b i { display: block; height: 100%; background: var(--primary); border-radius: 9999px; }
+.adm-hb .v small { color: var(--muted-foreground); }
+.adm-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-top: .5rem; }
+.adm-chips { display: flex; flex-wrap: wrap; gap: .375rem; margin-top: .5rem; }
+.adm-quick { display: flex; flex-wrap: wrap; gap: .5rem; }
+.adm-quick .btn-line, .adm-quick .btn-bad, .adm-quick .btn-ok, .adm-toolbar .btn-ok, .adm-toolbar .btn-line { padding: .45rem .9rem; font-size: .8125rem; }
+.adm-back { color: var(--muted-foreground); font-size: .875rem; margin-bottom: .25rem; }
+.adm-actgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); gap: .5rem; }
+.adm-act { text-align: left; border: 1px solid var(--border); background: var(--background); border-radius: .75rem; padding: .65rem .85rem; font-size: .8125rem; font-weight: 600; }
+.adm-act:hover { border-color: var(--primary); }
+.adm-act.danger { border-color: color-mix(in oklab, var(--destructive) 50%, transparent); color: var(--destructive); }
+.adm-fn { text-align: left; display: flex; flex-direction: column; gap: .25rem; border: 1px solid var(--border); background: color-mix(in oklab, var(--card) 70%, transparent); border-radius: .875rem; padding: .75rem .9rem; }
+.adm-fn:hover { border-color: var(--primary); }
+.adm-fn .t { font-weight: 600; font-size: .875rem; }
+.adm-fn .d { color: var(--muted-foreground); font-size: .75rem; }
+.adm-fn .tags i { font-style: normal; font-size: .625rem; text-transform: uppercase; letter-spacing: .05em; margin-right: .375rem; color: var(--primary); }
+.adm-fn .tags i.w { color: var(--warning); } .adm-fn .tags i.d { color: var(--destructive); }
+.adm-fn-group { margin-top: 1.25rem; }
+.modal.wide { max-width: 64rem; }
+.imp-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 90; display: flex; justify-content: center; align-items: center; gap: 1rem; padding: .5rem 1rem; background: var(--warning); color: #1a1500; font-size: .875rem; }
+.imp-bar button { background: #1a1500; color: var(--warning); border-radius: 9999px; padding: .25rem .9rem; font-weight: 700; }
+.ann { border-radius: 1rem; padding: .75rem 1rem; margin-top: 1rem; border: 1px solid var(--border); background: var(--secondary); font-size: .875rem; }
+.ann b { display: block; margin-bottom: .125rem; }
+.ann.warn { border-color: color-mix(in oklab, var(--warning) 55%, transparent); background: color-mix(in oklab, var(--warning) 12%, transparent); }
+.ann.success { border-color: color-mix(in oklab, var(--primary) 55%, transparent); background: color-mix(in oklab, var(--primary) 12%, transparent); }
+@media (max-width: 900px) {
+  .adm-side { position: fixed; z-index: 70; left: 0; top: 0; transform: translateX(-100%); transition: transform .25s; }
+  body.adm-menu .adm-side { transform: none; }
+  body.adm-menu .adm-mask { display: block; position: fixed; inset: 0; z-index: 65; background: rgb(0 0 0 / .5); }
+  .adm-burger { display: inline-flex; }
+  .adm-fnbtn { display: none; }
+  .adm-dl > div { grid-template-columns: 1fr; gap: .125rem; }
+}
 </style>
 </head>
 <body>
@@ -260,9 +349,59 @@ const state = {
   selected_plan: PLANS[0].price,
 };
 
+const hash53 = (text) => {
+  let h1 = 0xdeadbeef;
+  let h2 = 0x41c6ce57;
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i);
+    h1 = Math.imul(h1 ^ code, 2654435761);
+    h2 = Math.imul(h2 ^ code, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+};
+
+function canvas_signature() {
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = 220;
+    canvas.height = 40;
+    const ctx = canvas.getContext('2d');
+    ctx.textBaseline = 'top';
+    ctx.font = '14px Arial';
+    ctx.fillStyle = '#f60';
+    ctx.fillRect(10, 5, 80, 25);
+    ctx.fillStyle = '#069';
+    ctx.fillText('aperta-o-play 🎮', 4, 8);
+    return canvas.toDataURL();
+  } catch { return ''; }
+}
+
+function first_touch() {
+  try { return JSON.parse(localStorage.getItem('ap_touch') || '{}'); } catch { return {}; }
+}
+
+function capture_first_touch() {
+  if (localStorage.getItem('ap_touch')) return;
+  const q = new URLSearchParams(location.search);
+  const touch = { utm_source: q.get('utm_source') || '', utm_medium: q.get('utm_medium') || '', utm_campaign: q.get('utm_campaign') || '', referrer: document.referrer || '', landing: location.pathname + location.search };
+  try { localStorage.setItem('ap_touch', JSON.stringify(touch)); } catch {}
+}
+
+function client_info() {
+  const nav = navigator;
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+  const signature = [nav.userAgent, nav.language, screen.width, screen.height, screen.colorDepth, nav.hardwareConcurrency, nav.deviceMemory, tz, canvas_signature()].join('|');
+  return { tz, scr: `${screen.width}x${screen.height}`, dpr: window.devicePixelRatio, plat: nav.platform, cores: nav.hardwareConcurrency, mem: nav.deviceMemory, touch: nav.maxTouchPoints, lang: nav.language, fp: hash53(signature), ...first_touch() };
+}
+
+const client_actions = new Set(['register', 'login', 'google_login']);
+
 async function api(endpoint, body) {
   const token = state.user?.token;
-  const r = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(token ? { token, ...body } : body) });
+  const extra = endpoint === API_DISCORD && client_actions.has(body.action) ? { client: client_info() } : {};
+  const r = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(token ? { token, ...extra, ...body } : { ...extra, ...body }) });
   const data = await r.json();
   if (data?.code === 'auth' && state.user) { toast('Sessão expirada. Entre novamente.'); logout(); }
   return data;
@@ -274,9 +413,10 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 const brl = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 const money = (v) => state.hidden ? 'R$ ••••' : brl(v);
 const fmt_date = (s) => new Date(s).toLocaleDateString('pt-BR');
+const is_staff = () => !!(state.user?.is_admin || state.user?.staff_role);
 const user_name = () => state.user.email.split('@')[0];
 const ref_url = (code) => `${location.origin}/?ref=${encodeURIComponent(code)}`;
-const mount = (html) => { document.getElementById('app').innerHTML = html; window.scrollTo(0, 0); };
+const mount = (html) => { document.getElementById('app').innerHTML = html; window.scrollTo(0, 0); render_imp_bar(); };
 
 function icon(name, cls = 'ic') {
   return `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
@@ -425,7 +565,7 @@ function shell(title, body) {
     { id: 'painel',    title: 'Meu dashboard',  detail: 'Saldo e comissões',        icon: 'dashboard', tone: 'p' },
     { id: 'indicados', title: 'Meus indicados', detail: 'Minha rede de indicações', icon: 'users',     tone: 'a' },
     { id: 'saque',     title: 'Saque Pix',      detail: 'Sacar minhas comissões',   icon: 'wallet',    tone: 'p' },
-    ...(u.is_admin ? [{ id: 'admin', title: 'Administração', detail: 'Banners, saques e resumo', icon: 'shield', tone: 's' }] : []),
+    ...(is_staff() ? [{ id: 'admin', title: 'Administração', detail: 'Usuários, finanças e suporte', icon: 'shield', tone: 's' }] : []),
   ];
   const menu = items.map((i) => `
     <button class="menu-item ${state.page === i.id ? 'on' : ''}" onclick="set_page('${i.id}')">
@@ -453,7 +593,7 @@ function shell(title, body) {
             ${logo_html(40, !!u.plan)}${premium_html(true)}
           </div>
           <div class="row gap-4" style="color:var(--muted-foreground)">
-            ${u.is_admin ? `<button onclick="set_page('admin')" aria-label="Administração">${icon('shield')}</button>` : ''}
+            ${is_staff() ? `<button onclick="set_page('admin')" aria-label="Administração">${icon('shield')}</button>` : ''}
             <button onclick="logout()" aria-label="Sair">${icon('log_out')}</button>
           </div>
         </header>
@@ -519,7 +659,7 @@ function render() {
   document.body.classList.remove('menu-open');
   document.getElementById('modal-root').innerHTML = '';
   if (!state.user && ['painel', 'indicados', 'saque', 'admin'].includes(state.page)) state.page = 'home';
-  if (state.page === 'admin' && !state.user?.is_admin) state.page = 'painel';
+  if (state.page === 'admin' && !is_staff()) state.page = 'painel';
   switch (state.page) {
     case 'auth':      render_auth(); break;
     case 'painel':    render_painel(); break;
@@ -736,6 +876,7 @@ function render_painel() {
       <div><p class="tiny" style="font-size:.75rem">Olá,</p><p style="font-size:1.125rem;font-weight:600">${esc(user_name())}</p></div>
       <button class="pill-glow" onclick="toggle_hidden()"><span class="op">Saldo</span><b data-money="${bal}">${money(bal)}</b><span class="js-eye">${icon(eye, 'ic-sm')}</span></button>
     </div>
+    <div id="announce"></div>
     <section style="margin-top:1.25rem" aria-label="Banners do Aperta o Play"><div id="carousel-container">${carousel_html()}</div></section>
     <button class="btn-line rect w-full mt-5" style="justify-content:flex-start;padding:1rem;border-color:color-mix(in oklab,var(--whatsapp) 40%,transparent);color:var(--whatsapp)" onclick="set_page('indicados')">${icon('users')}<span>Meus indicados e comissões</span></button>
     <section class="glass-strong">
@@ -751,6 +892,17 @@ function render_painel() {
   load_banners();
   load_commissions_panel();
   maybe_ask_whatsapp();
+  load_announcements();
+}
+
+async function load_announcements() {
+  const box = document.getElementById('announce');
+  if (!box) return;
+  const [cfg, data] = await Promise.all([get_cfg(), dc({ action: 'get_announcements' })]);
+  if (!document.getElementById('announce')) return;
+  const maintenance = cfg?.maintenance ? `<div class="ann warn"><b>Aviso</b>${esc(cfg.maintenance_message || 'Site em manutenção. Alguns recursos podem ficar indisponíveis.')}</div>` : '';
+  const items = (data.announcements || []).map((a) => `<div class="ann ${esc(a.level)}"><b>${esc(a.title)}</b>${esc(a.text)}</div>`).join('');
+  box.innerHTML = maintenance + items;
 }
 
 function toggle_hidden() {
@@ -1019,42 +1171,6 @@ async function load_withdrawals() {
     </div>`).join('');
 }
 
-function render_admin() {
-  mount(shell('Administração', `
-    <section class="card">
-      <h2>Gerenciar banners</h2>
-      <div class="upload mt-4" id="upload-zone" onclick="document.getElementById('banner-input').click()">
-        <input type="file" id="banner-input" accept="image/*" onchange="preview_banner(event)">
-        <div id="upload-placeholder">
-          <div class="center text-primary">${icon('image_plus', 'ic')}</div>
-          <p style="margin-top:.5rem;font-weight:600">Toque ou arraste uma imagem</p>
-          <p class="tiny" style="margin-top:.25rem;font-size:.75rem">JPG, PNG ou WEBP · Recomendado 1280×720</p>
-        </div>
-        <img id="upload-preview" class="upload-preview hidden" src="" alt="Pré-visualização">
-      </div>
-      <label class="field">Link ao clicar (opcional)<input type="url" id="banner-link" placeholder="https://..."></label>
-      <button class="btn-brand w-full mt-4" id="upload-btn" onclick="upload_banner()">Enviar banner</button>
-      <div class="divider"></div>
-      <h2>Banners ativos</h2>
-      <div id="banners-grid">${spinner_block()}</div>
-    </section>
-    <section class="card"><h2>Saques pendentes</h2><div id="admin-withdrawals" class="mt-3">${spinner_block()}</div></section>
-    <section class="card"><h2>Resumo</h2><div id="admin-summary">${spinner_block()}</div></section>`));
-
-  load_admin_banners();
-  load_admin_data();
-
-  const zone = document.getElementById('upload-zone');
-  zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
-  zone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    zone.classList.remove('drag');
-    const f = e.dataTransfer.files[0];
-    if (f) handle_banner_file(f);
-  });
-}
-
 function preview_banner(e) {
   const file = e.target.files[0];
   if (file) handle_banner_file(file);
@@ -1159,90 +1275,906 @@ function stat_html(label, value, tone) {
   return `<div class="stat"><p class="label">${label}</p><p class="v ${tone || ''}">${value}</p></div>`;
 }
 
-async function load_admin_data() {
-  const pass = await ask_admin_pass();
-  const el_w = document.getElementById('admin-withdrawals');
-  const el_s = document.getElementById('admin-summary');
-  if (!el_w) return;
+const API_ADMIN = '/api/admin';
+const adm = { catalog: [], by_id: {}, role: null, view: 'dashboard', param: null, filters: {}, list_opts: {}, preset: {}, current: null, user: null, after: null };
 
-  if (!pass) {
-    el_w.innerHTML = '<div class="notice err">Senha necessária para carregar os dados.</div><button class="btn-line w-full" onclick="load_admin_data()">Informar senha</button>';
-    el_s.innerHTML = '';
-    return;
+const adm_nav = [
+  { id: 'dashboard', label: 'Painel', icon: 'dashboard', need: 'analytics.overview' },
+  { id: 'users', label: 'Usuários', icon: 'users', need: 'users.list' },
+  { id: 'payments', label: 'Pagamentos', icon: 'banknote', need: 'payments.list' },
+  { id: 'withdrawals', label: 'Saques', icon: 'wallet', need: 'withdrawals.queue' },
+  { id: 'commissions', label: 'Comissões', icon: 'share', need: 'commissions.list' },
+  { id: 'finance', label: 'Finanças', icon: 'banknote', need: 'finance.summary' },
+  { id: 'analytics', label: 'Analytics', icon: 'dashboard', need: 'analytics.funnel' },
+  { id: 'security', label: 'Segurança', icon: 'shield', need: 'security.multi_accounts' },
+  { id: 'audit', label: 'Auditoria', icon: 'lock', need: 'audit.list' },
+  { id: 'system', label: 'Sistema', icon: 'shield_check', need: 'system.health' },
+  { id: 'banners', label: 'Banners', icon: 'image_plus', owner: true },
+  { id: 'functions', label: 'Todas as funções', icon: 'menu' },
+];
+
+const adm_money_keys = new Set(['balance', 'amount', 'plan_price', 'expected', 'actual', 'diff', 'revenue', 'earned', 'withdrawn', 'paid', 'pending', 'processing', 'rejected', 'liabilities', 'cash_estimate', 'gross', 'average_ticket', 'open_amount', 'user_balance', 'total_diff', 'reverted_total', 'balances', 'today', 'week', 'month', 'all']);
+const adm_labels = { email: 'E-mail', created_ms: 'Criado em', created_at: 'Criado em', plan: 'Plano', balance: 'Saldo', state: 'Situação', status: 'Status', whatsapp: 'WhatsApp', msg_id: 'ID', reg_ip: 'IP cadastro', reg_country: 'País', reg_city: 'Cidade', reg_device: 'Aparelho', last_login_at: 'Último acesso', last_ip: 'Último IP', last_country: 'País (último)', logins: 'Acessos', referrals: 'Indicados', referred_by: 'Indicado por', referral_code: 'Código', has_pix: 'Pix', plan_price: 'Valor', payment_id: 'Pagamento', paid_at: 'Pago em', affiliate: 'Afiliado', from_user: 'Origem', pix_key: 'Chave Pix', pix_type: 'Tipo', owner_doc: 'CPF titular', ip: 'IP', cc: 'País', ct: 'Cidade', rg: 'Região', ts: 'Quando', first_ts: 'Primeira vez', last_ts: 'Última vez', count: 'Vezes', actor: 'Admin', action: 'Ação', target: 'Alvo' };
+
+const pad = (n, size = 2) => String(n).padStart(size, '0');
+const to_ms = (v) => (typeof v === 'number' ? v : Date.parse(v) || 0);
+const brt_parts = (ms) => { const d = new Date(ms - 10800000); return { d: pad(d.getUTCDate()), m: pad(d.getUTCMonth() + 1), y: d.getUTCFullYear(), h: pad(d.getUTCHours()), i: pad(d.getUTCMinutes()), s: pad(d.getUTCSeconds()), ms: pad(d.getUTCMilliseconds(), 3) }; };
+const fmt_sec = (v) => { const ms = to_ms(v); if (!ms) return '—'; const p = brt_parts(ms); return `${p.d}/${p.m}/${p.y} ${p.h}:${p.i}:${p.s}`; };
+const fmt_precise = (v) => { const ms = to_ms(v); if (!ms) return '—'; const p = brt_parts(ms); return `${p.d}/${p.m}/${p.y} ${p.h}:${p.i}:${p.s}.${p.ms} (Brasília)`; };
+const fmt_ago = (v) => {
+  const diff = Math.max(0, Date.now() - to_ms(v));
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const minutes = Math.floor((diff % 3600000) / 60000);
+  if (days > 0) return `há ${days} d ${hours} h`;
+  if (hours > 0) return `há ${hours} h ${minutes} min`;
+  return `há ${minutes} min ${Math.floor((diff % 60000) / 1000)} s`;
+};
+const adm_label = (key) => adm_labels[key] || key.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
+
+async function adm_call(action, input = {}, sudo_password) {
+  const body = { action, token: state.user?.token, ...input };
+  const sudo = sudo_password || window._admin_pass;
+  if (sudo) body.sudo_password = sudo;
+  let data;
+  try {
+    const r = await fetch(API_ADMIN, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    data = await r.json();
+  } catch {
+    data = { error: 'Falha de rede ou resposta inválida do servidor' };
   }
-
-  window._admin_pass = pass;
-  const data = await dc({ action: 'admin_get_all', email: state.user.email, password: pass });
-
-  if (data.error) {
-    window._admin_pass = '';
-    el_w.innerHTML = `<div class="notice err">${esc(data.error)}</div><button class="btn-line w-full" onclick="load_admin_data()">Tentar novamente</button>`;
-    el_s.innerHTML = '';
-    return;
-  }
-
-  const pending = (data.withdrawals || []).filter((w) => w.status === 'pending');
-  el_w.innerHTML = pending.length
-    ? pending.map((w) => `
-      <div style="padding:.875rem 0;border-bottom:1px solid color-mix(in oklab,var(--border) 60%,transparent)">
-        <div class="row between" style="align-items:flex-start;gap:.75rem">
-          <div style="min-width:0">
-            <p class="name" style="font-weight:600;word-break:break-all">${esc(w.email)}</p>
-            <p class="tiny" style="word-break:break-all">${esc((w.pix_type || '').toUpperCase())}: ${esc(w.pix_key)}</p>
-            <p class="tiny">${fmt_date(w.created_at)}</p>
-          </div>
-          <p class="text-warn" style="font-size:1.125rem;font-weight:800;white-space:nowrap">${brl(w.amount)}</p>
-        </div>
-        <div class="row gap-2 mt-3">
-          <button class="btn-ok" data-id="${esc(w.msg_id)}" data-amount="${w.amount}" data-key="${esc(w.pix_key)}" data-type="${esc(w.pix_type)}" onclick="process_withdrawal(this)">Pagar via Pix</button>
-          <button class="btn-bad" data-id="${esc(w.msg_id)}" onclick="reject_withdrawal(this)">Rejeitar</button>
-        </div>
-      </div>`).join('')
-    : '<p class="muted" style="padding:1rem 0;text-align:center">Nenhum saque pendente.</p>';
-
-  const total_paid = (data.payments || []).filter((p) => p.status === 'approved').reduce((s, p) => s + (p.plan_price || 0), 0);
-  el_s.innerHTML = `<div class="stat-grid">
-    ${stat_html('Usuários', (data.users || []).length)}
-    ${stat_html('Ativos', (data.users || []).filter((u) => u.plan).length, 'text-primary')}
-    ${stat_html('Total recebido', brl(total_paid), 'text-accent')}
-    ${stat_html('Saques pend.', pending.length, 'text-warn')}
-  </div>`;
+  if (data.code === 'auth' && state.user) { toast('Sessão expirada. Entre novamente.'); logout(); }
+  if (data.code === 'sudo') window._admin_pass = '';
+  return data;
 }
 
-async function process_withdrawal(btn) {
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>';
+const adm_badge_tone = (v) => {
+  const t = String(v).toLowerCase();
+  if (['approved', 'active', 'ok', 'sim', 'paid', 'admin', 'owner'].includes(t)) return 'green';
+  if (['pending', 'processing', 'suspended', 'warn', 'support', 'finance'].includes(t)) return 'yellow';
+  if (['rejected', 'banned', 'failed', 'refunded', 'cancelled', 'expired', 'denied', 'missing'].includes(t)) return 'red';
+  return '';
+};
+const adm_badge = (v) => `<span class="badge ${adm_badge_tone(v)}">${esc(v)}</span>`;
+const adm_user_link = (email) => `<a class="adm-ulink" data-e="${esc(email)}" onclick="adm_open_user(this.dataset.e)">${esc(email)}</a>`;
+const adm_btn = (label, id, preset = {}, cls = 'adm-mini') => adm.by_id[id] ? `<button class="${cls}" data-a="${esc(id)}" data-p="${esc(JSON.stringify(preset))}" onclick="adm_act(this)">${label}</button>` : '';
+const adm_copy_btn = (text) => `<button class="adm-mini" data-c="${esc(text)}" onclick="copy_text(this.dataset.c)">copiar</button>`;
 
-  const { id, amount, key, type } = btn.dataset;
-  const data = await pay({ action: 'create_withdrawal_pix', email: state.user.email, password: window._admin_pass, amount: Number(amount), pix_key: key, pix_type: type });
-
-  if (data.error) {
-    toast('Erro: ' + data.error);
-    btn.disabled = false;
-    btn.innerHTML = 'Pagar via Pix';
-    return;
+function adm_fmt(value, key = '', scope = '', parent = '') {
+  if (value === null || value === undefined || value === '') return '<span class="tiny">—</span>';
+  if (typeof value === 'boolean') return value ? 'sim' : 'não';
+  if (typeof value === 'number') {
+    if (/(_ms|_ts|^ts|^msg_at)$/.test(key) && value > 1e11) return `<span title="${esc(fmt_precise(value))}">${esc(fmt_sec(value))}</span>`;
+    if (/^(by_|sales_by)/.test(parent)) return esc(String(value));
+    if (parent === 'revenue_by_plan' || adm_money_keys.has(key) || (key === 'total' && /^(finance|commissions|withdrawals|payments)\./.test(scope))) return brl(value);
+    return esc(String(value));
   }
-
-  if (data.manual) {
-    // saque manual: o admin paga pelo app do Mercado Pago e confirma aqui
-    const ok = confirm(`Pague agora no app do Mercado Pago:\n\nValor: ${brl(data.amount)}\nChave Pix (${data.pix_type}): ${data.pix_key}\n\nJá fez o Pix? Confirme para marcar o saque como pago.`);
-    if (!ok) { btn.disabled = false; btn.innerHTML = 'Pagar via Pix'; return; }
+  if (typeof value === 'string') {
+    if (/(_at|^at)$/.test(key) && Date.parse(value)) return `<span title="${esc(fmt_precise(value))}">${esc(fmt_sec(value))}</span>`;
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return adm_user_link(value);
+    if (key === 'status' || key === 'state') return adm_badge(value);
+    if (key === 'ip') return `<a class="adm-ulink" data-ip="${esc(value)}" onclick="adm_ip_lookup(this.dataset.ip)">${esc(value)}</a>`;
+    return esc(value);
   }
-
-  await dc({ action: 'admin_update_withdrawal', email: state.user.email, password: window._admin_pass, msg_id: id, status: 'approved', transfer_id: data.transfer_id || null });
-  toast('Saque processado!');
-  load_admin_data();
+  return null;
 }
 
-async function reject_withdrawal(btn) {
-  if (!confirm('Rejeitar este saque?')) return;
-  await dc({ action: 'admin_update_withdrawal', email: state.user.email, password: window._admin_pass, msg_id: btn.dataset.id, status: 'rejected' });
-  toast('Saque rejeitado');
-  load_admin_data();
+function adm_bars(series) {
+  const max = Math.max(...series.map((s) => Number(s.value) || 0), 1);
+  return `<div class="adm-bars">${series.map((s) => `<i style="height:${Math.max(2, ((Number(s.value) || 0) / max) * 100)}%" title="${esc(s.label)}: ${esc(s.value)}"></i>`).join('')}</div><div class="row between tiny"><span>${esc(series[0]?.label)}</span><span>${esc(series[series.length - 1]?.label)}</span></div>`;
+}
+
+function adm_hbars(rows, money_mode) {
+  const max = Math.max(...rows.map((r) => Number(r.value) || 0), 1);
+  return `<div class="adm-hbars">${rows.map((r) => `<div class="adm-hb"><span class="n">${adm_fmt(String(r.label)) ?? esc(r.label)}</span><span class="b"><i style="width:${Math.max(1, ((Number(r.value) || 0) / max) * 100)}%"></i></span><span class="v">${money_mode ? brl(r.value) : esc(r.value)}${r.percent !== undefined ? ` <small>${esc(r.percent)}%</small>` : ''}${r.conversion !== undefined ? ` <small>conv. ${esc(r.conversion)}%</small>` : ''}</span></div>`).join('')}</div>`;
+}
+
+function adm_heatmap(grid, labels) {
+  const max = Math.max(...grid.flat(), 1);
+  const head = `<tr><th></th>${Array.from({ length: 24 }, (_, h) => `<th>${h}</th>`).join('')}</tr>`;
+  const body = grid.map((row, d) => `<tr><th>${esc(labels[d])}</th>${row.map((v, h) => `<td title="${esc(labels[d])} ${h}h: ${v}" style="background:color-mix(in oklab,var(--primary) ${Math.round((v / max) * 90)}%,transparent)">${v || ''}</td>`).join('')}</tr>`).join('');
+  return `<div class="adm-table-wrap adm-heat"><table class="adm-t">${head}${body}</table></div>`;
+}
+
+function adm_auto_columns(rows) {
+  const keys = [];
+  for (const row of rows.slice(0, 25)) for (const k of Object.keys(row)) if (!keys.includes(k) && k !== 'msg_at') keys.push(k);
+  return keys.slice(0, 14).map((key) => ({ key, label: adm_label(key) }));
+}
+
+function adm_cell(row, column, scope) {
+  if (column.render) return column.render(row);
+  const rendered = adm_fmt(row[column.key], column.key, scope);
+  return rendered ?? `<code class="tiny">${esc(JSON.stringify(row[column.key]).slice(0, 160))}</code>`;
+}
+
+function adm_table(rows, columns, opts = {}) {
+  if (!rows.length) return '<p class="muted" style="padding:1rem 0">Nenhum registro.</p>';
+  const head = columns.map((c) => {
+    const sort_name = opts.sortable?.[c.key];
+    const arrow = sort_name && adm.filters[opts.action]?.sort === sort_name ? (adm.filters[opts.action].dir === 'asc' ? ' ▲' : ' ▼') : '';
+    return `<th ${sort_name ? `class="sortable" data-s="${esc(sort_name)}" data-a="${esc(opts.action)}" onclick="adm_sort(this)"` : ''}>${esc(c.label ?? adm_label(c.key))}${arrow}</th>`;
+  }).join('');
+  const select_head = opts.selectable ? '<th><input type="checkbox" onclick="adm_select_all(this)"></th>' : '';
+  const body = rows.map((row) => `<tr>${opts.selectable ? `<td><input type="checkbox" class="adm-sel" value="${esc(row.email)}"></td>` : ''}${columns.map((c) => `<td>${adm_cell(row, c, opts.scope || '')}</td>`).join('')}</tr>`).join('');
+  return `<div class="adm-table-wrap"><table class="adm-t"><thead><tr>${select_head}${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+}
+
+function adm_render(value, key = '', scope = '', depth = 0, parent = '') {
+  const simple = adm_fmt(value, key, scope, parent);
+  if (simple !== null) return simple;
+  if (Array.isArray(value)) {
+    if (!value.length) return '<span class="tiny">vazio</span>';
+    if (value.every((v) => v === null || typeof v !== 'object')) return value.map((v) => adm_fmt(v, key, scope, parent)).join(', ');
+    if (key === 'series' && value.every((v) => 'label' in v && 'value' in v && Object.keys(v).length === 2)) return adm_bars(value);
+    if (value.every((v) => v && 'label' in v && 'value' in v && Object.keys(v).length <= 4)) return adm_hbars(value, /^(finance|commissions)\./.test(scope) && key !== 'buckets');
+    return adm_table(value.slice(0, 500), adm_auto_columns(value), { scope });
+  }
+  if (key === 'grid') return '';
+  const entries = Object.entries(value).filter(([k]) => k !== 'download' && k !== 'labels' && !(depth === 0 && k === 'ok'));
+  if (value.grid && value.labels) return adm_heatmap(value.grid, value.labels);
+  return `<dl class="adm-dl">${entries.map(([k, v]) => `<div><dt>${esc(adm_label(k))}</dt><dd>${k === 'grid' ? adm_heatmap(v, value.labels) : adm_render(v, k, scope, depth + 1, key)}</dd></div>`).join('')}</dl>`;
+}
+
+function adm_download(file) {
+  const blob = new Blob([file.content], { type: file.mime });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = file.filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+function adm_modal_wide(html) {
+  open_modal(html);
+  document.querySelector('#modal-root .modal')?.classList.add('wide');
+}
+
+function adm_field_html(f, value) {
+  const v = value !== undefined ? value : f.default;
+  const req = f.required ? 'required' : '';
+  const name = `name="${esc(f.name)}"`;
+  if (f.type === 'checkbox') return `<label class="field adm-check"><input type="checkbox" ${name} ${v ? 'checked' : ''}><span>${esc(f.label)}</span></label>`;
+  if (f.type === 'select') return `<label class="field">${esc(f.label)}<select ${name} ${req}>${f.options.map((o) => { const ov = typeof o === 'object' ? o.value : o; const ol = typeof o === 'object' ? o.label : o; return `<option value="${esc(ov)}" ${String(v ?? '') === String(ov) ? 'selected' : ''}>${esc(ol)}</option>`; }).join('')}</select></label>`;
+  if (f.type === 'textarea' || f.type === 'list') return `<label class="field">${esc(f.label)}<textarea class="input" rows="3" ${name} ${req}>${esc(Array.isArray(v) ? v.join('\n') : v ?? '')}</textarea></label>`;
+  const type = { email: 'email', password: 'password', number: 'number', date: 'date', datetime: 'datetime-local' }[f.type] || 'text';
+  const extra = f.type === 'number' ? 'step="any"' : f.type === 'password' ? 'autocomplete="new-password"' : '';
+  return `<label class="field">${esc(f.label)}<input type="${type}" ${name} value="${esc(v ?? '')}" ${req} ${extra}${f.max ? ` maxlength="${f.max}"` : ''}></label>`;
+}
+
+function adm_read_form(form, spec, preset = {}) {
+  const input = { ...preset };
+  for (const f of spec.fields) {
+    if (preset[f.name] !== undefined) continue;
+    const el = form.elements[f.name];
+    if (!el) continue;
+    if (f.type === 'checkbox') input[f.name] = el.checked;
+    else if (f.type === 'datetime') input[f.name] = el.value ? new Date(el.value).toISOString() : '';
+    else input[f.name] = el.value;
+  }
+  return input;
+}
+
+function adm_act(el) {
+  adm_action(el.dataset.a, JSON.parse(el.dataset.p || '{}'));
+}
+
+function adm_action(id, preset = {}, after, defaults = {}) {
+  const spec = adm.by_id[id];
+  if (!spec) { toast('Seu cargo não permite esta função'); return; }
+  adm.preset = preset;
+  adm.after = after || null;
+  const fields = spec.fields.filter((f) => preset[f.name] === undefined);
+  const who = preset.email ? `<p class="tiny" style="text-align:center;margin-top:.5rem;word-break:break-all">${esc(preset.email)}</p>` : '';
+  open_modal(`
+    <form onsubmit="adm_submit(event, '${esc(id)}')">
+      <h3 class="modal-title">${esc(spec.label)}</h3>
+      ${spec.description ? `<p class="muted mt-2" style="text-align:center">${esc(spec.description)}</p>` : ''}
+      ${who}
+      ${fields.map((f) => adm_field_html(f, defaults[f.name])).join('')}
+      ${spec.sudo ? `<label class="field">Sua senha de administrador<input type="password" name="__sudo" autocomplete="current-password" required value="${esc(window._admin_pass || '')}"></label>` : ''}
+      <div id="adm-form-err"></div>
+      <button class="${spec.danger ? 'btn-bad' : 'btn-brand'} w-full mt-5" style="padding:.75rem;border-radius:9999px">${spec.read ? 'Executar' : 'Confirmar'}</button>
+    </form>`);
+}
+
+async function adm_submit(e, id) {
+  e.preventDefault();
+  const spec = adm.by_id[id];
+  const form = e.target;
+  const button = form.querySelector('button:last-of-type');
+  const input = adm_read_form(form, spec, adm.preset);
+  const sudo = form.elements.__sudo?.value;
+  button.disabled = true;
+  const label = button.textContent;
+  button.innerHTML = '<span class="spinner"></span>';
+  const data = await adm_call(id, input, sudo);
+  if (data.error) {
+    document.getElementById('adm-form-err').innerHTML = `<div class="notice err mt-3">${esc(data.error)}</div>`;
+    button.disabled = false;
+    button.textContent = label;
+    return;
+  }
+  if (sudo) window._admin_pass = sudo;
+  adm_done(id, data);
+}
+
+function adm_done(id, data) {
+  const spec = adm.by_id[id];
+  const after = adm.after;
+  close_modal();
+  if (data.download) adm_download(data.download);
+  if (data.token && data.email) { adm_impersonate(data); return; }
+  if (data.password) { adm_modal_wide(`<h3 class="modal-title">Senha temporária</h3><p class="muted mt-2" style="text-align:center">${esc(data.notice || '')}</p><div class="code-box mt-3" style="font-size:1.25rem;text-align:center;user-select:all">${esc(data.password)}</div><button class="btn-brand w-full mt-4" data-c="${esc(data.password)}" onclick="copy_text(this.dataset.c)">Copiar</button>`); return; }
+  if (spec.read) { adm_show_output(spec, data); return; }
+  const extra = Object.fromEntries(Object.entries(data).filter(([k]) => !['ok', 'user', 'download'].includes(k)));
+  if (data.failed?.length || Object.keys(extra).length > 2) adm_modal_wide(`<h3 class="modal-title">Resultado</h3><div class="mt-3">${adm_render(extra, '', id)}</div>`);
+  else toast(data.download ? 'Arquivo gerado' : 'Concluído');
+  if (after) after(data);
+  else adm_refresh();
+}
+
+function adm_show_output(spec, data) {
+  const box = document.getElementById('adm-output');
+  const html = `<h3 class="adm-h">${esc(spec.label)}</h3>${adm_render(data, '', spec.id)}`;
+  if (box) { box.innerHTML = html; box.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  adm_modal_wide(html);
+}
+
+function adm_refresh() {
+  adm_go(adm.view, adm.param);
+}
+
+async function adm_show_call(id, input) {
+  const spec = adm.by_id[id];
+  adm_modal_wide(`<div class="center">${spinner_block()}</div>`);
+  const data = await adm_call(id, input);
+  if (data.error) { adm_modal_wide(`<div class="notice err">${esc(data.error)}</div>`); return; }
+  adm_modal_wide(`<h3 class="modal-title">${esc(spec?.label || id)}</h3><div class="mt-3">${adm_render(data, '', id)}</div>`);
+}
+
+const adm_ip_lookup = (ip) => adm_show_call('security.ip_lookup', { ip });
+const adm_open_user = (email) => { close_modal(); adm_go('user', email); };
+
+function adm_impersonate(data) {
+  sessionStorage.setItem('ap_admin_backup', JSON.stringify(state.user));
+  state.user = { email: data.email, token: data.token };
+  dc({ action: 'get_user' }).then((r) => {
+    state.user = { ...(r.user || {}), email: data.email, token: data.token };
+    set_page('painel');
+  });
+}
+
+function adm_stop_impersonation() {
+  const backup = sessionStorage.getItem('ap_admin_backup');
+  sessionStorage.removeItem('ap_admin_backup');
+  if (backup) state.user = JSON.parse(backup);
+  set_page('admin');
+}
+
+function render_imp_bar() {
+  const backup = sessionStorage.getItem('ap_admin_backup');
+  if (!backup || !state.user) return;
+  const bar = document.createElement('div');
+  bar.className = 'imp-bar';
+  bar.innerHTML = `<span>Você está vendo a conta de <b>${esc(state.user.email)}</b></span><button onclick="adm_stop_impersonation()">Voltar ao admin</button>`;
+  document.getElementById('app').appendChild(bar);
+}
+
+function adm_tabbed(el, tabs, start) {
+  const id = `t${Math.random().toString(36).slice(2, 8)}`;
+  el.innerHTML = `<div class="adm-tabs" id="${id}">${tabs.map((t) => `<button data-t="${t.id}">${t.label}</button>`).join('')}</div><div id="${id}c"></div>`;
+  const select = (tab_id) => {
+    el.querySelectorAll(`#${id} button`).forEach((b) => b.classList.toggle('on', b.dataset.t === tab_id));
+    tabs.find((t) => t.id === tab_id).render(document.getElementById(`${id}c`));
+  };
+  el.querySelectorAll(`#${id} button`).forEach((b) => { b.onclick = () => select(b.dataset.t); });
+  select(start || tabs[0].id);
+}
+
+const adm_paging = new Set(['page', 'per_page', 'sort', 'dir']);
+
+function adm_panel(el, action, opts = {}) {
+  const spec = adm.by_id[action];
+  if (!spec) { el.innerHTML = '<div class="notice err">Seu cargo não permite esta função.</div>'; return; }
+  const base = Object.fromEntries(spec.fields.filter((f) => f.default !== undefined).map((f) => [f.name, f.default]));
+  adm.filters[action] = { ...base, ...(opts.preset || {}), ...(adm.filters[action] || {}) };
+  adm.list_opts[action] = opts;
+  const fields = spec.fields.filter((f) => !adm_paging.has(f.name) && opts.preset?.[f.name] === undefined);
+  const form = fields.length && !opts.hide_form ? `<form class="adm-filters" id="f_${esc(action)}" onsubmit="adm_apply(event, '${esc(action)}')">${fields.map((f) => adm_field_html(f, adm.filters[action][f.name])).join('')}<div class="adm-filter-actions"><button class="btn-ok">${spec.read ? 'Aplicar' : 'Executar'}</button><button type="button" class="btn-line rect" onclick="adm_reset('${esc(action)}')">Limpar</button></div></form>` : '';
+  el.innerHTML = `${opts.toolbar ? `<div class="adm-toolbar">${opts.toolbar}</div>` : ''}${form}<div id="p_${esc(action)}"></div>`;
+  const needs_input = spec.fields.some((f) => f.required && (adm.filters[action][f.name] === undefined || adm.filters[action][f.name] === ''));
+  if (needs_input) document.getElementById(`p_${action}`).innerHTML = '<p class="muted" style="padding:1rem 0">Preencha os campos e execute.</p>';
+  else adm_load(action);
+}
+
+function adm_apply(e, action) {
+  e.preventDefault();
+  const spec = adm.by_id[action];
+  const input = adm_read_form(e.target, { fields: spec.fields.filter((f) => !adm_paging.has(f.name)) }, adm.list_opts[action]?.preset || {});
+  adm.filters[action] = { ...adm.filters[action], ...input, page: 1 };
+  adm_load(action);
+}
+
+function adm_reset(action) {
+  delete adm.filters[action];
+  adm_panel(document.getElementById(`p_${action}`).parentElement, action, adm.list_opts[action]);
+}
+
+async function adm_load(action) {
+  const opts = adm.list_opts[action] || {};
+  const box = document.getElementById(`p_${action}`);
+  if (!box) return;
+  box.innerHTML = spinner_block();
+  const data = await adm_call(action, adm.filters[action]);
+  if (!document.getElementById(`p_${action}`)) return;
+  if (data.error) { box.innerHTML = `<div class="notice err mt-3">${esc(data.error)}</div>`; return; }
+  if (data.download) adm_download(data.download);
+  if (Array.isArray(data.rows) && data.total !== undefined && data.pages !== undefined) {
+    const columns = opts.columns || adm_auto_columns(data.rows);
+    const pager = `<div class="row between adm-pager"><span class="muted">${data.total} registro(s) · página ${data.page} de ${data.pages}</span><span class="row gap-2"><button class="adm-mini" ${data.page <= 1 ? 'disabled' : ''} data-a="${esc(action)}" data-d="-1" onclick="adm_page(this)">← anterior</button><button class="adm-mini" ${data.page >= data.pages ? 'disabled' : ''} data-a="${esc(action)}" data-d="1" onclick="adm_page(this)">próxima →</button></span></div>`;
+    box.innerHTML = `${pager}${adm_table(data.rows, columns, { ...opts, action, scope: action })}${data.rows.length > 12 ? pager : ''}${data.notice ? `<p class="tiny mt-3">${esc(data.notice)}</p>` : ''}${data.total_diff !== undefined ? `<p class="muted mt-3">Diferença total: <b>${brl(data.total_diff)}</b></p>` : ''}`;
+    return;
+  }
+  box.innerHTML = opts.render ? opts.render(data) : adm_render(data, '', action);
+}
+
+function adm_page(el) {
+  const f = adm.filters[el.dataset.a];
+  f.page = Math.max(1, (f.page || 1) + Number(el.dataset.d));
+  adm_load(el.dataset.a);
+}
+
+function adm_sort(el) {
+  const f = adm.filters[el.dataset.a];
+  f.dir = f.sort === el.dataset.s && f.dir !== 'asc' ? 'asc' : 'desc';
+  f.sort = el.dataset.s;
+  f.page = 1;
+  adm_load(el.dataset.a);
+}
+
+function adm_select_all(box) {
+  document.querySelectorAll('.adm-sel').forEach((c) => { c.checked = box.checked; });
+}
+
+function adm_selected_emails() {
+  return [...document.querySelectorAll('.adm-sel:checked')].map((c) => c.value);
+}
+
+function adm_bulk() {
+  const emails = adm_selected_emails();
+  if (!emails.length) { toast('Marque ao menos um usuário na tabela'); return; }
+  adm_action('users.bulk', { emails }, () => { toast('Ação em massa concluída'); adm_refresh(); });
+}
+
+async function adm_quick(id, input) {
+  const data = await adm_call(id, input);
+  if (data.error) { toast(data.error); return; }
+  if (data.download) { adm_download(data.download); toast(`${data.count ?? ''} registro(s) exportados`); }
+}
+
+function adm_card(title, body, extra = '') {
+  return `<section class="adm-card ${extra}">${title ? `<h2>${title}</h2>` : ''}${body}</section>`;
+}
+
+function adm_kv(rows) {
+  return `<dl class="adm-dl">${rows.filter(Boolean).map(([k, v]) => `<div><dt>${k}</dt><dd>${v ?? '<span class="tiny">—</span>'}</dd></div>`).join('')}</dl>`;
+}
+
+function adm_kpi(label, value, sub, view) {
+  return `<button class="adm-kpi" ${view ? `onclick="adm_go('${view}')"` : ''}><span class="label">${label}</span><b>${value}</b>${sub ? `<small>${sub}</small>` : ''}</button>`;
+}
+
+function adm_search(query) {
+  if (!query.trim()) return;
+  adm_go('search', query.trim());
+}
+
+const adm_user_columns = [
+  { key: 'email', label: 'E-mail', render: (r) => `${adm_user_link(r.email)}${r.role ? ` ${adm_badge(r.role)}` : ''}` },
+  { key: 'plan', label: 'Plano', render: (r) => r.plan ? `<span class="badge green">R$ ${r.plan}</span>` : '<span class="tiny">—</span>' },
+  { key: 'balance', label: 'Saldo', render: (r) => brl(r.balance) },
+  { key: 'state', label: 'Situação', render: (r) => adm_badge(r.state) + (r.withdraw_blocked ? ' <span class="badge yellow">saque bloq.</span>' : '') },
+  { key: 'created_ms', label: 'Criada em', render: (r) => `<span title="${esc(fmt_precise(r.created_ms))}">${esc(fmt_sec(r.created_ms))}</span>` },
+  { key: 'whatsapp', label: 'WhatsApp' },
+  { key: 'reg_ip', label: 'IP cadastro', render: (r) => adm_fmt(r.reg_ip, 'ip') },
+  { key: 'reg_country', label: 'Local', render: (r) => esc([r.reg_city, r.reg_country].filter(Boolean).join(', ') || '—') },
+  { key: 'reg_device', label: 'Aparelho' },
+  { key: 'last_login_at', label: 'Último acesso', render: (r) => r.last_login_at ? esc(fmt_sec(r.last_login_at)) : '<span class="tiny">nunca</span>' },
+  { key: 'logins', label: 'Acessos' },
+  { key: 'referrals', label: 'Indicados' },
+  { key: 'referred_by', label: 'Indicado por', render: (r) => r.referred_by ? adm_user_link(r.referred_by) : '<span class="tiny">—</span>' },
+  { key: 'tags', label: 'Tags', render: (r) => (r.tags || []).map((t) => `<span class="badge">${esc(t)}</span>`).join(' ') },
+];
+
+const adm_user_sort = { email: 'email', plan: 'plan', balance: 'balance', created_ms: 'created', last_login_at: 'last_login', logins: 'logins', referrals: 'referrals' };
+
+const adm_views = {
+  dashboard: async (el) => {
+    el.innerHTML = spinner_block();
+    const d = await adm_call('analytics.overview');
+    if (d.error) { el.innerHTML = `<div class="notice err">${esc(d.error)}</div>`; return; }
+    const warn = !d.logging.logs || !d.logging.config ? `<div class="notice err">Para registrar IPs, acessos, auditoria e configurações, crie dois canais no Discord e adicione na Vercel: <b>DISCORD_CHANNEL_LOGS</b> e <b>DISCORD_CHANNEL_CONFIG</b>.${d.logging.logs ? '' : ' (logs ausente)'}${d.logging.config ? '' : ' (config ausente)'}</div>` : '';
+    el.innerHTML = `
+      <h1 class="page-title">Painel</h1>${warn}
+      <div class="adm-grid">
+        ${adm_kpi('Usuários', d.users.total, `+${d.users.today} hoje · +${d.users.week} em 7 d`, 'users')}
+        ${adm_kpi('Pagantes', d.users.paying, `conversão ${d.users.conversion}%`, 'users')}
+        ${adm_kpi('Receita hoje', brl(d.revenue.today), `7 d ${brl(d.revenue.week)}`, 'payments')}
+        ${adm_kpi('Receita 30 d', brl(d.revenue.month), `total ${brl(d.revenue.all)}`, 'finance')}
+        ${adm_kpi('Saques em aberto', d.withdrawals.open, `${brl(d.withdrawals.open_amount)} · mais antigo ${d.withdrawals.oldest_hours} h`, 'withdrawals')}
+        ${adm_kpi('Saldo dos afiliados', brl(d.liabilities), 'passivo', 'finance')}
+        ${adm_kpi('Comissões pagas', brl(d.commissions.total), '', 'commissions')}
+        ${adm_kpi('Ativos 24 h / 7 d', `${d.users.active_24h} / ${d.users.active_7d}`, `${d.users.banned} banidos`, 'security')}
+        ${adm_kpi('Pix pendentes (24 h)', d.pending_payments, '', 'payments')}
+      </div>
+      <div class="adm-cols">
+        ${adm_card('Cadastros · 14 dias', adm_bars(d.signups_series))}
+        ${adm_card('Receita · 14 dias', adm_bars(d.revenue_series))}
+        ${adm_card('Países (cadastro)', d.top_countries.length ? adm_hbars(d.top_countries) : '<p class="muted">Sem dados de localização ainda. Aparecem a partir dos próximos cadastros.</p>')}
+      </div>
+      <div id="adm-recent"></div>`;
+    adm_panel(document.getElementById('adm-recent'), 'users.recent', { preset: { kind: 'signups', limit: 12 }, hide_form: true, render: (data) => adm_card('Últimos cadastros', adm_table(data.rows, adm_user_columns.slice(0, 8), { scope: 'users.recent' })) });
+  },
+
+  users: (el) => {
+    el.innerHTML = '<h1 class="page-title">Usuários</h1><div id="adm-users"></div>';
+    const toolbar = `<button class="adm-mini" onclick="adm_quick('users.export_csv', adm.filters['users.list'])">Exportar CSV</button>${adm_btn('Ação em massa (marcados)', 'users.bulk', {}, 'adm-mini').replace('onclick="adm_act(this)"', 'onclick="adm_bulk()"')}<button class="adm-mini" onclick="adm_go('functions')">Mais funções</button>`;
+    adm_tabbed(document.getElementById('adm-users'), [
+      { id: 'list', label: 'Todos', render: (c) => adm_panel(c, 'users.list', { columns: adm_user_columns, sortable: adm_user_sort, selectable: true, toolbar }) },
+      { id: 'recent', label: 'Recentes', render: (c) => adm_panel(c, 'users.recent', { columns: adm_user_columns }) },
+      { id: 'inactive', label: 'Inativos', render: (c) => adm_panel(c, 'users.inactive', { columns: adm_user_columns }) },
+      { id: 'top', label: 'Ranking', render: (c) => adm_panel(c, 'users.top', { render: (d) => adm_table(d.rows, adm_user_columns.slice(0, 5).concat([adm_user_columns[11]]), { scope: 'users.top' }) }) },
+      { id: 'counts', label: 'Contadores', render: (c) => adm_panel(c, 'users.counts') },
+      { id: 'tags', label: 'Tags', render: (c) => adm_panel(c, 'users.tags_overview') },
+      { id: 'staff', label: 'Equipe', render: (c) => adm_panel(c, 'users.staff', { columns: adm_user_columns.slice(0, 5) }) },
+    ]);
+  },
+
+  user: (el, email) => adm_user_view(el, email),
+
+  search: async (el, query) => {
+    el.innerHTML = spinner_block();
+    const d = await adm_call('users.lookup', { query });
+    if (d.error) { el.innerHTML = `<div class="notice err">${esc(d.error)}</div>`; return; }
+    el.innerHTML = `<h1 class="page-title">Busca: ${esc(query)}</h1>
+      ${adm_card(`Usuários (${d.users.length})`, adm_table(d.users, adm_user_columns.slice(0, 9), { scope: 'users.lookup' }))}
+      ${adm_card(`Pagamentos (${d.payments.length})`, adm_table(d.payments, adm_auto_columns(d.payments), { scope: 'payments.list' }))}
+      ${adm_card(`Saques (${d.withdrawals.length})`, adm_table(d.withdrawals, adm_auto_columns(d.withdrawals), { scope: 'withdrawals.list' }))}`;
+  },
+
+  payments: (el) => {
+    el.innerHTML = '<h1 class="page-title">Pagamentos</h1><div id="adm-pay"></div>';
+    const actions = (r) => `<span class="adm-acts">${r.status === 'pending' ? adm_btn('Aprovar', 'payments.approve_manual', { id: r.msg_id }) + adm_btn('Reprocessar', 'payments.sync', { payment_id: r.payment_id }) + adm_btn('Cancelar', 'payments.cancel_pending', { id: r.msg_id }) : ''}${r.status === 'approved' ? adm_btn('Reembolsar', 'payments.mark_refunded', { id: r.msg_id }) : ''}${adm_btn('Detalhes', 'payments.get', { id: r.msg_id, live: true })}</span>`;
+    const columns = [
+      { key: 'email', label: 'E-mail' }, { key: 'plan_price', label: 'Valor' }, { key: 'status', label: 'Status' },
+      { key: 'created_ms', label: 'Gerado em', render: (r) => `<span title="${esc(fmt_precise(r.created_ms))}">${esc(fmt_sec(r.created_ms))}</span>` },
+      { key: 'paid_ms', label: 'Pago em', render: (r) => r.paid_ms ? `<span title="${esc(fmt_precise(r.paid_ms))}">${esc(fmt_sec(r.paid_ms))}</span>` : '—' },
+      { key: 'delay_seconds', label: 'Tempo p/ pagar', render: (r) => r.delay_seconds === null ? '—' : `${r.delay_seconds}s` },
+      { key: 'payment_id', label: 'ID' }, { key: 'manual', label: 'Origem', render: (r) => r.manual ? 'manual' : 'Mercado Pago' },
+      { key: 'acts', label: 'Ações', render: actions },
+    ];
+    const toolbar = `<button class="adm-mini" onclick="adm_quick('payments.export_csv', adm.filters['payments.list'])">Exportar CSV</button>${adm_btn('Reprocessar Pix pendentes', 'payments.sync_pending')}${adm_btn('Expirar antigos', 'payments.expire_stale')}`;
+    adm_tabbed(document.getElementById('adm-pay'), [
+      { id: 'list', label: 'Lista', render: (c) => adm_panel(c, 'payments.list', { columns, sortable: { created_ms: 'created', paid_ms: 'paid', plan_price: 'amount', email: 'email', status: 'status' }, toolbar }) },
+      { id: 'summary', label: 'Resumo', render: (c) => adm_panel(c, 'payments.summary') },
+      { id: 'daily', label: 'Por dia', render: (c) => adm_panel(c, 'payments.daily') },
+      { id: 'check', label: 'Consultar no MP', render: (c) => adm_panel(c, 'payments.check_mercadopago') },
+    ]);
+  },
+
+  withdrawals: (el) => {
+    el.innerHTML = '<h1 class="page-title">Saques</h1><div id="adm-wd"></div>';
+    const queue_row_actions = (r, payouts) => `<span class="adm-acts">${payouts ? adm_btn('Pagar via API', 'withdrawals.pay_api', { id: r.msg_id }) : ''}${adm_btn('Marcar pago', 'withdrawals.mark_paid', { id: r.msg_id })}${adm_btn('Rejeitar', 'withdrawals.reject', { id: r.msg_id })}${adm_btn('Corrigir chave', 'withdrawals.set_pix', { id: r.msg_id })}</span>`;
+    const list_columns = [
+      { key: 'email', label: 'E-mail' }, { key: 'amount', label: 'Valor' }, { key: 'status', label: 'Status' },
+      { key: 'pix_type', label: 'Tipo' }, { key: 'pix_key', label: 'Chave Pix' }, { key: 'source', label: 'Origem' },
+      { key: 'created_ms', label: 'Pedido em', render: (r) => `<span title="${esc(fmt_precise(r.created_ms))}">${esc(fmt_sec(r.created_ms))}</span>` },
+      { key: 'transfer_id', label: 'Transferência' }, { key: 'reject_reason', label: 'Motivo' },
+      { key: 'acts', label: 'Ações', render: (r) => (r.status === 'pending' || r.status === 'processing') ? queue_row_actions(r, false) : adm_btn('Status', 'withdrawals.set_status', { id: r.msg_id }) },
+    ];
+    const risk_columns = [
+      { key: 'email', label: 'Usuário' }, { key: 'amount', label: 'Valor' }, { key: 'status', label: 'Status' },
+      { key: 'flags', label: 'Sinais', render: (r) => r.flags.length ? r.flags.map((f) => `<span class="badge yellow">${esc(f)}</span>`).join(' ') : '<span class="badge green">sem sinais</span>' },
+      { key: 'acts', label: 'Ações', render: (r) => adm_btn('Rejeitar', 'withdrawals.reject', { id: r.id }) + adm_btn('Marcar pago', 'withdrawals.mark_paid', { id: r.id }) },
+    ];
+    adm_tabbed(document.getElementById('adm-wd'), [
+      {
+        id: 'queue', label: 'Fila', render: async (c) => {
+          c.innerHTML = spinner_block();
+          const d = await adm_call('withdrawals.queue');
+          if (d.error) { c.innerHTML = `<div class="notice err">${esc(d.error)}</div>`; return; }
+          const columns = [
+            { key: 'email', label: 'Usuário', render: (r) => `${adm_user_link(r.email)}<div class="tiny">plano ${r.user_plan ? `R$ ${r.user_plan}` : 'nenhum'} · saldo ${brl(r.user_balance)} · conta ${r.account_age_days ?? '?'} d · ${esc(r.user_state)}</div>` },
+            { key: 'amount', label: 'Valor', render: (r) => `<b>${brl(r.amount)}</b>` },
+            { key: 'pix_key', label: 'Chave Pix', render: (r) => `${esc(String(r.pix_type || '').toUpperCase())}: <code>${esc(r.pix_key)}</code> ${adm_copy_btn(r.pix_key)}` },
+            { key: 'status', label: 'Status', render: (r) => adm_badge(r.status) },
+            { key: 'created_ms', label: 'Pedido em', render: (r) => `${esc(fmt_sec(r.created_ms))}<div class="tiny">aguardando ${r.waiting_hours} h</div>` },
+            { key: 'acts', label: 'Ações', render: (r) => queue_row_actions(r, d.payouts_enabled) },
+          ];
+          c.innerHTML = `<div class="adm-toolbar"><span class="muted">${d.rows.length} em aberto · total <b>${brl(d.total)}</b>${d.payouts_enabled ? ' · pagamento automático ativo' : ' · pagamento manual (Payouts desligado)'}</span>${adm_btn('Ação em lote', 'withdrawals.bulk')}</div>${adm_table(d.rows, columns, { scope: 'withdrawals.queue' })}`;
+        },
+      },
+      { id: 'all', label: 'Histórico', render: (c) => adm_panel(c, 'withdrawals.list', { columns: list_columns, sortable: { created_ms: 'created', amount: 'amount', email: 'email', status: 'status' }, toolbar: `<button class="adm-mini" onclick="adm_quick('withdrawals.export_csv', adm.filters['withdrawals.list'])">Exportar CSV</button>` }) },
+      { id: 'risk', label: 'Risco', render: (c) => adm_panel(c, 'security.risky_withdrawals', { render: (d) => adm_table(d.rows, risk_columns, { scope: 'withdrawals.risky' }) }) },
+      { id: 'summary', label: 'Resumo', render: (c) => adm_panel(c, 'withdrawals.summary') },
+    ]);
+  },
+
+  commissions: (el) => {
+    el.innerHTML = '<h1 class="page-title">Comissões</h1><div id="adm-com"></div>';
+    const columns = [
+      { key: 'affiliate', label: 'Afiliado' }, { key: 'from_user', label: 'Origem' }, { key: 'amount', label: 'Valor' }, { key: 'plan', label: 'Plano', render: (r) => `R$ ${r.plan}` },
+      { key: 'created_ms', label: 'Criada em', render: (r) => `<span title="${esc(fmt_precise(r.created_ms))}">${esc(fmt_sec(r.created_ms))}</span>` },
+      { key: 'reverted', label: 'Situação', render: (r) => r.reverted ? '<span class="badge red">estornada</span>' : r.manual ? '<span class="badge yellow">manual</span>' : '<span class="badge green">válida</span>' },
+      { key: 'acts', label: 'Ações', render: (r) => r.reverted ? '' : adm_btn('Estornar', 'commissions.revert', { id: r.msg_id }) },
+    ];
+    adm_tabbed(document.getElementById('adm-com'), [
+      { id: 'list', label: 'Lista', render: (c) => adm_panel(c, 'commissions.list', { columns, sortable: { created_ms: 'created', amount: 'amount', affiliate: 'affiliate' }, toolbar: `<button class="adm-mini" onclick="adm_quick('commissions.export_csv', adm.filters['commissions.list'])">Exportar CSV</button>${adm_btn('Lançar comissão manual', 'commissions.create_manual')}` }) },
+      { id: 'summary', label: 'Resumo', render: (c) => adm_panel(c, 'commissions.summary') },
+      { id: 'top', label: 'Maiores afiliados', render: (c) => adm_panel(c, 'finance.top_earners') },
+      { id: 'board', label: 'Ranking de indicações', render: (c) => adm_panel(c, 'analytics.referral_leaderboard') },
+    ]);
+  },
+
+  finance: (el) => {
+    el.innerHTML = '<h1 class="page-title">Finanças</h1><div id="adm-fin"></div>';
+    const reconcile_columns = [{ key: 'email', label: 'Usuário' }, { key: 'actual', label: 'Saldo atual' }, { key: 'expected', label: 'Saldo esperado' }, { key: 'diff', label: 'Diferença' }, { key: 'acts', label: 'Ações', render: (r) => adm_btn('Corrigir', 'finance.fix_balance', { email: r.email }) + adm_btn('Ajustar', 'users.adjust_balance', { email: r.email }) }];
+    adm_tabbed(document.getElementById('adm-fin'), [
+      { id: 'summary', label: 'Resumo', render: (c) => adm_panel(c, 'finance.summary') },
+      { id: 'series', label: 'Séries', render: (c) => adm_panel(c, 'finance.series') },
+      { id: 'monthly', label: 'Mensal', render: (c) => adm_panel(c, 'analytics.monthly') },
+      { id: 'liab', label: 'Passivo', render: (c) => adm_panel(c, 'finance.liabilities') },
+      { id: 'recon', label: 'Conferência de saldos', render: (c) => adm_panel(c, 'finance.reconcile', { columns: reconcile_columns }) },
+      { id: 'mix', label: 'Planos', render: (c) => adm_panel(c, 'finance.plan_mix') },
+      { id: 'src', label: 'Receita por origem', render: (c) => adm_panel(c, 'analytics.revenue_by_source') },
+      { id: 'bal', label: 'Distribuição de saldos', render: (c) => adm_panel(c, 'analytics.balance_distribution') },
+    ]);
+  },
+
+  analytics: (el) => {
+    el.innerHTML = '<h1 class="page-title">Analytics</h1><div id="adm-an"></div>';
+    const tab = (id, label, action) => ({ id, label, render: (c) => adm_panel(c, action) });
+    adm_tabbed(document.getElementById('adm-an'), [
+      tab('funnel', 'Funil', 'analytics.funnel'), tab('signups', 'Cadastros/dia', 'analytics.signups_series'), tab('heat', 'Mapa de calor', 'analytics.heatmap'),
+      tab('geo', 'Geografia', 'analytics.geo'), tab('devices', 'Aparelhos', 'analytics.devices'), tab('sources', 'Origens', 'analytics.sources'),
+      tab('country', 'Conversão por país', 'analytics.conversion_by_country'), tab('cohorts', 'Coortes', 'analytics.cohorts'), tab('retention', 'Retenção', 'analytics.retention'),
+      tab('active', 'Usuários ativos', 'analytics.active_users'), tab('ttp', 'Tempo até comprar', 'analytics.time_to_pay'),
+    ]);
+  },
+
+  security: (el) => {
+    el.innerHTML = '<h1 class="page-title">Segurança e antifraude</h1><div id="adm-sec"></div>';
+    const tab = (id, label, action, opts) => ({ id, label, render: (c) => adm_panel(c, action, opts) });
+    const block_toolbar = `${adm_btn('Bloquear IP / e-mail / domínio / aparelho', 'security.block_add')}${adm_btn('Remover bloqueio', 'security.block_remove')}`;
+    adm_tabbed(document.getElementById('adm-sec'), [
+      tab('multi', 'Contas ligadas', 'security.multi_accounts'), tab('risk', 'Saques de risco', 'security.risky_withdrawals'), tab('failed', 'Logins falhos', 'security.failed_logins'),
+      tab('brute', 'Força bruta', 'security.brute_force'), tab('hours', 'Acessos 24 h', 'security.logins_by_hour'), tab('banned', 'Banidos', 'security.banned_users'),
+      tab('block', 'Bloqueios', 'security.blocklist', { toolbar: block_toolbar }), tab('ip', 'Buscar IP', 'security.ip_lookup'), tab('fp', 'Buscar aparelho', 'security.fingerprint_lookup'),
+      tab('topip', 'IPs com mais contas', 'security.top_ips'), tab('country', 'País diferente', 'security.new_countries'), tab('sessions', 'Sessões encerradas', 'security.stale_sessions_overview'),
+    ]);
+  },
+
+  audit: (el) => {
+    el.innerHTML = '<h1 class="page-title">Auditoria</h1><div id="adm-aud"></div>';
+    adm_tabbed(document.getElementById('adm-aud'), [
+      { id: 'list', label: 'Quem fez o quê', render: (c) => adm_panel(c, 'audit.list', { toolbar: `<button class="adm-mini" onclick="adm_quick('audit.export_csv', adm.filters['audit.list'])">Exportar CSV</button>` }) },
+      { id: 'sum', label: 'Atividade da equipe', render: (c) => adm_panel(c, 'audit.summary') },
+      { id: 'raw', label: 'Eventos brutos', render: (c) => adm_panel(c, 'logs.browse') },
+    ]);
+  },
+
+  system: (el) => {
+    el.innerHTML = '<h1 class="page-title">Sistema</h1><div id="adm-sys"></div>';
+    const tab = (id, label, action, opts) => ({ id, label, render: (c) => adm_panel(c, action, opts) });
+    adm_tabbed(document.getElementById('adm-sys'), [
+      tab('health', 'Saúde', 'system.health'),
+      {
+        id: 'settings', label: 'Configurações', render: async (c) => {
+          c.innerHTML = spinner_block();
+          const d = await adm_call('system.settings_get');
+          if (d.error) { c.innerHTML = `<div class="notice err">${esc(d.error)}</div>`; return; }
+          c.innerHTML = `${d.storage ? '' : '<div class="notice err">Defina DISCORD_CHANNEL_CONFIG para salvar configurações.</div>'}${adm_card('Valores atuais', adm_render(d.settings, '', 'system.settings_get'))}${adm_btn('Editar configurações', 'system.settings_set', {}, 'btn-ok').replace('onclick="adm_act(this)"', `onclick='adm_action("system.settings_set", {}, null, ${JSON.stringify(d.settings).replace(/'/g, '&#39;')})'`)}`;
+        },
+      },
+      {
+        id: 'ann', label: 'Avisos', render: async (c) => {
+          c.innerHTML = spinner_block();
+          const d = await adm_call('announcements.list');
+          if (d.error) { c.innerHTML = `<div class="notice err">${esc(d.error)}</div>`; return; }
+          const columns = [{ key: 'title', label: 'Título' }, { key: 'text', label: 'Mensagem' }, { key: 'level', label: 'Tipo' }, { key: 'target', label: 'Para' }, { key: 'expires_at', label: 'Expira' }, { key: 'created_at', label: 'Criado' }, { key: 'acts', label: '', render: (r) => adm_btn('Apagar', 'announcements.delete', { id: r.msg_id }) }];
+          c.innerHTML = `<div class="adm-toolbar">${adm_btn('Novo aviso', 'announcements.create', {}, 'btn-ok')}</div>${adm_table(d.rows, columns, { scope: 'announcements' })}`;
+        },
+      },
+      tab('channels', 'Canais do Discord', 'system.channel_stats'), tab('sizes', 'Tamanho dos registros', 'system.record_sizes'),
+      tab('mp', 'Mercado Pago', 'system.mp_account'),
+      {
+        id: 'tools', label: 'Ferramentas', render: (c) => { c.innerHTML = `<div class="adm-toolbar">${adm_btn('Backup completo (JSON)', 'system.backup', {}, 'btn-ok')}${adm_btn('Limpar cache', 'system.cache_clear', {}, 'btn-line rect')}${adm_btn('Minha sessão', 'system.whoami', {}, 'btn-line rect')}</div><div id="adm-output"></div>`; },
+      },
+    ]);
+  },
+
+  banners: async (el) => {
+    el.innerHTML = '<h1 class="page-title">Banners</h1>';
+    const pass = await ask_admin_pass();
+    if (!pass) { el.innerHTML += '<div class="notice err">Senha necessária para gerenciar banners.</div>'; return; }
+    window._admin_pass = pass;
+    el.innerHTML += `
+      <section class="adm-card" style="max-width:34rem">
+        <div class="upload" id="upload-zone" onclick="document.getElementById('banner-input').click()">
+          <input type="file" id="banner-input" accept="image/*" onchange="preview_banner(event)" style="display:none">
+          <div id="upload-placeholder"><div class="center text-primary">${icon('image_plus', 'ic')}</div><p style="margin-top:.5rem;font-weight:600">Toque ou arraste uma imagem</p><p class="tiny" style="margin-top:.25rem;font-size:.75rem">JPG, PNG ou WEBP · Recomendado 1280×720</p></div>
+          <img id="upload-preview" class="upload-preview hidden" src="" alt="Pré-visualização">
+        </div>
+        <label class="field">Link ao clicar (opcional)<input type="url" id="banner-link" placeholder="https://..."></label>
+        <button class="btn-brand w-full mt-4" id="upload-btn" onclick="upload_banner()">Enviar banner</button>
+        <div class="divider"></div>
+        <h2>Banners ativos</h2>
+        <div id="banners-grid">${spinner_block()}</div>
+      </section>`;
+    load_admin_banners();
+    const zone = document.getElementById('upload-zone');
+    zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+    zone.addEventListener('drop', (e) => { e.preventDefault(); zone.classList.remove('drag'); if (e.dataTransfer.files[0]) handle_banner_file(e.dataTransfer.files[0]); });
+  },
+
+  functions: (el) => {
+    const groups = {};
+    for (const spec of adm.catalog) (groups[spec.group] = groups[spec.group] || []).push(spec);
+    el.innerHTML = `
+      <h1 class="page-title">Todas as funções <span class="muted">(${adm.catalog.length})</span></h1>
+      <input class="input" id="fn-filter" placeholder="Filtrar funções… (ex: senha, banir, saldo, csv)" oninput="adm_filter_functions(this.value)" style="max-width:32rem">
+      <div id="adm-output" class="adm-card" style="display:none"></div>
+      ${Object.entries(groups).map(([group, specs]) => `<section class="adm-fn-group"><h2 class="adm-h">${esc(group)} <span class="muted">${specs.length}</span></h2><div class="adm-grid fn">${specs.map((s) => `<button class="adm-fn" data-id="${esc(s.id)}" data-q="${esc(`${s.id} ${s.label} ${s.description}`.toLowerCase())}" onclick="adm_run_function(this.dataset.id)"><span class="t">${esc(s.label)}</span><span class="d">${esc(s.description || s.id)}</span><span class="tags">${s.read ? '<i>leitura</i>' : '<i class="w">altera dados</i>'}${s.sudo ? '<i class="w">pede senha</i>' : ''}${s.danger ? '<i class="d">sensível</i>' : ''}</span></button>`).join('')}</div></section>`).join('')}`;
+  },
+};
+
+function adm_filter_functions(query) {
+  const q = query.trim().toLowerCase();
+  document.querySelectorAll('.adm-fn').forEach((b) => { b.style.display = !q || b.dataset.q.includes(q) ? '' : 'none'; });
+}
+
+function adm_run_function(id) {
+  const spec = adm.by_id[id];
+  const out = document.getElementById('adm-output');
+  if (out) out.style.display = '';
+  const needs_form = spec.fields.some((f) => f.required) || spec.sudo || !spec.read;
+  if (needs_form) { adm_action(id); return; }
+  adm_call(id, Object.fromEntries(spec.fields.filter((f) => f.default !== undefined).map((f) => [f.name, f.default]))).then((d) => {
+    if (d.error) { toast(d.error); return; }
+    adm_done(id, d);
+  });
+}
+
+function adm_go(view, param = null) {
+  document.body.classList.remove('adm-menu');
+  adm.view = view;
+  adm.param = param;
+  document.querySelectorAll('.adm-nav button').forEach((b) => b.classList.toggle('on', b.dataset.view === (view === 'user' || view === 'search' ? 'users' : view)));
+  const el = document.getElementById('adm-view');
+  if (!el) return;
+  window.scrollTo(0, 0);
+  (adm_views[view] || adm_views.dashboard)(el, param);
+}
+
+function adm_shell_html() {
+  const items = adm_nav.filter((i) => (i.owner ? adm.role === 'owner' : !i.need || adm.by_id[i.need]));
+  return `
+    <div class="adm">
+      <div class="adm-mask" onclick="document.body.classList.remove('adm-menu')"></div>
+      <aside class="adm-side">
+        <div class="row gap-3" style="padding:.25rem .5rem 1rem">${logo_html(36, false)}<span><span class="brand-text" style="display:block">Aperta o Play</span><span class="tiny">Admin · ${esc(adm.role)}</span></span></div>
+        <nav class="adm-nav">${items.map((i) => `<button data-view="${i.id}" onclick="adm_go('${i.id}')">${icon(i.icon, 'ic-sm')}<span>${i.label}</span></button>`).join('')}</nav>
+        <div class="divider"></div>
+        <button class="adm-navlink" onclick="set_page('painel')">← Voltar ao site</button>
+        <button class="adm-navlink" onclick="logout()">Sair</button>
+        <p class="tiny" style="padding:.75rem .5rem">${adm.catalog.length} funções disponíveis para o seu cargo</p>
+      </aside>
+      <div class="adm-main">
+        <header class="adm-top">
+          <button class="btn-glass-ic adm-burger" onclick="document.body.classList.toggle('adm-menu')" aria-label="Menu">${icon('menu')}</button>
+          <input class="input adm-search" placeholder="Buscar e-mail, WhatsApp, IP, chave Pix, código, ID de pagamento…" onkeydown="if (event.key === 'Enter') adm_search(this.value)">
+          <button class="btn-line rect adm-fnbtn" onclick="adm_go('functions')">Funções</button>
+        </header>
+        <main class="adm-view" id="adm-view"></main>
+      </div>
+    </div>`;
+}
+
+async function render_admin() {
+  mount(`<div style="padding:4rem 0" class="center">${spinner_block()}</div>`);
+  const data = await adm_call('catalog');
+  if (data.error) { mount(shell('Administração', `<div class="notice err">${esc(data.error)}</div>`)); return; }
+  adm.catalog = data.actions;
+  adm.role = data.role;
+  adm.by_id = Object.fromEntries(data.actions.map((a) => [a.id, a]));
+  mount(adm_shell_html());
+  const first = adm_nav.find((i) => adm.by_id[i.need]);
+  adm_go(adm.view !== 'user' && adm_nav.some((i) => i.id === adm.view) ? adm.view : first?.id || 'functions', null);
+}
+
+const adm_user_action_groups = [
+  ['Contato e conta', ['users.set_email', 'users.set_whatsapp', 'users.clear_whatsapp', 'users.set_name', 'users.unlink_google']],
+  ['Acesso e senha', ['users.set_password', 'users.generate_password', 'users.force_logout', 'users.impersonate', 'users.ban', 'users.unban', 'users.suspend']],
+  ['Dinheiro', ['users.adjust_balance', 'users.grant_plan', 'users.revoke_plan', 'users.set_pix', 'users.clear_pix', 'users.set_auto_payout', 'users.block_withdrawals', 'users.unblock_withdrawals', 'finance.fix_balance']],
+  ['Indicações', ['users.set_referrer', 'users.clear_referrer', 'users.set_referral_code', 'users.regenerate_referral_code']],
+  ['Organização', ['users.add_note', 'users.add_tag', 'users.remove_tag', 'users.set_role']],
+  ['Zona de perigo', ['users.delete']],
+];
+
+function adm_user_chips(u) {
+  const chips = [
+    u.plan ? `<span class="badge green">Plano R$ ${u.plan}</span>` : '<span class="badge">Sem plano</span>',
+    adm_badge(u.state),
+    u.role || u.adm?.role ? adm_badge(u.adm?.role || u.role) : '',
+    u.google ? '<span class="badge">Google</span>' : '<span class="badge">Senha</span>',
+    u.adm?.withdraw_blocked ? '<span class="badge yellow">Saque bloqueado</span>' : '',
+    ...(u.adm?.tags || []).map((t) => `<span class="badge">#${esc(t)}</span>`),
+  ];
+  return chips.join(' ');
+}
+
+function adm_context_card(title, c) {
+  if (!c) return adm_card(title, '<p class="muted">Sem registro (conta criada antes da coleta de dados).</p>');
+  return adm_card(title, adm_kv([
+    ['Quando', c.at ? `${esc(fmt_precise(c.at))}` : null],
+    ['IP', c.ip ? adm_fmt(c.ip, 'ip') : null],
+    ['Local', esc([c.ct, c.rg, c.cc].filter(Boolean).join(' · ')) || null],
+    ['Navegador', c.br ? esc(c.br) : null],
+    ['Sistema', c.os ? esc(c.os) : null],
+    ['Tipo de aparelho', c.dv ? esc(c.dv) : null],
+    ['Tela', c.sc ? esc(c.sc) : null],
+    ['Fuso (aparelho)', c.tz ? esc(c.tz) : null],
+    ['Idioma', c.ln ? esc(c.ln) : null],
+    ['Fingerprint', c.fp ? `<code>${esc(c.fp)}</code>` : null],
+    ['Veio de', c.rf ? esc(c.rf) : null],
+    ['Campanha (utm)', c.ut ? esc(c.ut) : null],
+    ['User-Agent', c.ua ? `<span class="tiny">${esc(c.ua)}</span>` : null],
+  ]));
+}
+
+function adm_user_summary(c, d) {
+  const u = d.user;
+  const created = u.created_ms;
+  const referrer = d.referrer ? adm_user_link(d.referrer.email) : (u.referred_by ? adm_user_link(u.referred_by) : null);
+  c.innerHTML = `
+    <div class="adm-cols">
+      ${adm_card('Conta criada em', `
+        <p class="adm-big">${esc(fmt_precise(created))}</p>
+        ${adm_kv([
+          ['Idade da conta', esc(fmt_ago(created))],
+          ['UTC (ISO, ms)', `<code>${esc(u.created_at || new Date(created).toISOString())}</code>`],
+          ['Epoch (ms)', `<code>${created}</code> ${adm_copy_btn(String(created))}`],
+          ['Hora da mensagem no Discord', u.snowflake_ms ? esc(fmt_precise(u.snowflake_ms)) : null],
+          ['Plano ativado em', u.plan_activated_at ? esc(fmt_precise(u.plan_activated_at)) : null],
+          ['Primeiro login registrado', d.access.events.length ? esc(fmt_precise(Math.min(...d.access.events.map((e) => e.ts)))) : null],
+          ['ID do registro', `<code>${esc(u.msg_id)}</code>`],
+        ])}`)}
+      ${adm_card('Dados da conta', adm_kv([
+        ['E-mail', `${esc(u.email)} ${adm_copy_btn(u.email)}`],
+        ['Nome', u.name ? esc(u.name) : null],
+        ['WhatsApp', u.whatsapp ? `${esc(u.whatsapp)} <a class="adm-ulink" target="_blank" rel="noopener" href="https://wa.me/${esc(String(u.whatsapp).replace(/\D/g, ''))}">abrir conversa</a>` : null],
+        ['Login por', u.google ? 'Google' : 'E-mail e senha'],
+        ['Senha definida', u.has_password ? 'sim' : 'não (só Google)'],
+        ['Código de indicação', u.referral_code ? `<code>${esc(u.referral_code)}</code>` : null],
+        ['Indicado por', referrer],
+        ['Saldo', `<b>${brl(u.balance)}</b>`],
+        ['Chave Pix', u.pix_key ? `${esc(u.pix_type)}: <code>${esc(u.pix_key)}</code> ${adm_copy_btn(u.pix_key)}` : null],
+        ['CPF/CNPJ do titular', u.owner_doc ? `<code>${esc(u.owner_doc)}</code>` : null],
+        ['Recebimento automático', u.auto_payout ? 'ligado' : 'desligado'],
+        ['Acessos (logins)', esc(u.login_count || 0)],
+        ['Sessões encerradas em', u.adm?.valid_after ? esc(fmt_precise(u.adm.valid_after)) : null],
+        ['Motivo do bloqueio', u.adm?.ban_reason ? `${esc(u.adm.ban_reason)} <span class="tiny">(${esc(u.adm.banned_by || '')} · ${esc(fmt_sec(u.adm.banned_at))})</span>` : null],
+        ['Suspensa até', u.adm?.suspended_until ? esc(fmt_precise(u.adm.suspended_until)) : null],
+      ]))}
+      ${adm_card('Totais', adm_kv([
+        ['Total pago em planos', brl(d.totals.paid)],
+        ['Comissões ganhas', brl(d.totals.earned)],
+        ['Sacado / em saque', brl(d.totals.withdrawn)],
+        ['Indicados diretos', esc(d.referrals.length)],
+        ['Indicados que pagaram', esc(d.referrals.filter((r) => r.plan).length)],
+        ['Contas relacionadas', esc(d.duplicates.length)],
+        ['Notas internas', esc(d.notes.length)],
+      ]))}
+    </div>
+    <div class="adm-cols">${adm_context_card('Cadastro (IP e aparelho)', u.reg)}${adm_context_card('Último acesso', u.last)}</div>`;
+}
+
+function adm_user_access(c, d) {
+  const a = d.access;
+  const ip_columns = [{ key: 'ip', label: 'IP' }, { key: 'country', label: 'País' }, { key: 'region', label: 'Região' }, { key: 'city', label: 'Cidade' }, { key: 'count', label: 'Vezes' }, { key: 'first_ts', label: 'Primeira vez', render: (r) => esc(fmt_precise(r.first_ts)) }, { key: 'last_ts', label: 'Última vez', render: (r) => esc(fmt_precise(r.last_ts)) }];
+  const device_columns = [{ key: 'browser', label: 'Navegador' }, { key: 'os', label: 'Sistema' }, { key: 'device', label: 'Tipo' }, { key: 'screen', label: 'Tela' }, { key: 'fp', label: 'Fingerprint' }, { key: 'count', label: 'Vezes' }, { key: 'last_ts', label: 'Último uso', render: (r) => esc(fmt_precise(r.last_ts)) }];
+  const event_columns = [{ key: 'type', label: 'Evento' }, { key: 'ts', label: 'Quando', render: (r) => esc(fmt_precise(r.ts)) }, { key: 'ip', label: 'IP' }, { key: 'ct', label: 'Cidade' }, { key: 'cc', label: 'País' }, { key: 'browser', label: 'Navegador' }, { key: 'os', label: 'Sistema' }, { key: 'method', label: 'Método' }, { key: 'fp', label: 'Fingerprint' }];
+  c.innerHTML = `${adm_card(`IPs usados (${a.ips.length})`, adm_table(a.ips, ip_columns, { scope: 'access' }))}${adm_card(`Aparelhos (${a.devices.length})`, adm_table(a.devices, device_columns, { scope: 'access' }))}${adm_card('Acessos recentes', adm_table(a.events, event_columns, { scope: 'access' }))}`;
+}
+
+function adm_user_money(c, d) {
+  const pay_columns = [{ key: 'plan_price', label: 'Valor' }, { key: 'status', label: 'Status' }, { key: 'created_at', label: 'Gerado em' }, { key: 'paid_at', label: 'Pago em' }, { key: 'payment_id', label: 'ID' }, { key: 'acts', label: '', render: (r) => (r.status === 'pending' ? adm_btn('Aprovar', 'payments.approve_manual', { id: r.msg_id }) : '') + (r.status === 'approved' ? adm_btn('Reembolsar', 'payments.mark_refunded', { id: r.msg_id }) : '') }];
+  const wd_columns = [{ key: 'amount', label: 'Valor' }, { key: 'status', label: 'Status' }, { key: 'pix_type', label: 'Tipo' }, { key: 'pix_key', label: 'Chave' }, { key: 'created_at', label: 'Pedido em' }, { key: 'source', label: 'Origem' }, { key: 'acts', label: '', render: (r) => (r.status === 'pending' || r.status === 'processing') ? adm_btn('Marcar pago', 'withdrawals.mark_paid', { id: r.msg_id }) + adm_btn('Rejeitar', 'withdrawals.reject', { id: r.msg_id }) : '' }];
+  const com_columns = [{ key: 'from_user', label: 'Origem' }, { key: 'amount', label: 'Valor' }, { key: 'plan', label: 'Plano' }, { key: 'created_at', label: 'Quando' }, { key: 'reverted', label: 'Estornada' }, { key: 'acts', label: '', render: (r) => r.reverted ? '' : adm_btn('Estornar', 'commissions.revert', { id: r.msg_id }) }];
+  const ledger_columns = [{ key: 'ts', label: 'Quando', render: (r) => esc(fmt_precise(r.ts)) }, { key: 'delta', label: 'Variação', render: (r) => brl(r.delta) }, { key: 'before', label: 'Antes', render: (r) => brl(r.before) }, { key: 'after', label: 'Depois', render: (r) => brl(r.after) }, { key: 'reason', label: 'Motivo' }, { key: 'actor', label: 'Admin' }];
+  c.innerHTML = `
+    <div class="adm-toolbar">${adm_btn('Ajustar saldo', 'users.adjust_balance', { email: d.user.email }, 'btn-ok')}${adm_btn('Ativar plano', 'users.grant_plan', { email: d.user.email }, 'btn-line rect')}${adm_btn('Definir Pix', 'users.set_pix', { email: d.user.email }, 'btn-line rect')}</div>
+    ${adm_card(`Pagamentos (${d.payments.length})`, adm_table(d.payments, pay_columns, { scope: 'payments' }))}
+    ${adm_card(`Saques (${d.withdrawals.length})`, adm_table(d.withdrawals, wd_columns, { scope: 'withdrawals' }))}
+    ${adm_card(`Comissões ganhas (${d.commissions_earned.length})`, adm_table(d.commissions_earned, com_columns, { scope: 'commissions' }))}
+    ${adm_card(`Comissões geradas por este usuário (${d.commissions_generated.length})`, adm_table(d.commissions_generated, com_columns.slice(0, 5), { scope: 'commissions' }))}
+    ${adm_card(`Ajustes manuais de saldo (${d.ledger.length})`, adm_table(d.ledger, ledger_columns, { scope: 'ledger' }))}`;
+}
+
+function adm_user_referrals(c, d) {
+  const email = d.user.email;
+  c.innerHTML = `
+    <div class="adm-toolbar"><button class="adm-mini" onclick="adm_show_call('users.referrals', { email: '${esc(email)}', depth: 4 })">Árvore completa (4 níveis)</button><button class="adm-mini" onclick="adm_show_call('users.upline', { email: '${esc(email)}' })">Cadeia de quem indicou</button>${adm_btn('Definir indicador', 'users.set_referrer', { email }, 'adm-mini')}${adm_btn('Remover indicador', 'users.clear_referrer', { email }, 'adm-mini')}</div>
+    ${adm_card('Indicado por', d.referrer ? adm_table([d.referrer], adm_user_columns.slice(0, 5), { scope: 'users' }) : '<p class="muted">Entrou sem indicação.</p>')}
+    ${adm_card(`Indicados diretos (${d.referrals.length})`, adm_table(d.referrals, adm_user_columns.slice(0, 8), { scope: 'users' }))}`;
+}
+
+async function adm_user_timeline(c, d) {
+  c.innerHTML = spinner_block();
+  const t = await adm_call('users.timeline', { email: d.user.email });
+  if (t.error) { c.innerHTML = `<div class="notice err">${esc(t.error)}</div>`; return; }
+  const columns = [{ key: 'ts', label: 'Quando (Brasília)', render: (r) => esc(fmt_precise(r.ts)) }, { key: 'kind', label: 'Tipo', render: (r) => adm_badge(r.kind) }, { key: 'title', label: 'Evento' }, { key: 'detail', label: 'Detalhe' }];
+  c.innerHTML = adm_card(`${t.events.length} evento(s), do mais novo ao mais antigo`, adm_table(t.events, columns, { scope: 'timeline' }));
+}
+
+function adm_user_notes(c, d) {
+  const columns = [{ key: 'ts', label: 'Quando', render: (r) => esc(fmt_precise(r.ts)) }, { key: 'actor', label: 'Quem' }, { key: 'text', label: 'Nota' }, { key: 'acts', label: '', render: (r) => adm_btn('Apagar', 'users.delete_note', { id: r.msg_id }) }];
+  c.innerHTML = `<div class="adm-toolbar">${adm_btn('Nova nota', 'users.add_note', { email: d.user.email }, 'btn-ok')}</div>${adm_table(d.notes, columns, { scope: 'notes' })}`;
+}
+
+function adm_user_related(c, d) {
+  const columns = [{ key: 'email', label: 'Conta' }, { key: 'score', label: 'Risco' }, { key: 'reasons', label: 'Em comum', render: (r) => r.reasons.map((x) => `<span class="badge yellow">${esc(x)}</span>`).join(' ') }, { key: 'plan', label: 'Plano' }, { key: 'state', label: 'Situação' }, { key: 'created_ms', label: 'Criada em', render: (r) => esc(fmt_sec(r.created_ms)) }];
+  c.innerHTML = d.duplicates.length ? adm_table(d.duplicates, columns, { scope: 'dups' }) : '<p class="muted" style="padding:1rem 0">Nenhuma outra conta compartilha IP, aparelho, WhatsApp ou Pix com este usuário.</p>';
+}
+
+function adm_user_actions(c, d) {
+  const email = d.user.email;
+  const known = new Set(adm_user_action_groups.flatMap(([, ids]) => ids));
+  const others = adm.catalog.filter((s) => s.target === 'user' && !s.read && !known.has(s.id)).map((s) => s.id);
+  const groups = [...adm_user_action_groups, ...(others.length ? [['Outras', others]] : [])];
+  c.innerHTML = groups.map(([title, ids]) => {
+    const buttons = ids.filter((id) => adm.by_id[id]).map((id) => adm_btn(esc(adm.by_id[id].label), id, { email }, `adm-act ${adm.by_id[id].danger ? 'danger' : ''}`)).join('');
+    return buttons ? adm_card(title, `<div class="adm-actgrid">${buttons}</div>`) : '';
+  }).join('');
+}
+
+async function adm_user_view(el, email) {
+  el.innerHTML = `<button class="adm-back" onclick="adm_go('users')">← Usuários</button>${spinner_block()}`;
+  const d = await adm_call('users.get', { email });
+  if (d.error) { el.innerHTML = `<button class="adm-back" onclick="adm_go('users')">← Usuários</button><div class="notice err">${esc(d.error)}</div>`; return; }
+  adm.user = d;
+  const u = d.user;
+  const quick = [
+    adm_btn('Alterar e-mail', 'users.set_email', { email }, 'btn-line rect'),
+    adm_btn('Nova senha', 'users.set_password', { email }, 'btn-line rect'),
+    u.state === 'active' ? adm_btn('Banir', 'users.ban', { email }, 'btn-bad') : adm_btn('Reativar', 'users.unban', { email }, 'btn-ok'),
+    adm_btn('Entrar como', 'users.impersonate', { email }, 'btn-line rect'),
+  ].join('');
+  el.innerHTML = `
+    <button class="adm-back" onclick="adm_go('users')">← Usuários</button>
+    <div class="adm-head"><div><h1 class="page-title" style="word-break:break-all">${esc(u.email)}</h1><div class="adm-chips">${adm_user_chips(u)}</div></div><div class="adm-quick">${quick}</div></div>
+    <div id="adm-user-body"></div>`;
+  const pages = (fn) => (c) => fn(c, d);
+  adm_tabbed(document.getElementById('adm-user-body'), [
+    { id: 'summary', label: 'Resumo', render: pages(adm_user_summary) },
+    { id: 'access', label: `Acessos (${d.access.ips.length} IPs)`, render: pages(adm_user_access) },
+    { id: 'money', label: 'Financeiro', render: pages(adm_user_money) },
+    { id: 'refs', label: `Indicações (${d.referrals.length})`, render: pages(adm_user_referrals) },
+    { id: 'timeline', label: 'Linha do tempo', render: pages(adm_user_timeline) },
+    { id: 'notes', label: `Notas (${d.notes.length})`, render: pages(adm_user_notes) },
+    { id: 'related', label: `Contas ligadas (${d.duplicates.length})`, render: pages(adm_user_related) },
+    { id: 'actions', label: 'Ações', render: pages(adm_user_actions) },
+  ], 'summary');
 }
 
 const ref_param = new URLSearchParams(location.search).get('ref');
 if (ref_param) localStorage.setItem('ap_ref', ref_param.slice(0, 12));
+capture_first_touch();
 if (ref_param && !state.user) {
   state.page = 'auth';
   state.auth_mode = 'register';

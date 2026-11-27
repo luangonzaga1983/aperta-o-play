@@ -79,7 +79,7 @@ async function find_user_by_referral(code) {
   for (const msg of messages) {
     try {
       const data = JSON.parse(msg.content);
-      if (data.referral_code === code) return { ...data, msg_id: msg.id };
+      if (String(data.referral_code || "").toUpperCase() === String(code || "").toUpperCase()) return { ...data, msg_id: msg.id };
     } catch {}
   }
   return null;
@@ -115,6 +115,10 @@ function touch_access(user, context) {
   return { ...user, last: compact_context(context, now), login_count: (user.login_count || 0) + 1 };
 }
 
+const parse_material = (message) => {
+  try { return JSON.parse(message.content) || {}; } catch { return {}; }
+};
+
 const public_user = (user, token) => {
   const { password_hash, msg_id, owner_doc, reg, last, login_count, adm, ...safe } = user;
   const staff_role = user.email === ADMIN_EMAIL ? "owner" : ["admin", "support", "finance"].includes(adm?.role) ? adm.role : null;
@@ -132,20 +136,20 @@ export default async function handler(req, res) {
 
   if (action === "get_banners") {
     const messages = await fetch_all_messages(CHANNEL_BANNERS);
+    const limit = body.all ? 50 : 10;
     const banners = messages
       .filter(m => m.attachments?.length > 0)
-      .slice(0, 10)
-      .map(m => ({
-        id: m.id,
-        url: m.attachments[0].url,
-        link: (() => { try { return JSON.parse(m.content).link || null; } catch { return null; } })(),
-      }))
+      .slice(0, limit)
+      .map(m => {
+        const meta = parse_material(m);
+        return { id: m.id, url: m.attachments[0].url, link: meta.link || null, title: meta.title || "", downloads: meta.downloads || 0, shares: meta.shares || 0 };
+      })
       .reverse();
     return res.status(200).json({ banners });
   }
 
   if (action === "upload_banner") {
-    const { email, password, image_base64, image_type, link } = body;
+    const { email, password, image_base64, image_type, link, title } = body;
     const user = await find_user(email);
     if (!user || !verify_password(password, user.password_hash)) return res.status(401).json({ error: "Acesso negado" });
     if (email.toLowerCase() !== ADMIN_EMAIL) return res.status(403).json({ error: "Apenas o administrador pode enviar banners" });
@@ -155,7 +159,7 @@ export default async function handler(req, res) {
     const filename = `banner_${Date.now()}.${ext}`;
 
     const form = new FormData();
-    form.append("payload_json", JSON.stringify({ content: JSON.stringify({ link: link || null }) }));
+    form.append("payload_json", JSON.stringify({ content: JSON.stringify({ link: link || null, title: String(title || "").trim().slice(0, 80) || null, downloads: 0, shares: 0 }) }));
     form.append("files[0]", new Blob([binary], { type: image_type }), filename);
 
     const msg = await discord_post_form(CHANNEL_BANNERS, form);
@@ -174,6 +178,90 @@ export default async function handler(req, res) {
       headers: discord_headers,
     });
     return res.status(200).json({ ok: true });
+  }
+
+  if (action === "get_videos") {
+    const user = await auth(body);
+    if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
+    const messages = await fetch_all_messages(CHANNEL_BANNERS);
+    const videos = messages
+      .map(m => ({ id: m.id, meta: parse_material(m) }))
+      .filter(entry => entry.meta.kind === "video" && entry.meta.url)
+      .slice(0, 50)
+      .map(entry => ({ id: entry.id, title: entry.meta.title || "Vídeo", url: entry.meta.url, downloads: entry.meta.downloads || 0, shares: entry.meta.shares || 0, created_at: entry.meta.created_at || null }));
+    return res.status(200).json({ videos });
+  }
+
+  if (action === "add_video") {
+    const { email, password, title, url } = body;
+    const user = await find_user(String(email || ""));
+    if (!user || !verify_password(password, user.password_hash)) return res.status(401).json({ error: "Acesso negado" });
+    if (String(email).toLowerCase() !== ADMIN_EMAIL) return res.status(403).json({ error: "Apenas o administrador pode publicar vídeos" });
+
+    const clean_title = String(title || "").trim().slice(0, 80);
+    const clean_url = String(url || "").trim();
+    if (!clean_title) return res.status(400).json({ error: "Informe o título do vídeo" });
+    if (!/^https:\/\/[^\s]+$/i.test(clean_url) || clean_url.length > 500) return res.status(400).json({ error: "Informe um link https válido" });
+
+    const meta = { kind: "video", title: clean_title, url: clean_url, downloads: 0, shares: 0, created_at: new Date().toISOString() };
+    const msg = await discord_post(`/channels/${CHANNEL_BANNERS}/messages`, { content: JSON.stringify(meta) });
+    if (!msg.id) return res.status(500).json({ error: "Falha ao publicar vídeo" });
+    return res.status(200).json({ ok: true, id: msg.id });
+  }
+
+  if (action === "track_material") {
+    const user = await auth(body);
+    if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
+    if (!["downloads", "shares"].includes(body.metric)) return res.status(400).json({ error: "Métrica inválida" });
+    if (!/^\d{5,25}$/.test(String(body.msg_id || ""))) return res.status(400).json({ error: "Material inválido" });
+
+    const message = await discord_get(`/channels/${CHANNEL_BANNERS}/messages/${body.msg_id}`);
+    if (!message?.id) return res.status(404).json({ error: "Material não encontrado" });
+    const meta = parse_material(message);
+    meta[body.metric] = (meta[body.metric] || 0) + 1;
+    await discord_patch(`/channels/${CHANNEL_BANNERS}/messages/${message.id}`, { content: JSON.stringify(meta) });
+    return res.status(200).json({ ok: true });
+  }
+
+  if (action === "get_inviter") {
+    const code = String(body.code || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12);
+    if (code.length < 3) return res.status(200).json({ found: false });
+    const messages = await fetch_all_messages(CHANNEL_USUARIOS);
+    let inviter = null;
+    const people = [];
+    for (const message of messages) {
+      try {
+        const entry = JSON.parse(message.content);
+        people.push(entry);
+        if (String(entry.referral_code || "").toUpperCase() === code) inviter = entry;
+      } catch {}
+    }
+    if (!inviter) return res.status(200).json({ found: false });
+    const raw = String(inviter.name || inviter.email.split("@")[0]).replace(/[^\p{L}\p{N} ._-]/gu, "").trim();
+    const first = raw.split(/[ ._-]/)[0] || "Um amigo";
+    const referred = people.filter(entry => entry.referred_by === inviter.email);
+    return res.status(200).json({
+      found: true,
+      name: first.charAt(0).toUpperCase() + first.slice(1).toLowerCase(),
+      members: referred.length,
+      active: referred.filter(entry => entry.plan).length,
+      verified: !!inviter.plan,
+    });
+  }
+
+  if (action === "set_referral_code") {
+    const user = await auth(body);
+    if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
+    const code = String(body.code || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (code.length < 4 || code.length > 12) return res.status(400).json({ error: "Use de 4 a 12 letras ou números." });
+    if (code !== user.referral_code) {
+      const taken = await find_user_by_referral(code);
+      if (taken && taken.email !== user.email) return res.status(400).json({ error: "Esse código já está em uso. Escolha outro." });
+    }
+    const { msg_id, ...data } = user;
+    const next = { ...data, referral_code: code };
+    await update_user(msg_id, next);
+    return res.status(200).json({ ok: true, user: public_user(next) });
   }
 
   if (action === "get_config") {

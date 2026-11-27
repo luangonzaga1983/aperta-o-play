@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+<script src="/pwa.js" defer></script>
 <style>
 :root {
   --radius: 1rem;
@@ -305,6 +306,19 @@ body.menu-open .drawer-mask { opacity: 1; pointer-events: auto; }
 .aff { display: flex; align-items: center; gap: .75rem; padding: .75rem 0; border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent); }
 .aff-wa { display: inline-flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; border-radius: 9999px; background: var(--whatsapp); color: var(--primary-foreground); flex-shrink: 0; }
 .plan-row.sel { background: color-mix(in oklab, var(--primary) 8%, transparent); }
+
+.mat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.mat { display: flex; flex-direction: column; overflow: hidden; border-radius: 1rem; border: 1px solid var(--border); background: color-mix(in oklab, var(--card) 70%, transparent); }
+.mat-media { position: relative; display: block; aspect-ratio: 16 / 9; background: var(--secondary); }
+.mat-media img { width: 100%; height: 100%; object-fit: cover; }
+.mat-play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgb(0 0 0 / .3); color: #fff; }
+.mat-body { display: flex; flex: 1; flex-direction: column; gap: .5rem; padding: .625rem; }
+.mat-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .8125rem; font-weight: 600; }
+.mat-stats { display: flex; gap: .75rem; font-size: .6875rem; color: var(--muted-foreground); }
+.mat-stats span { display: inline-flex; align-items: center; gap: .25rem; }
+.mat-actions { display: flex; gap: .375rem; margin-top: auto; }
+.mat-actions .btn-brand { flex: 1; padding: .5rem; font-size: .8125rem; }
+.mat-wa { display: flex; align-items: center; justify-content: center; width: 2.25rem; flex-shrink: 0; border-radius: 9999px; background: var(--whatsapp); color: var(--primary-foreground); }
 </style>
 </head>
 <body>
@@ -350,6 +364,11 @@ const ICONS = {
   key: '<path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/>',
   bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
   chat: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+  video: '<path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/>',
+  download: '<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>',
+  images: '<path d="M18 22H4a2 2 0 0 1-2-2V6"/><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18"/><circle cx="12" cy="8" r="2"/><rect width="16" height="16" x="6" y="2" rx="2"/>',
+  pencil: '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>',
+  gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>',
   user: '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
 };
 
@@ -363,6 +382,7 @@ const state = {
   hidden: false,
   paused: false,
   banners: [],
+  materials: { banners: [], videos: [] },
   carousel_idx: 0,
   carousel_timer: null,
   selected_plan: 25,
@@ -434,7 +454,7 @@ const money = (v) => state.hidden ? 'R$ ••••' : brl(v);
 const fmt_date = (s) => new Date(s).toLocaleDateString('pt-BR');
 const is_staff = () => !!(state.user?.is_admin || state.user?.staff_role);
 const user_name = () => state.user.email.split('@')[0];
-const ref_url = (code) => `${location.origin}/?ref=${encodeURIComponent(code)}`;
+const ref_url = (code) => `${location.origin}/r/${encodeURIComponent(code)}`;
 const mount = (html) => { document.getElementById('app').innerHTML = html; window.scrollTo(0, 0); render_imp_bar(); };
 
 function icon(name, cls = 'ic') {
@@ -583,12 +603,18 @@ function shell(title, body) {
   const items = [
     { id: 'painel',    title: 'Meu dashboard',  detail: 'Saldo e comissões',        icon: 'dashboard', tone: 'p' },
     { id: 'indicados', title: 'Meus afiliados', detail: 'Minha rede de indicações', icon: 'users',     tone: 'a' },
+    { id: 'banners',   title: 'Galeria de banners',   detail: 'Materiais de divulgação',  icon: 'images', tone: 'p' },
+    { id: 'videos',    title: 'Vídeos de divulgação', detail: 'Vídeos para compartilhar', icon: 'video',  tone: 'a' },
     { id: 'saque',     title: 'Saque Pix',      detail: 'Sacar minhas comissões',   icon: 'wallet',    tone: 'p' },
     { id: 'senha',     title: 'Mudar senha',    detail: 'Segurança da minha conta', icon: 'key',       tone: 'p' },
+    ...(u.is_admin ? [
+      { id: 'adm_banners', title: 'Gerenciar banners', detail: 'Enviar, ver desempenho e excluir', icon: 'image_plus', tone: 's', go: "adm.view='banners'; set_page('admin')" },
+      { id: 'adm_videos',  title: 'Gerenciar vídeos',  detail: 'Publicar e organizar vídeos',      icon: 'video',      tone: 's', go: "adm.view='videos'; set_page('admin')" },
+    ] : []),
     ...(is_staff() ? [{ id: 'admin', title: 'Administração', detail: 'Usuários, finanças e suporte', icon: 'shield', tone: 's' }] : []),
   ];
   const menu = items.map((i) => `
-    <button class="menu-item ${state.page === i.id ? 'on' : ''}" onclick="set_page('${i.id}')">
+    <button class="menu-item ${state.page === i.id ? 'on' : ''}" onclick="${i.go || `set_page('${i.id}')`}">
       <span class="ico ${i.tone}">${icon(i.icon)}</span>
       <span style="flex:1;min-width:0"><span class="t">${i.title}</span><span class="d">${i.detail}</span></span>
       <span style="color:var(--muted-foreground)">${icon('chev_r', 'ic-sm')}</span>
@@ -647,7 +673,13 @@ function referral_html() {
         <button class="btn-line" onclick="copy_text('${esc(link)}', 'Link copiado!')">${icon('copy', 'ic-sm')}Copiar</button>
         <a class="btn-line" href="https://wa.me/?text=${encodeURIComponent('Entre pelo meu link: ' + link)}" target="_blank" rel="noopener noreferrer">${wa_icon('ic-sm')}WhatsApp</a>
       </div>
-      <p class="tiny" style="margin-top:.75rem">Código: <b>${esc(u.referral_code)}</b></p>
+      <form onsubmit="save_ref_code(event)">
+        <label class="field" style="margin-top:1rem">Personalizar meu link
+          <input type="text" id="ref-code-input" value="${esc(u.referral_code)}" maxlength="12" autocapitalize="characters" autocomplete="off" placeholder="SEUNOME" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
+        </label>
+        <p class="tiny" style="margin-top:.375rem">Seu link fica ${esc(location.host)}/r/<b id="ref-code-preview">${esc(u.referral_code)}</b>. Use de 4 a 12 letras ou números.</p>
+        <button class="btn-line w-full mt-3" id="ref-code-btn">${icon('pencil', 'ic-sm')}Salvar meu código</button>
+      </form>
     </div>`;
 }
 
@@ -680,7 +712,7 @@ function render() {
   clearInterval(state.carousel_timer);
   document.body.classList.remove('menu-open');
   document.getElementById('modal-root').innerHTML = '';
-  if (!state.user && ['painel', 'indicados', 'saque', 'admin', 'senha'].includes(state.page)) state.page = 'home';
+  if (!state.user && ['painel', 'indicados', 'saque', 'admin', 'senha', 'banners', 'videos'].includes(state.page)) state.page = 'home';
   if (state.page === 'admin' && !is_staff()) state.page = 'painel';
   switch (state.page) {
     case 'auth':      render_auth(); break;
@@ -688,6 +720,9 @@ function render() {
     case 'indicados': render_indicados(); break;
     case 'saque':     render_saque(); break;
     case 'senha':     render_senha(); break;
+    case 'banners':   render_materials('banners'); break;
+    case 'videos':    render_materials('videos'); break;
+    case 'invite':    render_invite(); break;
     case 'admin':     render_admin(); break;
     default:          render_home();
   }
@@ -1233,6 +1268,188 @@ async function load_withdrawals() {
     </div>`).join('');
 }
 
+function video_id(url) {
+  const match = String(url || '').match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
+  return match ? match[1] : '';
+}
+
+function material_stats_html(list, downloads_label) {
+  const total = (key) => list.reduce((sum, m) => sum + (m[key] || 0), 0);
+  const top = list.reduce((best, m) => (!best || (m.downloads || 0) > (best.downloads || 0) ? m : best), null);
+  const top_line = top && total('downloads') ? `<p class="muted xs mt-3">Mais usado: <b>${esc(top.title || 'Sem título')}</b></p>` : '';
+  return `<div class="stat-grid">${stat_html(downloads_label, total('downloads'))}${stat_html('Compartilhamentos', total('shares'))}</div>${top_line}`;
+}
+
+function material_card(kind, m) {
+  const is_banner = kind === 'banners';
+  const vid = is_banner ? '' : video_id(m.url);
+  const thumb = is_banner ? `<img src="${esc(m.url)}" alt="${esc(m.title || 'Banner')}" loading="lazy">` : (vid ? `<img src="https://img.youtube.com/vi/${vid}/hqdefault.jpg" alt="" loading="lazy">` : '');
+  const veil = is_banner ? '' : `<span class="mat-play">${icon('play', 'ic').replace('fill="none"', 'fill="currentColor"')}</span>`;
+  const main = is_banner
+    ? `<button class="btn-brand" data-k="${kind}" data-id="${esc(m.id)}" onclick="download_material(this)">${icon('download', 'ic-sm')}Baixar</button>`
+    : `<button class="btn-brand" data-k="${kind}" data-id="${esc(m.id)}" onclick="open_video(this)">${icon('play', 'ic-sm').replace('fill="none"', 'fill="currentColor"')}Assistir</button>`;
+  return `
+    <article class="mat">
+      <span class="mat-media">${thumb}${veil}</span>
+      <div class="mat-body">
+        <p class="mat-title">${esc(m.title || (is_banner ? 'Banner' : 'Vídeo'))}</p>
+        <div class="mat-stats"><span>${icon('download', 'ic-sm')}${m.downloads || 0}</span><span>${icon('share', 'ic-sm')}${m.shares || 0}</span></div>
+        <div class="mat-actions">${main}<button class="mat-wa" data-k="${kind}" data-id="${esc(m.id)}" onclick="share_material(this)" aria-label="Compartilhar no WhatsApp">${wa_icon('ic-sm')}</button></div>
+      </div>
+    </article>`;
+}
+
+function find_material(btn) {
+  return (state.materials[btn.dataset.k] || []).find((m) => m.id === btn.dataset.id);
+}
+
+function paint_materials(kind) {
+  const box = document.getElementById('mat-box');
+  if (!box) return;
+  const list = state.materials[kind];
+  if (!list.length) { box.innerHTML = '<p class="muted" style="padding:1rem 0;text-align:center">Nenhum material publicado ainda.</p>'; return; }
+  box.innerHTML = `<div class="mat-grid">${list.map((m) => material_card(kind, m)).join('')}</div>`;
+}
+
+async function render_materials(kind) {
+  const is_banner = kind === 'banners';
+  const title = is_banner ? 'Galeria de banners' : 'Vídeos de divulgação';
+  const hint = is_banner ? 'Baixe os banners ou envie direto no WhatsApp com o seu link.' : 'Assista, compartilhe e divulgue com o seu link de indicação.';
+  mount(shell(title, `<p class="muted" style="margin-top:.5rem">${hint}</p>${state.user.plan ? '' : '<div class="notice mt-3">Ative seu plano para liberar o seu link e compartilhar os materiais.</div>'}<div id="mat-box" class="mt-4">${spinner_block()}</div>`));
+  const data = await dc(is_banner ? { action: 'get_banners', all: true } : { action: 'get_videos' });
+  const list = (is_banner ? data.banners : data.videos) || [];
+  state.materials[kind] = is_banner ? list.slice().reverse() : list;
+  paint_materials(kind);
+}
+
+function track_material(kind, m, metric) {
+  m[metric] = (m[metric] || 0) + 1;
+  paint_materials(kind);
+  dc({ action: 'track_material', msg_id: m.id, metric });
+}
+
+async function download_material(btn) {
+  const m = find_material(btn);
+  if (!m) return;
+  track_material('banners', m, 'downloads');
+  try {
+    const blob = await (await fetch(m.url)).blob();
+    const href = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = href;
+    a.download = `${(m.title || 'banner').replace(/[^\w-]+/g, '_')}.${blob.type.split('/')[1] || 'jpg'}`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(href), 4000);
+  } catch {
+    window.open(m.url, '_blank', 'noopener');
+  }
+}
+
+function open_video(btn) {
+  const m = find_material(btn);
+  if (!m) return;
+  track_material('videos', m, 'downloads');
+  window.open(m.url, '_blank', 'noopener');
+}
+
+async function share_material(btn) {
+  const m = find_material(btn);
+  if (!m) return;
+  if (!state.user.plan) { toast('Ative seu plano para liberar o seu link de indicação.'); return; }
+  const kind = btn.dataset.k;
+  const link = ref_url(state.user.referral_code);
+  const text = `🔥 ${m.title || 'Aperta o Play'}\nEntre pelo meu link: ${link}${kind === 'videos' ? `\n${m.url}` : ''}`;
+  track_material(kind, m, 'shares');
+  if (kind === 'banners' && navigator.canShare) {
+    try {
+      const blob = await (await fetch(m.url)).blob();
+      const file = new File([blob], `banner.${blob.type.split('/')[1] || 'jpg'}`, { type: blob.type });
+      if (navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text }); return; }
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+    }
+  }
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
+}
+
+async function save_ref_code(e) {
+  e.preventDefault();
+  const btn = document.getElementById('ref-code-btn');
+  btn.disabled = true;
+  const data = await dc({ action: 'set_referral_code', code: document.getElementById('ref-code-input').value });
+  btn.disabled = false;
+  if (data.error) { toast(data.error, 4000); return; }
+  save_user(data.user);
+  toast('Código salvo! Seu link foi atualizado.');
+  render();
+}
+
+async function render_invite() {
+  const code = localStorage.getItem('ap_ref') || '';
+  mount(`<div class="bg-page mist center" style="padding:1.25rem"><div class="auth-card" id="invite-box">${spinner_block()}</div></div>`);
+  const data = await dc({ action: 'get_inviter', code });
+  const box = document.getElementById('invite-box');
+  if (!box) return;
+  const who = data.found ? esc(data.name) : 'um amigo';
+  const stats = data.found
+    ? `<div class="stat-grid">${stat_html('Afiliados na rede', data.members)}${stat_html('Com plano ativo', data.active, 'text-primary')}</div>`
+    : '';
+  const perks = [
+    ['gift', `Comece por ${brl(PLANS[0].price)}`, 'Ative o plano e já libere o seu link de indicação.'],
+    ['banknote', 'Comissão na hora', `Ganhe até ${brl(PLANS[PLANS.length - 1].commission)} por pessoa que entrar pelo seu link.`],
+    ['wallet', 'Saque por Pix', 'Receba direto na sua conta quando quiser.'],
+  ].map(([ic, title, text]) => `<div class="li"><span class="avatar-ic">${icon(ic, 'ic-sm')}</span><div class="grow"><p class="name" style="font-weight:600">${title}</p><p class="tiny">${text}</p></div></div>`).join('');
+  box.innerHTML = `
+    <div class="center">${logo_html(72, !!data.verified)}</div>
+    <p class="muted" style="text-align:center;margin-top:1rem">Você foi convidado por</p>
+    <h1 style="text-align:center;font-size:1.75rem;font-weight:800">${who}</h1>
+    ${stats}
+    <div class="list mt-4">${perks}</div>
+    <button class="btn-brand big w-full mt-5" onclick="open_auth('register')">Criar minha conta</button>
+    <div class="mt-4 center"><button class="link-u" onclick="open_auth('login')">Já tenho conta</button></div>
+    ${code ? `<p class="tiny center mt-4">Código do convite: <b>${esc(code.toUpperCase())}</b></p>` : ''}`;
+}
+
+async function add_video() {
+  const title = document.getElementById('video-title').value.trim();
+  const url = document.getElementById('video-url').value.trim();
+  const btn = document.getElementById('video-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Publicando…';
+  const data = await dc({ action: 'add_video', email: state.user.email, password: window._admin_pass || '', title, url });
+  btn.disabled = false;
+  btn.innerHTML = 'Publicar vídeo';
+  if (data.error) { toast('Erro: ' + data.error); return; }
+  toast('Vídeo publicado!');
+  document.getElementById('video-title').value = '';
+  document.getElementById('video-url').value = '';
+  load_admin_videos();
+}
+
+async function load_admin_videos() {
+  const data = await dc({ action: 'get_videos' });
+  const el = document.getElementById('videos-grid');
+  if (!el) return;
+  const videos = data.videos || [];
+  if (!videos.length) { el.innerHTML = '<p class="muted" style="padding:1rem 0">Nenhum vídeo ainda.</p>'; return; }
+  el.innerHTML = `${material_stats_html(videos, 'Acessos')}<div class="list mt-3">${videos.map((v) => `
+    <div class="li">
+      <span class="avatar-ic">${icon('video', 'ic-sm')}</span>
+      <div class="grow" style="min-width:0"><p class="name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v.title)}</p><p class="tiny">${v.downloads || 0} acessos, ${v.shares || 0} compartilhamentos</p></div>
+      <button data-id="${esc(v.id)}" onclick="delete_video(this)" aria-label="Excluir vídeo" class="text-bad">${icon('trash', 'ic-sm')}</button>
+    </div>`).join('')}</div>`;
+}
+
+async function delete_video(btn) {
+  if (!confirm('Excluir este vídeo?')) return;
+  const data = await dc({ action: 'delete_banner', email: state.user.email, password: window._admin_pass || '', msg_id: btn.dataset.id });
+  if (data.error) { toast('Erro: ' + data.error); return; }
+  toast('Vídeo excluído');
+  load_admin_videos();
+}
+
 function preview_banner(e) {
   const file = e.target.files[0];
   if (file) handle_banner_file(file);
@@ -1257,6 +1474,7 @@ async function upload_banner() {
   btn.innerHTML = '<span class="spinner"></span> Enviando…';
 
   const link = document.getElementById('banner-link').value.trim();
+  const title = document.getElementById('banner-title').value.trim();
   const reader = new FileReader();
   reader.onload = async (e) => {
     const base64 = e.target.result.split(',')[1];
@@ -1267,6 +1485,7 @@ async function upload_banner() {
       image_base64: base64,
       image_type: window._banner_file.type,
       link: link || null,
+      title,
     });
 
     btn.disabled = false;
@@ -1279,6 +1498,7 @@ async function upload_banner() {
     document.getElementById('upload-preview').classList.add('hidden');
     document.getElementById('upload-placeholder').style.display = '';
     document.getElementById('banner-link').value = '';
+    document.getElementById('banner-title').value = '';
     document.getElementById('banner-input').value = '';
 
     await load_banners();
@@ -1293,8 +1513,8 @@ async function load_admin_banners() {
   if (!el) return;
   const banners = data.banners || [];
   if (!banners.length) { el.innerHTML = '<p class="muted" style="padding:1rem 0">Nenhum banner ainda.</p>'; return; }
-  el.innerHTML = `<div class="banner-grid">${banners.map((b) => `
-    <div class="banner-thumb">
+  el.innerHTML = `${material_stats_html(banners, 'Downloads')}<div class="banner-grid">${banners.map((b) => `
+    <div class="banner-thumb" title="${esc(b.title || '')} | ${b.downloads || 0} downloads, ${b.shares || 0} compartilhamentos">
       <img src="${esc(b.url)}" alt="Banner">
       <button data-id="${esc(b.id)}" onclick="delete_banner(this)" aria-label="Excluir banner">${icon('trash', 'ic-sm')}</button>
     </div>`).join('')}</div>`;
@@ -1352,6 +1572,7 @@ const adm_nav = [
   { id: 'audit', label: 'Auditoria', icon: 'lock', need: 'audit.list' },
   { id: 'system', label: 'Sistema', icon: 'shield_check', need: 'system.health' },
   { id: 'banners', label: 'Banners', icon: 'image_plus', owner: true },
+  { id: 'videos', label: 'Vídeos', icon: 'video', owner: true },
   { id: 'functions', label: 'Todas as funções', icon: 'menu' },
 ];
 
@@ -1959,6 +2180,24 @@ const adm_views = {
     ]);
   },
 
+  videos: async (el) => {
+    el.innerHTML = '<h1 class="page-title">Vídeos de divulgação</h1>';
+    const pass = await ask_admin_pass();
+    if (!pass) { el.innerHTML += '<div class="notice err">Senha necessária para gerenciar vídeos.</div>'; return; }
+    window._admin_pass = pass;
+    el.innerHTML += `
+      <section class="adm-card" style="max-width:34rem">
+        <label class="field">Título<input type="text" id="video-title" maxlength="80" placeholder="Ex.: Como ganhar com o Aperta o Play"></label>
+        <label class="field">Link do vídeo<input type="url" id="video-url" placeholder="https://youtube.com/watch?v=..."></label>
+        <p class="tiny" style="margin-top:.375rem">YouTube, Google Drive, Instagram ou qualquer link https.</p>
+        <button class="btn-brand w-full mt-4" id="video-btn" onclick="add_video()">Publicar vídeo</button>
+        <div class="divider"></div>
+        <h2>Vídeos publicados</h2>
+        <div id="videos-grid">${spinner_block()}</div>
+      </section>`;
+    load_admin_videos();
+  },
+
   banners: async (el) => {
     el.innerHTML = '<h1 class="page-title">Banners</h1>';
     const pass = await ask_admin_pass();
@@ -1971,6 +2210,7 @@ const adm_views = {
           <div id="upload-placeholder"><div class="center text-primary">${icon('image_plus', 'ic')}</div><p style="margin-top:.5rem;font-weight:600">Toque ou arraste uma imagem</p><p class="tiny" style="margin-top:.25rem;font-size:.75rem">JPG, PNG ou WEBP · Recomendado 1280×720</p></div>
           <img id="upload-preview" class="upload-preview hidden" src="" alt="Pré-visualização">
         </div>
+        <label class="field">Título (usado ao compartilhar)<input type="text" id="banner-title" maxlength="80" placeholder="Ex.: Renda extra pelo celular"></label>
         <label class="field">Link ao clicar (opcional)<input type="url" id="banner-link" placeholder="https://..."></label>
         <button class="btn-brand w-full mt-4" id="upload-btn" onclick="upload_banner()">Enviar banner</button>
         <div class="divider"></div>
@@ -2234,11 +2474,12 @@ async function adm_user_view(el, email) {
   ], 'summary');
 }
 
-const ref_param = new URLSearchParams(location.search).get('ref');
+const path_ref = (location.pathname.match(/^\/r\/([A-Za-z0-9]{3,12})\/?$/) || [])[1];
+const ref_param = new URLSearchParams(location.search).get('ref') || path_ref;
 if (ref_param) localStorage.setItem('ap_ref', ref_param.slice(0, 12));
 capture_first_touch();
 if (ref_param && !state.user) {
-  state.page = 'auth';
+  state.page = 'invite';
   state.auth_mode = 'register';
 } else if (state.user) {
   state.page = 'painel';

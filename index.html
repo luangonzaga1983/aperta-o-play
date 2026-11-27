@@ -290,6 +290,21 @@ body.menu-open .drawer-mask { opacity: 1; pointer-events: auto; }
   .adm-fnbtn { display: none; }
   .adm-dl > div { grid-template-columns: 1fr; gap: .125rem; }
 }
+
+.drawer-head { position: relative; }
+.drawer-x { position: absolute; right: 0; top: 0; display: flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; border-radius: 9999px; border: 1px solid var(--primary); color: var(--primary); }
+.menu-item { transition: border-color .15s, background .15s, transform .1s; }
+.menu-item:active { transform: scale(.985); }
+.bal-card { background-image: linear-gradient(145deg, color-mix(in oklab, white 16%, var(--card)) 0%, color-mix(in oklab, var(--primary) 10%, var(--card)) 100%); border-radius: 1.75rem; box-shadow: var(--shadow-glow), inset 0 1px 0 var(--glass-hi); }
+.contacts-btn, .edit-banners { display: flex; align-items: center; gap: .75rem; width: 100%; margin-top: 1.25rem; padding: 1rem; border-radius: .875rem; font-weight: 600; color: var(--primary); border: 1px solid color-mix(in oklab, var(--primary) 45%, transparent); background: color-mix(in oklab, var(--primary) 8%, transparent); }
+.edit-banners { border: 0; background: none; padding: .25rem 0; margin-top: 1rem; font-size: .9rem; }
+.contacts-btn:active { transform: scale(.985); }
+.fab { position: fixed; right: 1rem; bottom: 1rem; z-index: 40; display: flex; align-items: center; gap: .6rem; padding: .75rem 1.1rem; border-radius: 1.25rem; background: var(--primary); color: var(--primary-foreground); box-shadow: 0 10px 30px -6px color-mix(in oklab, var(--primary) 60%, transparent); text-align: left; }
+.fab span { display: flex; flex-direction: column; line-height: 1.15; }
+.fab small { font-size: .7rem; opacity: .75; }
+.aff { display: flex; align-items: center; gap: .75rem; padding: .75rem 0; border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent); }
+.aff-wa { display: inline-flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; border-radius: 9999px; background: var(--whatsapp); color: var(--primary-foreground); flex-shrink: 0; }
+.plan-row.sel { background: color-mix(in oklab, var(--primary) 8%, transparent); }
 </style>
 </head>
 <body>
@@ -303,6 +318,7 @@ const API_PAY     = '/api/pay';
 const LOGO        = 'data:image/jpeg;base64,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';
 
 const PLANS = [
+  { price: 1,   commission: 0.4, label: 'Teste' },
   { price: 25,  commission: 10, label: 'Básico' },
   { price: 50,  commission: 25, label: 'Pro' },
   { price: 100, commission: 50, label: 'Premium' },
@@ -331,6 +347,9 @@ const ICONS = {
   lock: '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
   banknote: '<rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>',
   trash: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
+  key: '<path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/>',
+  bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  chat: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
   user: '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
 };
 
@@ -346,7 +365,7 @@ const state = {
   banners: [],
   carousel_idx: 0,
   carousel_timer: null,
-  selected_plan: PLANS[0].price,
+  selected_plan: 25,
 };
 
 const hash53 = (text) => {
@@ -563,8 +582,9 @@ function shell(title, body) {
   const u = state.user;
   const items = [
     { id: 'painel',    title: 'Meu dashboard',  detail: 'Saldo e comissões',        icon: 'dashboard', tone: 'p' },
-    { id: 'indicados', title: 'Meus indicados', detail: 'Minha rede de indicações', icon: 'users',     tone: 'a' },
+    { id: 'indicados', title: 'Meus afiliados', detail: 'Minha rede de indicações', icon: 'users',     tone: 'a' },
     { id: 'saque',     title: 'Saque Pix',      detail: 'Sacar minhas comissões',   icon: 'wallet',    tone: 'p' },
+    { id: 'senha',     title: 'Mudar senha',    detail: 'Segurança da minha conta', icon: 'key',       tone: 'p' },
     ...(is_staff() ? [{ id: 'admin', title: 'Administração', detail: 'Usuários, finanças e suporte', icon: 'shield', tone: 's' }] : []),
   ];
   const menu = items.map((i) => `
@@ -578,9 +598,10 @@ function shell(title, body) {
     <div class="drawer-mask" onclick="toggle_menu(false)"></div>
     <aside class="drawer" aria-label="Menu dos afiliados">
       <div class="drawer-head">
+        <button class="drawer-x" onclick="toggle_menu(false)" aria-label="Fechar menu">${icon('x')}</button>
         <div class="row gap-3">${logo_html(48, !!u.plan)}<span style="min-width:0"><span class="brand-text" style="display:block;font-size:1.25rem">Aperta o Play</span>${premium_html()}</span></div>
         <h2>Dashboard afiliado</h2>
-        <p class="muted">${esc(u.email)}</p>
+        <p class="muted">Minha conta</p>
       </div>
       <nav>${menu}</nav>
       <div class="drawer-cta"><button onclick="set_page('indicados')"><span class="row gap-3">${icon('share')}Indique e ganhe</span>${icon('arrow_up_right')}</button></div>
@@ -593,6 +614,7 @@ function shell(title, body) {
             ${logo_html(40, !!u.plan)}${premium_html(true)}
           </div>
           <div class="row gap-4" style="color:var(--muted-foreground)">
+            <button onclick="show_notices()" aria-label="Avisos">${icon('bell')}</button>
             ${is_staff() ? `<button onclick="set_page('admin')" aria-label="Administração">${icon('shield')}</button>` : ''}
             <button onclick="logout()" aria-label="Sair">${icon('log_out')}</button>
           </div>
@@ -658,13 +680,14 @@ function render() {
   clearInterval(state.carousel_timer);
   document.body.classList.remove('menu-open');
   document.getElementById('modal-root').innerHTML = '';
-  if (!state.user && ['painel', 'indicados', 'saque', 'admin'].includes(state.page)) state.page = 'home';
+  if (!state.user && ['painel', 'indicados', 'saque', 'admin', 'senha'].includes(state.page)) state.page = 'home';
   if (state.page === 'admin' && !is_staff()) state.page = 'painel';
   switch (state.page) {
     case 'auth':      render_auth(); break;
     case 'painel':    render_painel(); break;
     case 'indicados': render_indicados(); break;
     case 'saque':     render_saque(); break;
+    case 'senha':     render_senha(); break;
     case 'admin':     render_admin(); break;
     default:          render_home();
   }
@@ -878,15 +901,17 @@ function render_painel() {
     </div>
     <div id="announce"></div>
     <section style="margin-top:1.25rem" aria-label="Banners do Aperta o Play"><div id="carousel-container">${carousel_html()}</div></section>
-    <button class="btn-line rect w-full mt-5" style="justify-content:flex-start;padding:1rem;border-color:color-mix(in oklab,var(--whatsapp) 40%,transparent);color:var(--whatsapp)" onclick="set_page('indicados')">${icon('users')}<span>Meus indicados e comissões</span></button>
-    <section class="glass-strong">
+    ${u.is_admin ? `<button class="edit-banners" onclick="adm.view='banners'; set_page('admin')">${icon('image_plus', 'ic-sm')}<span>Editar banners</span></button>` : ''}
+    <button class="contacts-btn" onclick="set_page('indicados')">${icon('users')}<span>Todos os contatos de afiliados</span></button>
+    <section class="glass-strong bal-card">
       <div class="row between"><p style="font-size:.875rem">Saldo disponível</p><button onclick="toggle_hidden()" aria-label="Mostrar ou esconder saldo"><span class="js-eye">${icon(eye)}</span></button></div>
       <p data-money="${bal}" style="margin-top:.5rem;font-size:2.25rem;font-weight:800">${money(bal)}</p>
       <button class="btn-brand mt-4" style="padding:.5rem 1rem;border-radius:.75rem;font-size:.875rem" onclick="set_page('saque')">${icon('wallet', 'ic-sm')}Sacar</button>
     </section>
     ${plans}
     ${referral_html()}
-    <section class="card"><h2>Últimas comissões</h2><div class="list mt-3" id="commissions-list">${spinner_block()}</div></section>`));
+    <section class="card"><h2>Últimas comissões</h2><div class="list mt-3" id="commissions-list">${spinner_block()}</div></section>
+    <button class="fab" onclick="open_support()">${icon('chat')}<span><b>Suporte</b><small>conversas</small></span></button>`));
 
   carousel_reset_timer();
   load_banners();
@@ -939,48 +964,18 @@ function stop_pix_poll() {
 }
 
 // Passo 1: o Pix do Mercado Pago pede o CPF/CNPJ do pagador para gerar a cobrança Pix
-function open_pix() {
-  let saved = {};
-  try { saved = JSON.parse(localStorage.getItem('ap_payer') || '{}'); } catch {}
-  open_modal(`
-    <h3 class="modal-title">Dados para o Pix</h3>
-    <p class="muted center mt-2 xs">Necessários para emitir a cobrança de ${brl(state.selected_plan)}.</p>
-    <form onsubmit="submit_pix(event)">
-      <div id="pix-form-alert" class="mt-3"></div>
-      <label class="field">Nome completo<input type="text" id="pix-name" autocomplete="name" value="${esc(saved.name || '')}" required></label>
-      <label class="field">CPF<input type="text" id="pix-cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" maxlength="18" value="${esc(saved.cpf ? fmt_cpf(saved.cpf) : '')}" oninput="this.value = fmt_cpf(this.value)" required></label>
-      <button class="btn-brand w-full mt-4" id="pix-submit">Gerar Pix de ${brl(state.selected_plan)}</button>
-    </form>`, stop_pix_poll);
-}
-
-async function submit_pix(e) {
-  e.preventDefault();
-  const name = document.getElementById('pix-name').value.trim();
-  const cpf  = document.getElementById('pix-cpf').value.replace(/\D/g, '');
-  const btn  = document.getElementById('pix-submit');
-  const fail = (msg) => { document.getElementById('pix-form-alert').innerHTML = `<div class="notice err">${esc(msg)}</div>`; };
-
-  if (name.length < 3) { fail('Informe seu nome completo'); return; }
-  if (cpf.length !== 11 && cpf.length !== 14) { fail('Informe um CPF válido'); return; }
-
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Gerando Pix…';
-
+async function open_pix() {
+  open_modal(`<h3 class="modal-title">Gerando seu Pix…</h3><div class="center" style="padding:2rem 0">${spinner_block()}</div>`, stop_pix_poll);
   let data;
   try {
-    data = await pay({ action: 'create_pix', email: state.user.email, plan_price: state.selected_plan, name, cpf_cnpj: cpf });
+    data = await pay({ action: 'create_pix', email: state.user.email, plan_price: state.selected_plan });
   } catch {
     data = { error: 'Sem conexão. Tente novamente.' };
   }
-
   if (data.error) {
-    btn.disabled = false;
-    btn.innerHTML = `Gerar Pix de ${brl(state.selected_plan)}`;
-    fail(data.error);
+    open_modal(`<h3 class="modal-title">Não foi possível gerar o Pix</h3><div class="notice err mt-3">${esc(data.error)}</div><button class="btn-brand w-full mt-3" onclick="open_pix()">Tentar novamente</button>`);
     return;
   }
-
-  try { localStorage.setItem('ap_payer', JSON.stringify({ name, cpf })); } catch {}
   show_pix(data);
 }
 
@@ -1035,7 +1030,8 @@ async function check_pix(manual) {
 
 async function render_indicados() {
   const u = state.user;
-  mount(shell('Meus indicados', `
+  mount(shell('Meus afiliados', `
+    <section class="card" style="margin-top:1rem"><h2>Minha rede</h2><div id="affiliates-box" class="mt-3">${spinner_block()}</div></section>
     ${referral_html()}
     <section class="card">
       <h2>Comissão por plano</h2>
@@ -1045,6 +1041,7 @@ async function render_indicados() {
     </section>
     <section class="card"><h2>Histórico</h2><div id="commissions-history" class="mt-3">${spinner_block()}</div></section>`));
 
+  load_affiliates();
   const data = await dc({ action: 'get_commissions', email: u.email });
   const el = document.getElementById('commissions-history');
   if (!el) return;
@@ -1053,6 +1050,71 @@ async function render_indicados() {
   el.innerHTML = `
     <div class="glass-strong" style="margin-top:0;padding:1rem;border-radius:1rem"><p class="label">Total ganho</p><p class="text-primary" style="font-size:1.75rem;font-weight:800">${brl(total)}</p></div>
     <div class="list" style="margin-top:.5rem">${data.commissions.map((c) => commission_row(c, true)).join('')}</div>`;
+}
+
+async function load_affiliates() {
+  const data = await dc({ action: 'get_affiliates' });
+  const box = document.getElementById('affiliates-box');
+  if (!box) return;
+  if (data.error) { box.innerHTML = `<div class="notice err">${esc(data.error)}</div>`; return; }
+  const list = data.affiliates || [];
+  if (!list.length) { box.innerHTML = '<p class="muted" style="padding:1rem 0;text-align:center">Você ainda não tem afiliados. Compartilhe seu link e comece a ganhar.</p>'; return; }
+  const active = list.filter((a) => a.plan).length;
+  const earned = list.reduce((sum, a) => sum + a.earned, 0);
+  const rows = list.map((a) => {
+    const phone = String(a.whatsapp || '').replace(/\D/g, '');
+    const wa = phone ? `<a class="aff-wa" href="https://wa.me/55${phone.replace(/^55/, '')}" target="_blank" rel="noopener noreferrer" aria-label="Chamar no WhatsApp">${wa_icon('ic-sm')}</a>` : '';
+    return `<div class="aff"><span class="avatar-ic">${icon('user', 'ic-sm')}</span><div style="min-width:0;flex:1"><p class="name" style="font-weight:600;overflow:hidden;text-overflow:ellipsis">${esc(a.name)}</p><p class="tiny">${esc(a.email)} · ${fmt_date(a.created_at)}</p></div><div style="text-align:right"><span class="badge ${a.plan ? 'green' : 'yellow'}">${a.plan ? `Ativo ${brl(a.plan)}` : 'Sem plano'}</span><p class="tiny" style="margin-top:.25rem">${a.earned ? `+ ${brl(a.earned)}` : ''}</p></div>${wa}</div>`;
+  }).join('');
+  box.innerHTML = `<div class="stat-grid" style="margin-top:0"><div class="stat"><p class="label">Afiliados</p><p class="v">${list.length}</p></div><div class="stat"><p class="label">Com plano</p><p class="v text-primary">${active}</p></div></div><p class="muted mt-3">Total ganho com eles: <b class="text-primary">${brl(earned)}</b></p><div class="mt-3">${rows}</div>`;
+}
+
+function render_senha() {
+  const u = state.user;
+  mount(shell('Mudar senha', `
+    <section class="card" style="margin-top:1rem">
+      <h2>Segurança da minha conta</h2>
+      <p class="muted mt-2">${u.has_password ? 'Informe sua senha atual e escolha uma nova.' : 'Sua conta entra pelo Google. Crie uma senha para também entrar com e-mail.'}</p>
+      <form onsubmit="submit_senha(event)" class="mt-3">
+        <div id="senha-alert"></div>
+        ${u.has_password ? '<label class="field">Senha atual<input type="password" id="senha-atual" autocomplete="current-password" required></label>' : ''}
+        <label class="field">Nova senha<input type="password" id="senha-nova" autocomplete="new-password" minlength="6" required></label>
+        <label class="field">Repita a nova senha<input type="password" id="senha-repete" autocomplete="new-password" minlength="6" required></label>
+        <button class="btn-brand w-full mt-4" id="senha-btn">Salvar nova senha</button>
+      </form>
+    </section>`));
+}
+
+async function submit_senha(e) {
+  e.preventDefault();
+  const alert_box = document.getElementById('senha-alert');
+  const fail = (msg) => { alert_box.innerHTML = `<div class="notice err">${esc(msg)}</div>`; };
+  const next = document.getElementById('senha-nova').value;
+  if (next !== document.getElementById('senha-repete').value) { fail('As senhas não são iguais'); return; }
+  const btn = document.getElementById('senha-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Salvando…';
+  const data = await dc({ action: 'change_password', current_password: document.getElementById('senha-atual')?.value || '', new_password: next });
+  btn.disabled = false;
+  btn.textContent = 'Salvar nova senha';
+  if (data.error) { fail(data.error); return; }
+  save_user({ ...state.user, has_password: true });
+  toast('Senha alterada!');
+  set_page('painel');
+}
+
+async function show_notices() {
+  open_modal(`<h3 class="modal-title">Avisos</h3><div class="center" style="padding:1.5rem 0">${spinner_block()}</div>`);
+  const data = await dc({ action: 'get_announcements' });
+  const items = (data.announcements || []).map((a) => `<div class="ann ${esc(a.level)}"><b>${esc(a.title)}</b>${esc(a.text)}</div>`).join('');
+  open_modal(`<h3 class="modal-title">Avisos</h3>${items || '<p class="muted center mt-4">Nenhum aviso no momento.</p>'}`);
+}
+
+async function open_support() {
+  const cfg = await get_cfg();
+  const phone = String(cfg?.support_whatsapp || '').replace(/\D/g, '');
+  if (!phone) { toast('Suporte indisponível no momento.'); return; }
+  window.open(`https://wa.me/${phone.startsWith('55') ? phone : '55' + phone}?text=${encodeURIComponent('Olá! Preciso de ajuda no Aperta o Play (' + state.user.email + ')')}`, '_blank', 'noopener');
 }
 
 const PIX_LABEL = { CPF: 'CPF', CNPJ: 'CNPJ', EMAIL: 'E-mail', PHONE: 'Telefone', EVP: 'Chave aleatória' };

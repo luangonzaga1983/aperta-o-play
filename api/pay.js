@@ -37,7 +37,6 @@ async function handle(req, res) {
     if (!plan) return res.status(400).json({ error: "Plano inválido" });
 
     const cpf_cnpj = only_digits(body.cpf_cnpj);
-    if (!valid_doc(cpf_cnpj)) return res.status(400).json({ error: "Informe um CPF válido para gerar o Pix.", code: "invalid_cpf" });
 
     const name = String(body.name || "").trim().slice(0, 100);
     const base = site_url(req);

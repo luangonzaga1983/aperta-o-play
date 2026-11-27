@@ -296,6 +296,42 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, created, user: public_user(user, make_token(g.email)) });
   }
 
+  if (action === "change_password") {
+    const user = await auth(body);
+    if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
+    const { current_password, new_password } = body;
+    if (String(new_password || "").length < 6) return res.status(400).json({ error: "A nova senha precisa ter pelo menos 6 caracteres" });
+    if (user.password_hash && !verify_password(String(current_password || ""), user.password_hash)) return res.status(403).json({ error: "Senha atual incorreta" });
+    const { msg_id, ...data } = user;
+    await update_user(msg_id, { ...data, password_hash: hash_password(new_password) });
+    await log_event("password_change", { email: user.email, ...log_context(request_context(req, body.client)) });
+    return res.status(200).json({ ok: true });
+  }
+
+  if (action === "get_affiliates") {
+    const user = await auth(body);
+    if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
+    const [user_messages, commission_messages] = await Promise.all([fetch_all_messages(CHANNEL_USUARIOS), fetch_all_messages(CHANNEL_COMISSOES)]);
+    const earned = {};
+    for (const message of commission_messages) {
+      try {
+        const entry = JSON.parse(message.content);
+        if (entry.affiliate === user.email && !entry.reverted) earned[entry.from_user] = (earned[entry.from_user] || 0) + entry.amount;
+      } catch {}
+    }
+    const mask_email = (email) => `${email.split("@")[0].slice(0, 2)}***@${email.split("@")[1]}`;
+    const affiliates = [];
+    for (const message of user_messages) {
+      try {
+        const entry = JSON.parse(message.content);
+        if (entry.referred_by !== user.email) continue;
+        affiliates.push({ name: entry.name || entry.email.split("@")[0], email: mask_email(entry.email), whatsapp: entry.whatsapp || null, plan: entry.plan || null, created_at: entry.created_at || null, plan_activated_at: entry.plan_activated_at || null, earned: Number((earned[entry.email] || 0).toFixed(2)) });
+      } catch {}
+    }
+    affiliates.sort((a, b) => Date.parse(b.created_at || 0) - Date.parse(a.created_at || 0));
+    return res.status(200).json({ affiliates });
+  }
+
   if (action === "get_user") {
     const user = await auth(body);
     if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });

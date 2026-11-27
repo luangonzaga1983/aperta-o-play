@@ -490,6 +490,34 @@ body.menu-open .drawer-mask { opacity: 1; pointer-events: auto; }
 .chip:hover { border-color: var(--primary); background: color-mix(in oklab, var(--primary) 12%, var(--secondary)); }
 
 @media (prefers-reduced-motion: reduce) { .btn-brand.big { animation: none; } }
+
+/* ===================== Seletor de cores (50 paletas) ===================== */
+.theme-mask { position: fixed; inset: 0; z-index: 58; background: rgb(0 0 0 / .45); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+.theme-panel { position: fixed; z-index: 59; top: calc(4.2rem + env(safe-area-inset-top, 0px)); left: 0; right: 0; margin: 0 auto; width: min(26rem, calc(100vw - 1.5rem)); max-height: min(34rem, calc(100vh - 6rem)); display: flex; flex-direction: column; overflow: hidden; border-radius: 1.25rem; border: 1px solid color-mix(in oklab, var(--primary) 30%, var(--border)); background: var(--card); box-shadow: 0 30px 70px -20px rgb(0 0 0 / .85); animation: themein .18s ease-out; }
+@keyframes themein { from { opacity: 0; translate: 0 -8px; } to { opacity: 1; translate: 0 0; } }
+.theme-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: 1rem 1.1rem .85rem; border-bottom: 1px solid var(--border); }
+.theme-head b { display: block; font-size: 1.05rem; }
+.theme-head small { color: var(--muted-foreground); font-size: .75rem; }
+.theme-chip { flex-shrink: 0; border-radius: 9999px; padding: .3rem .8rem; font-size: .8rem; font-weight: 700; color: var(--primary); background: color-mix(in oklab, var(--primary) 16%, transparent); border: 1px solid color-mix(in oklab, var(--primary) 45%, transparent); }
+.theme-grid { flex: 1; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; padding: .85rem 1.1rem; overscroll-behavior: contain; }
+.theme-opt { position: relative; text-align: left; padding: .35rem .35rem .55rem; border-radius: 1rem; border: 1px solid var(--border); background: color-mix(in oklab, var(--background) 60%, var(--card)); transition: border-color .15s, transform .12s; }
+.theme-opt:hover { border-color: color-mix(in oklab, var(--primary) 55%, var(--border)); }
+.theme-opt:active { transform: scale(.98); }
+.theme-opt.on { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary) inset; }
+.theme-prev { position: relative; height: 4.1rem; border-radius: .8rem; padding: .55rem .6rem; overflow: hidden; }
+.theme-prev i { position: absolute; top: .45rem; left: .6rem; width: 1.7rem; height: .22rem; border-radius: 9999px; background: rgb(255 255 255 / .22); }
+.theme-prev .dot { position: absolute; top: .4rem; right: .5rem; width: .5rem; height: .5rem; border-radius: 9999px; }
+.theme-prev .bar { position: absolute; left: .5rem; right: .5rem; bottom: .5rem; height: 1.7rem; border-radius: 9999px; border: 1px solid rgb(255 255 255 / .14); background: rgb(255 255 255 / .06); display: flex; align-items: center; gap: .35rem; padding: 0 .3rem; }
+.theme-prev .p1 { flex: 1; height: 1.05rem; border-radius: 9999px; }
+.theme-prev .p2 { width: 1.9rem; height: .75rem; border-radius: 9999px; }
+.theme-opt > span { display: flex; align-items: center; justify-content: space-between; margin-top: .45rem; padding: 0 .3rem; font-size: .8rem; font-weight: 600; }
+.theme-opt .ck { color: var(--primary); display: none; }
+.theme-opt.on .ck { display: inline-flex; }
+.theme-foot { padding: .8rem 1.1rem; border-top: 1px solid var(--border); }
+.theme-foot button { color: var(--muted-foreground); font-size: .8125rem; text-decoration: underline; text-underline-offset: 3px; }
+.theme-foot button:hover { color: var(--primary); }
+.btn-pal { display: inline-flex; color: var(--muted-foreground); }
+.btn-pal:hover { color: var(--primary); }
 </style>
 </head>
 <body>
@@ -511,6 +539,7 @@ const PLANS = [
 ];
 
 const ICONS = {
+  palette: '<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
   menu: '<line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>',
   x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
   eye: '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
@@ -821,6 +850,7 @@ function shell(title, body) {
             ${logo_html(40, !!u.plan)}${premium_html(true)}
           </div>
           <div class="row gap-4" style="color:var(--muted-foreground)">
+            <button class="btn-pal" onclick="theme_open()" aria-label="Cores do aplicativo">${icon('palette')}</button>
             <button class="hd-avatar" onclick="set_page('perfil')" aria-label="Meu perfil">${avatar_html(u, 36)}</button>
             <button class="nbell" onclick="set_page('notificacoes')" aria-label="Notificações">${icon('bell')}<span class="nbadge${notif.unread ? ' on' : ''}">${notif.unread > 9 ? '9+' : notif.unread}</span></button>
             ${is_staff() ? `<button class="nbell" onclick="open_admin_home()" aria-label="Administração">${icon('shield')}<span class="nbadge js-chat-n${staffchat.unread ? ' on' : ''}">${staffchat.unread > 9 ? '9+' : staffchat.unread}</span></button>` : ''}
@@ -881,8 +911,7 @@ function render_profile() {
       <h2>Dados pessoais</h2>
       <form onsubmit="save_profile(event)" class="mt-3">
         <div id="prof-alert"></div>
-        <label class="field">Login (nome de usuário)<input type="text" id="pf-login" maxlength="20" minlength="3" value="${esc(u.login || '')}" placeholder="seu.login" autocapitalize="none" autocorrect="off" spellcheck="false" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9._-]/g, '')"></label>
-        <label class="field">Nome<input type="text" id="pf-name" maxlength="60" value="${esc(u.name || '')}" placeholder="Como você quer ser chamado" autocomplete="name" required></label>
+        <label class="field">Nome de usuário<input type="text" id="pf-login" maxlength="20" minlength="3" value="${esc(u.login || '')}" placeholder="seu.login" autocapitalize="none" autocorrect="off" spellcheck="false" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9._-]/g, '')"></label>
         <label class="field">WhatsApp<input type="tel" id="pf-whatsapp" value="${esc(u.whatsapp || '')}" placeholder="(11) 91234-5678" autocomplete="tel"></label>
         <div class="f2">
           <label class="field">Cidade<input type="text" id="pf-city" maxlength="40" value="${esc(u.city || '')}" autocomplete="address-level2"></label>
@@ -982,7 +1011,7 @@ async function save_profile(e) {
     if (r.error) { form_busy('pf-btn', false, 'Salvar dados'); alert_box.innerHTML = `<div class="notice err">${esc(r.error)}</div>`; return; }
     save_user(r.user);
   }
-  const body = { action: 'update_profile', name: document.getElementById('pf-name').value, city: document.getElementById('pf-city').value, birth: document.getElementById('pf-birth').value, bio: document.getElementById('pf-bio').value };
+  const body = { action: 'update_profile', city: document.getElementById('pf-city').value, birth: document.getElementById('pf-birth').value, bio: document.getElementById('pf-bio').value };
   const whatsapp = document.getElementById('pf-whatsapp').value.trim();
   if (whatsapp && whatsapp !== (state.user.whatsapp || '')) body.whatsapp = whatsapp;
   const data = await dc(body);
@@ -1156,7 +1185,7 @@ function render_auth() {
           <div id="g-btn" class="center" style="min-height:44px"></div>
           <p class="tiny center" style="margin:1rem 0 0">ou use seu e-mail</p>
         </div>
-        ${login ? '<label class="field">E-mail ou login<input type="text" id="auth-email" name="email" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required placeholder="seu@email.com ou seu login"></label>' : `<label class="field">Login<input type="text" id="auth-login" name="login" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" minlength="3" maxlength="20" pattern="[A-Za-z0-9._\\-]{3,20}" required placeholder="ex: joao.silva" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9._-]/g, '')"><span class="tiny">Será o seu nome de usuário. 3 a 20 letras, números, ponto, hífen ou _</span></label>
+        ${login ? '<label class="field">E-mail ou nome de usuário<input type="text" id="auth-email" name="email" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required placeholder="seu@email.com ou seu usuário"></label>' : `<label class="field">Login<input type="text" id="auth-login" name="login" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" minlength="3" maxlength="20" pattern="[A-Za-z0-9._\\-]{3,20}" required placeholder="ex: joao.silva" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9._-]/g, '')"><span class="tiny">Será o seu nome de usuário. 3 a 20 letras, números, ponto, hífen ou _</span></label>
         <label class="field">E-mail<input type="email" id="auth-email" name="email" autocomplete="email" autocapitalize="none" required placeholder="seu@email.com"></label>`}
         ${login ? '' : `<label class="field">WhatsApp<input type="tel" id="auth-wa" inputmode="numeric" autocomplete="tel" placeholder="(11) 99999-9999" maxlength="15" oninput="this.value = fmt_phone(this.value)" required></label>`}
         <div class="field">
@@ -1235,7 +1264,7 @@ function maybe_ask_login() {
     <p class="muted center mt-2 xs">Ele será o seu nome de usuário: aparece no topo do app e serve para entrar.</p>
     <form onsubmit="save_login(event)">
       <div id="lg-alert" class="mt-3"></div>
-      <label class="field">Login<input type="text" id="lg-input" value="${esc(suggestion)}" minlength="3" maxlength="20" autocapitalize="none" autocorrect="off" spellcheck="false" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9._-]/g, '')"></label>
+      <label class="field">Nome de usuário<input type="text" id="lg-input" value="${esc(suggestion)}" minlength="3" maxlength="20" autocapitalize="none" autocorrect="off" spellcheck="false" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9._-]/g, '')"></label>
       <p class="tiny" style="margin-top:.4rem">3 a 20 letras, números, ponto, hífen ou _</p>
       <button class="btn-brand w-full mt-4" id="lg-btn">Salvar login</button>
     </form>`);
@@ -1251,7 +1280,7 @@ async function save_login(e) {
   if (data.error) { document.getElementById('lg-alert').innerHTML = `<div class="notice err">${esc(data.error)}</div>`; return; }
   save_user(data.user);
   close_modal();
-  toast('Login salvo!');
+  toast('Nome de usuário salvo!');
   render();
   setTimeout(maybe_ask_whatsapp, 400);
 }
@@ -1571,6 +1600,7 @@ async function open_support() {
     <h3 class="modal-title">Falar com o suporte</h3>
     <p class="muted center mt-2 xs">Escolha como prefere ser atendido.</p>
     ${chat_on ? `<button class="sup-opt" onclick="support_chat()"><span class="sup-ic ap">${icon('chat')}</span><span><b>Chat no aplicativo</b><small>Ao vivo, com histórico salvo${chat.unread ? ` · ${chat.unread} nova(s)` : ''}</small></span></button>` : ''}
+    ${!chat_on && state.user?.is_admin ? `<p class="tiny" style="margin-top:.75rem;color:var(--warning)">Chat desativado: falta definir DISCORD_CHANNEL_SUPORTE na Vercel e fazer um novo deploy.</p>` : ''}
     ${phone ? `<button class="sup-opt" onclick="support_whatsapp()"><span class="sup-ic wa">${wa_icon()}</span><span><b>WhatsApp</b><small>Abrir conversa no WhatsApp</small></span></button>` : ''}`);
 }
 
@@ -3133,8 +3163,7 @@ function adm_user_summary(c, d) {
       ${adm_card('Dados da conta', adm_kv([
         ['E-mail', `${esc(u.email)} ${adm_copy_btn(u.email)}`],
         ['Foto', adm_avatar(u, 56)],
-        ['Login', u.login ? `@${esc(u.login)}` : null],
-        ['Nome', u.name ? esc(u.name) : null],
+        ['Nome de usuário', u.login ? `@${esc(u.login)}` : null],
         ['Cidade', u.city ? esc(u.city) : null],
         ['Nascimento', u.birth ? esc(new Date(u.birth + 'T12:00:00').toLocaleDateString('pt-BR')) : null],
         ['Sobre', u.bio ? esc(u.bio) : null],
@@ -3630,6 +3659,96 @@ const path_ref = (location.pathname.match(/^\/r\/([A-Za-z0-9]{3,12})\/?$/) || []
 const path_promo = location.pathname.match(/^\/d\/(\d{5,25})(?:\/([A-Za-z0-9]{3,12}))?\/?$/);
 const ref_param = new URLSearchParams(location.search).get('ref') || path_ref || (path_promo && path_promo[2]);
 if (ref_param) localStorage.setItem('ap_ref', ref_param.slice(0, 12));
+
+// ---------- seletor de cores (50 paletas) ----------
+// [nome, matiz principal, matiz de destaque, matiz do fundo]  (a primeira é o visual original)
+const PALETTES = [
+  ['Esmeralda', 158, 330, 205], ['Oceano', 205, 5, 235], ['Rubi', 22, 190, 15], ['Ametista', 305, 150, 300],
+  ['Âmbar', 75, 285, 55], ['Coral', 35, 195, 25], ['Safira', 255, 60, 262], ['Turquesa', 185, 20, 200],
+  ['Rosa', 350, 160, 350], ['Lima', 125, 320, 140], ['Violeta', 285, 95, 290], ['Mar', 225, 40, 230],
+  ['Pôr do sol', 45, 275, 30], ['Menta', 168, 15, 175], ['Fúcsia', 330, 130, 325], ['Ouro', 90, 300, 80],
+  ['Céu', 235, 25, 245], ['Floresta', 145, 350, 150], ['Vinho', 8, 170, 355], ['Lavanda', 275, 120, 280],
+  ['Laranja', 55, 245, 45], ['Gelo', 215, 340, 220], ['Jade', 175, 340, 165], ['Magenta', 340, 110, 335],
+  ['Cobre', 50, 220, 40], ['Anil', 265, 85, 270], ['Pêssego', 40, 215, 35], ['Oliva', 110, 330, 115],
+  ['Tropical', 160, 25, 190], ['Chiclete', 355, 195, 345], ['Aurora', 150, 300, 260], ['Neon', 135, 335, 280],
+  ['Cereja', 15, 200, 5], ['Pavão', 195, 330, 215], ['Mel', 80, 260, 65], ['Orquídea', 320, 160, 315],
+  ['Atlântico', 220, 50, 225], ['Pistache', 118, 345, 130], ['Framboesa', 355, 165, 340], ['Tangerina', 62, 250, 50],
+  ['Glaciar', 200, 15, 210], ['Uva', 295, 110, 295], ['Salmão', 28, 200, 20], ['Hortelã', 170, 345, 180],
+  ['Cometa', 250, 20, 255], ['Girassol', 100, 280, 90], ['Cacau', 45, 205, 35], ['Boreal', 175, 300, 230],
+  ['Eclipse', 270, 70, 275], ['Brasil', 142, 95, 150],
+];
+const THEME_KEY = 'ap_theme';
+function theme_vars(i) {
+  const [, h, a, b] = PALETTES[i];
+  const wrap = (x) => ((x % 360) + 360) % 360;
+  return {
+    '--background': `oklch(0.12 0.028 ${b})`,
+    '--card': `oklch(0.17 0.032 ${wrap(b - 5)})`,
+    '--secondary': `oklch(0.24 0.03 ${b})`,
+    '--muted': `oklch(0.22 0.025 ${b})`,
+    '--border': `oklch(0.3 0.05 ${wrap(b - 20)})`,
+    '--primary': `oklch(0.85 0.19 ${h})`,
+    '--primary-foreground': `oklch(0.16 0.03 ${b})`,
+    '--accent': `oklch(0.72 0.24 ${a})`,
+    '--gradient-brand': `linear-gradient(135deg, oklch(0.89 0.19 ${wrap(h - 8)}) 0%, oklch(0.81 0.17 ${wrap(h + 24)}) 55%, oklch(0.73 0.16 ${wrap(h + 57)}) 100%)`,
+    '--gradient-hot': `linear-gradient(135deg, oklch(0.76 0.23 ${wrap(a + 5)}), oklch(0.68 0.21 ${wrap(a - 40)}))`,
+    '--gradient-page': `radial-gradient(90% 46% at 12% -6%, color-mix(in oklab, var(--primary) 22%, transparent), transparent 62%), radial-gradient(70% 42% at 104% 6%, color-mix(in oklab, var(--accent) 17%, transparent), transparent 64%), radial-gradient(90% 50% at 50% 112%, color-mix(in oklab, oklch(0.7 0.17 ${wrap(h + 57)}) 14%, transparent), transparent 62%)`,
+    '--shadow-glow': '0 0 44px -10px color-mix(in oklab, var(--primary) 60%, transparent)',
+  };
+}
+function theme_current() {
+  const n = Number(localStorage.getItem(THEME_KEY));
+  return Number.isInteger(n) && n > 0 && n < PALETTES.length ? n : 0;
+}
+function theme_apply(i) {
+  const root = document.documentElement;
+  const vars = theme_vars(i);
+  for (const k of Object.keys(vars)) i === 0 ? root.style.removeProperty(k) : root.style.setProperty(k, vars[k]);
+  try {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      if (i === 0) meta.setAttribute('content', '#04110d');
+      else {
+        const c = document.createElement('canvas').getContext('2d');
+        c.fillStyle = '#000'; c.fillStyle = vars['--background']; c.fillRect(0, 0, 1, 1);
+        const [r, g, bl] = c.getImageData(0, 0, 1, 1).data;
+        meta.setAttribute('content', '#' + [r, g, bl].map((v) => v.toString(16).padStart(2, '0')).join(''));
+      }
+    }
+  } catch {}
+}
+function theme_pick(i) {
+  try { i === 0 ? localStorage.removeItem(THEME_KEY) : localStorage.setItem(THEME_KEY, String(i)); } catch {}
+  theme_apply(i);
+  if (document.getElementById('theme-root')) theme_open();
+}
+function theme_close() { const el = document.getElementById('theme-root'); if (el) el.remove(); }
+function theme_open() {
+  const scroll = document.querySelector('#theme-root .theme-grid')?.scrollTop || 0;
+  theme_close();
+  const cur = theme_current();
+  const cards = PALETTES.map(([name, h, a, b], i) => `
+    <button class="theme-opt ${i === cur ? 'on' : ''}" onclick="theme_pick(${i})" aria-label="Paleta ${name}">
+      <div class="theme-prev" style="background:oklch(0.12 0.028 ${b})"><i></i><span class="dot" style="background:oklch(0.72 0.24 ${a})"></span>
+        <div class="bar"><span class="p1" style="background:oklch(0.85 0.19 ${h})"></span><span class="p2" style="background:oklch(0.72 0.24 ${a})"></span></div></div>
+      <span>${name}<em class="ck">${icon('check', 'ic-sm')}</em></span>
+    </button>`).join('');
+  const root = document.createElement('div');
+  root.id = 'theme-root';
+  root.innerHTML = `
+    <div class="theme-mask" onclick="theme_close()"></div>
+    <div class="theme-panel" role="dialog" aria-label="Cores do aplicativo">
+      <div class="theme-head"><div><b>Cores do aplicativo</b><small>Escolha uma das ${PALETTES.length} paletas</small></div><span class="theme-chip">${PALETTES[cur][0]}</span></div>
+      <div class="theme-grid">${cards}</div>
+      <div class="theme-foot"><button onclick="theme_pick(0)">Voltar às cores originais</button></div>
+    </div>`;
+  document.body.appendChild(root);
+  const grid = root.querySelector('.theme-grid');
+  if (scroll) grid.scrollTop = scroll; else root.querySelector('.theme-opt.on')?.scrollIntoView({ block: 'center' });
+}
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') theme_close(); });
+theme_apply(theme_current());
+
 capture_first_touch();
 if (path_promo) {
   state.promo = { id: path_promo[1], code: String(path_promo[2] || '').toUpperCase() };

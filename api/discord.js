@@ -17,7 +17,7 @@ const CHANNEL_SAQUES     = process.env.DISCORD_CHANNEL_SAQUES;
 const CHANNEL_COMISSOES  = process.env.DISCORD_CHANNEL_COMISSOES;
 const CHANNEL_BANNERS    = process.env.DISCORD_CHANNEL_BANNERS;
 const ADMIN_EMAIL        = (process.env.ADMIN_EMAIL || "").toLowerCase();
-const SUPPORT_WHATSAPP_DEFAULT = String(process.env.SUPPORT_WHATSAPP || "553195738547").replace(/\D/g, "");
+const SUPPORT_WHATSAPP_DEFAULT = String(process.env.SUPPORT_WHATSAPP || "553791994100").replace(/\D/g, "");
 
 const discord_headers = {
   Authorization: `Bot ${BOT_TOKEN}`,

@@ -253,7 +253,7 @@ export default async function handler(req, res) {
   }
 
   if (action === "admin_update_withdrawal") {
-    const { email, password, msg_id, status, assas_id } = body;
+    const { email, password, msg_id, status, transfer_id } = body;
     const user = await find_user(email);
     if (!user || user.password_hash !== simple_hash(password)) return res.status(401).json({ error: "Acesso negado" });
     if (email.toLowerCase() !== ADMIN_EMAIL) return res.status(403).json({ error: "Acesso negado" });
@@ -264,7 +264,7 @@ export default async function handler(req, res) {
 
     const data = JSON.parse(target.content);
     await discord_patch(`/channels/${CHANNEL_SAQUES}/messages/${msg_id}`, {
-      content: JSON.stringify({ ...data, status, ...(assas_id ? { assas_id } : {}) }),
+      content: JSON.stringify({ ...data, status, ...(transfer_id ? { transfer_id } : {}) }),
     });
     return res.status(200).json({ ok: true });
   }

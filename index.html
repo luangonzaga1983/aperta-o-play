@@ -686,16 +686,64 @@ async function load_commissions_panel() {
   el.innerHTML = data.commissions.slice(0, 8).map((c) => commission_row(c, false)).join('');
 }
 
-async function open_pix() {
-  open_modal(`<h3 class="modal-title">Gerando Pix…</h3>${spinner_block()}`);
+function fmt_cpf(v) {
+  const d = String(v || '').replace(/\D/g, '').slice(0, 14);
+  if (d.length <= 11) return d.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  return d.replace(/^(\d{2})(\d)/, '$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3').replace(/\.(\d{3})(\d)/, '.$1/$2').replace(/(\d{4})(\d)/, '$1-$2');
+}
 
-  const data = await pay({ action: 'create_pix', email: state.user.email, plan_price: state.selected_plan });
+function stop_pix_poll() {
+  if (window._pix_timer) { clearInterval(window._pix_timer); window._pix_timer = null; }
+}
+
+// Passo 1: o Asaas exige CPF/CNPJ do pagador para gerar a cobrança Pix
+function open_pix() {
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem('ap_payer') || '{}'); } catch {}
+  open_modal(`
+    <h3 class="modal-title">Dados para o Pix</h3>
+    <p class="muted center mt-2 xs">Necessários para emitir a cobrança de ${brl(state.selected_plan)}.</p>
+    <form onsubmit="submit_pix(event)">
+      <div id="pix-form-alert" class="mt-3"></div>
+      <label class="field">Nome completo<input type="text" id="pix-name" autocomplete="name" value="${esc(saved.name || '')}" required></label>
+      <label class="field">CPF<input type="text" id="pix-cpf" inputmode="numeric" autocomplete="off" placeholder="000.000.000-00" maxlength="18" value="${esc(saved.cpf ? fmt_cpf(saved.cpf) : '')}" oninput="this.value = fmt_cpf(this.value)" required></label>
+      <button class="btn-brand w-full mt-4" id="pix-submit">Gerar Pix de ${brl(state.selected_plan)}</button>
+    </form>`, stop_pix_poll);
+}
+
+async function submit_pix(e) {
+  e.preventDefault();
+  const name = document.getElementById('pix-name').value.trim();
+  const cpf  = document.getElementById('pix-cpf').value.replace(/\D/g, '');
+  const btn  = document.getElementById('pix-submit');
+  const fail = (msg) => { document.getElementById('pix-form-alert').innerHTML = `<div class="notice err">${esc(msg)}</div>`; };
+
+  if (name.length < 3) { fail('Informe seu nome completo'); return; }
+  if (cpf.length !== 11 && cpf.length !== 14) { fail('Informe um CPF válido'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Gerando Pix…';
+
+  let data;
+  try {
+    data = await pay({ action: 'create_pix', email: state.user.email, plan_price: state.selected_plan, name, cpf_cnpj: cpf });
+  } catch {
+    data = { error: 'Sem conexão. Tente novamente.' };
+  }
 
   if (data.error) {
-    open_modal(`<div class="notice err" style="margin-top:1.5rem">${esc(data.error)}</div><button class="btn-line w-full" onclick="close_modal()">Fechar</button>`);
+    btn.disabled = false;
+    btn.innerHTML = `Gerar Pix de ${brl(state.selected_plan)}`;
+    fail(data.error);
     return;
   }
 
+  try { localStorage.setItem('ap_payer', JSON.stringify({ name, cpf })); } catch {}
+  show_pix(data);
+}
+
+// Passo 2: mostra o QR Code e confere o pagamento sozinho a cada 4s
+function show_pix(data) {
   window._pix_assas_id = data.assas_id;
   window._pix_code = data.qr_code;
   open_modal(`
@@ -704,15 +752,31 @@ async function open_pix() {
     <p class="muted mt-4 xs">Pix copia e cola</p>
     <div class="code-box">${esc(data.qr_code)}</div>
     <button class="btn-brand w-full mt-3" onclick="copy_text(window._pix_code, 'Código copiado')">${icon('copy', 'ic-sm')}Copiar código Pix</button>
-    <button class="btn-line w-full mt-3" id="pix-check-btn" onclick="check_pix(this)">${icon('check', 'ic-sm')}Já paguei</button>
-    <p class="muted center gap-2 mt-4"><span class="pulse-dot"></span>Aguardando pagamento…</p>`);
+    <button class="btn-line w-full mt-3" id="pix-check-btn" onclick="check_pix(true)">${icon('check', 'ic-sm')}Já paguei</button>
+    <p class="muted center gap-2 mt-4"><span class="pulse-dot"></span>Aguardando pagamento…</p>`, stop_pix_poll);
+
+  stop_pix_poll();
+  let tries = 0;
+  window._pix_timer = setInterval(() => {
+    if (++tries > 225) { stop_pix_poll(); return; } // ~15 min
+    check_pix(false);
+  }, 4000);
 }
 
-async function check_pix(btn) {
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Verificando…';
-  const data = await pay({ action: 'check_payment', assas_id: window._pix_assas_id, email: state.user.email });
+async function check_pix(manual) {
+  if (window._pix_checking) return;
+  window._pix_checking = true;
+  const btn = document.getElementById('pix-check-btn');
+  if (manual && btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Verificando…'; }
+
+  let data = {};
+  try {
+    data = await pay({ action: 'check_payment', assas_id: window._pix_assas_id, email: state.user.email });
+  } catch {}
+  window._pix_checking = false;
+
   if (data.status === 'approved') {
+    stop_pix_poll();
     toast('Pagamento confirmado! Plano ativado.');
     close_modal();
     const u = await dc({ action: 'get_user', email: state.user.email });
@@ -720,9 +784,11 @@ async function check_pix(btn) {
     render();
     return;
   }
-  btn.disabled = false;
-  btn.innerHTML = `${icon('check', 'ic-sm')}Já paguei`;
-  toast('Pagamento ainda não identificado. Aguarde alguns segundos.');
+  if (manual && btn) {
+    btn.disabled = false;
+    btn.innerHTML = `${icon('check', 'ic-sm')}Já paguei`;
+    toast('Pagamento ainda não identificado. Aguarde alguns segundos.');
+  }
 }
 
 async function render_indicados() {

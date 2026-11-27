@@ -214,7 +214,7 @@ body.menu-open .drawer-mask { opacity: 1; pointer-events: auto; }
 .plans-cta::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 45%; pointer-events: none; background: linear-gradient(100deg, transparent 0%, rgb(255 255 255 / .25) 30%, rgb(255 255 255 / .9) 50%, rgb(255 255 255 / .25) 70%, transparent 100%); animation: plans-sweep 2s ease-in-out infinite; }
 .glow-card { position: relative; box-shadow: 0 0 26px -10px color-mix(in oklab, var(--primary) 80%, transparent); }
 .glow-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px; pointer-events: none; background: conic-gradient(from var(--ang), transparent 0 50%, var(--primary) 72%, var(--accent) 88%, transparent 100%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; animation: ang-spin 4s linear infinite; filter: drop-shadow(0 0 6px var(--primary)); }
-@media (prefers-reduced-motion: reduce) { .plans-cta, .plans-cta::after, .glow-card::before { animation: none; } }
+/* Sem regra de "reduzir movimento" aqui de propósito: o destaque do botão Planos deve animar sempre */
 .adm { display: flex; min-height: 100vh; background: var(--background); }
 .adm-side { width: 15.5rem; flex-shrink: 0; border-right: 1px solid var(--border); background: var(--card); padding: 1rem .75rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
 .adm-main { flex: 1; min-width: 0; }

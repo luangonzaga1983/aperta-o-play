@@ -1405,7 +1405,6 @@ function render_painel() {
   const plans = u.plan
     ? `<div class="card glow-card"><h2>Plano ativo: ${brl(u.plan)}</h2>
          <div class="mt-4"><div class="plan-row static"><div><p class="plan-price">${brl(u.plan)}</p><p class="tiny">por mês</p></div><p class="plan-comm">comissão <b>${brl((PLANS.find((p) => p.price === u.plan) || {}).commission || 0)}</b></p></div></div>
-         <button class="btn-wa w-full mt-4" style="justify-content:center" onclick="open_premium_group()">${wa_icon()}Grupo Premium</button>
          <button class="btn-line w-full mt-3 plans-cta" onclick="open_plans()">Planos</button>
        </div>`
     : `<div class="card glow-card">
@@ -1431,6 +1430,7 @@ function render_painel() {
     ${plans}
     ${referral_html()}
     <section class="card"><h2>Últimas comissões</h2><div class="list mt-3" id="commissions-list">${spinner_block()}</div></section>
+    ${u.plan ? `<button class="btn-wa w-full" style="justify-content:center;margin:1.25rem 0 5rem" onclick="open_premium_group()">${wa_icon()}Entrar no Grupo Premium</button>` : ''}
     <button class="fab" onclick="open_support()">${icon('chat')}<span><b>Suporte</b><small>conversas</small></span><span class="fab-dot" id="fab-dot"></span></button>`));
 
   carousel_reset_timer();

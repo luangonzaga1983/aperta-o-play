@@ -209,9 +209,9 @@ body.menu-open .drawer-mask { opacity: 1; pointer-events: auto; }
   0%, 100% { box-shadow: 0 0 14px -2px color-mix(in oklab, var(--primary) 70%, transparent), 0 0 0 0 color-mix(in oklab, var(--primary) 55%, transparent); }
   50% { box-shadow: 0 0 30px 2px color-mix(in oklab, var(--primary) 95%, transparent), 0 0 0 8px transparent; }
 }
-@keyframes plans-sweep { 0% { transform: translateX(-140%) skewX(-18deg); } 60%, 100% { transform: translateX(260%) skewX(-18deg); } }
-.plans-cta { position: relative; overflow: hidden; isolation: isolate; animation: plans-pulse 2.2s ease-in-out infinite; }
-.plans-cta::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 40%; pointer-events: none; background: linear-gradient(100deg, transparent, rgb(255 255 255 / .6), transparent); animation: plans-sweep 2.8s ease-in-out infinite; }
+@keyframes plans-sweep { 0% { transform: translateX(-160%) skewX(-20deg); } 45%, 100% { transform: translateX(300%) skewX(-20deg); } }
+.plans-cta { position: relative; overflow: hidden; isolation: isolate; animation: plans-pulse 2s ease-in-out infinite; font-weight: 800; letter-spacing: .02em; }
+.plans-cta::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 45%; pointer-events: none; background: linear-gradient(100deg, transparent 0%, rgb(255 255 255 / .25) 30%, rgb(255 255 255 / .9) 50%, rgb(255 255 255 / .25) 70%, transparent 100%); animation: plans-sweep 2s ease-in-out infinite; }
 .glow-card { position: relative; box-shadow: 0 0 26px -10px color-mix(in oklab, var(--primary) 80%, transparent); }
 .glow-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px; pointer-events: none; background: conic-gradient(from var(--ang), transparent 0 50%, var(--primary) 72%, var(--accent) 88%, transparent 100%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; animation: ang-spin 4s linear infinite; filter: drop-shadow(0 0 6px var(--primary)); }
 @media (prefers-reduced-motion: reduce) { .plans-cta, .plans-cta::after, .glow-card::before { animation: none; } }

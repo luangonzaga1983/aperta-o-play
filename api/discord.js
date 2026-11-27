@@ -17,6 +17,7 @@ const CHANNEL_SAQUES     = process.env.DISCORD_CHANNEL_SAQUES;
 const CHANNEL_COMISSOES  = process.env.DISCORD_CHANNEL_COMISSOES;
 const CHANNEL_BANNERS    = process.env.DISCORD_CHANNEL_BANNERS;
 const ADMIN_EMAIL        = (process.env.ADMIN_EMAIL || "").toLowerCase();
+const PREMIUM_GROUP_URL = String(process.env.PREMIUM_GROUP_URL || "https://chat.whatsapp.com/ICiRTG425vwKoWkMVSNhj6").trim();
 const SUPPORT_WHATSAPP_DEFAULT = String(process.env.SUPPORT_WHATSAPP || "553791994100").replace(/\D/g, "");
 
 const discord_headers = {
@@ -576,6 +577,14 @@ export default async function handler(req, res) {
     await update_user(msg_id, next);
     if (login !== user.login) await log_event("profile_update", { email: user.email, fields: ["login"], ...log_context(request_context(req, body.client)) });
     return res.status(200).json({ ok: true, user: public_user(next) });
+  }
+
+  // Link do grupo premium: só é entregue para quem tem plano ativo (não fica exposto no código do site)
+  if (action === "premium_group") {
+    const user = await auth(body);
+    if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
+    if (!user.plan) return res.status(403).json({ error: "O grupo é exclusivo para quem tem plano ativo." });
+    return res.status(200).json({ url: PREMIUM_GROUP_URL });
   }
 
   if (action === "get_user") {

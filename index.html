@@ -1103,8 +1103,30 @@ function plans_html() {
 
 function select_plan(price) {
   state.selected_plan = price;
-  document.getElementById('plans-list').innerHTML = plans_html();
-  document.getElementById('pix-btn-label').textContent = `Gerar Pix de ${brl(price)}`;
+  const list = document.getElementById('plans-list');
+  if (list) list.innerHTML = plans_html();
+  const label = document.getElementById('pix-btn-label');
+  if (label) label.textContent = `Gerar Pix de ${brl(price)}`;
+}
+
+// Janela com todos os planos (aparece ao tocar no botão "Planos"; continua disponível mesmo com plano ativo)
+function open_plans() {
+  const current = Number(state.user?.plan) || 0;
+  open_modal(`
+    <h3 class="modal-title">Planos</h3>
+    <p class="muted center mt-2 xs">${current ? `Seu plano ativo: ${brl(current)}. Você pode renovar ou ativar outro.` : 'Escolha um plano e pague no Pix.'}</p>
+    <div class="mt-4" id="plans-list">${plans_html()}</div>
+    <button class="btn-brand w-full mt-4" onclick="open_pix()">${icon('play', 'ic-sm').replace('fill="none"', 'fill="currentColor"')}<span id="pix-btn-label">Gerar Pix de ${brl(state.selected_plan)}</span></button>`);
+}
+
+// Entra no grupo premium do WhatsApp (o link vem do servidor e só para quem tem plano)
+async function open_premium_group() {
+  if (!state.user?.plan) { toast('O grupo é exclusivo para quem tem plano ativo.'); return; }
+  let data = {};
+  try { data = await dc({ action: 'premium_group' }); } catch { data = { error: 'Sem conexão. Tente novamente.' }; }
+  if (!data.url) { toast(data.error || 'Não foi possível abrir o grupo agora.'); return; }
+  const w = window.open(data.url, '_blank', 'noopener');
+  if (!w) open_modal(`<h3 class="modal-title">Grupo Premium</h3><a class="btn-wa w-full mt-4" style="text-decoration:none;justify-content:center" href="${esc(data.url)}" target="_blank" rel="noopener">${wa_icon()}Entrar no grupo</a>`);
 }
 
 function render() {
@@ -1368,11 +1390,15 @@ function render_painel() {
   const bal = Number(u.balance || 0);
   const eye = state.hidden ? 'eye_off' : 'eye';
   const plans = u.plan
-    ? `<div class="card"><h2>Plano ativo: ${brl(u.plan)}</h2><div class="mt-4"><div class="plan-row static"><div><p class="plan-price">${brl(u.plan)}</p><p class="tiny">por mês</p></div><p class="plan-comm">comissão <b>${brl((PLANS.find((p) => p.price === u.plan) || {}).commission || 0)}</b></p></div></div></div>`
+    ? `<div class="card"><h2>Plano ativo: ${brl(u.plan)}</h2>
+         <div class="mt-4"><div class="plan-row static"><div><p class="plan-price">${brl(u.plan)}</p><p class="tiny">por mês</p></div><p class="plan-comm">comissão <b>${brl((PLANS.find((p) => p.price === u.plan) || {}).commission || 0)}</b></p></div></div>
+         <button class="btn-wa w-full mt-4" style="justify-content:center" onclick="open_premium_group()">${wa_icon()}Grupo Premium</button>
+         <button class="btn-line w-full mt-3" onclick="open_plans()">Planos</button>
+       </div>`
     : `<div class="card">
          <h2>Ative seu plano</h2>
-         <div class="mt-4" id="plans-list">${plans_html()}</div>
-         <button class="btn-brand w-full mt-4" onclick="open_pix()">${icon('play', 'ic-sm').replace('fill="none"', 'fill="currentColor"')}<span id="pix-btn-label">Gerar Pix de ${brl(state.selected_plan)}</span></button>
+         <p class="muted mt-2">Escolha um plano, pague no Pix e libere seu link de indicação.</p>
+         <button class="btn-brand w-full mt-4" onclick="open_plans()">Planos</button>
        </div>`;
 
   mount(shell('', `

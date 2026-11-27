@@ -835,6 +835,7 @@ function shell(title, body) {
     ...(u.is_admin ? [
       { id: 'adm_banners', title: 'Gerenciar banners', detail: 'Enviar, ver desempenho e excluir', icon: 'image_plus', tone: 's', go: "adm.view='banners'; set_page('admin')" },
       { id: 'adm_videos',  title: 'Gerenciar vídeos',  detail: 'Publicar e organizar vídeos',      icon: 'video',      tone: 's', go: "adm.view='videos'; set_page('admin')" },
+      { id: 'adm_money',   title: 'Adicionar dinheiro', detail: 'Creditar saldo (teste de saque)', icon: 'wallet',     tone: 's', go: 'open_add_money()' },
     ] : []),
     ...(is_staff() ? [{ id: 'admin', title: 'Administração', detail: 'Usuários, finanças e suporte', icon: 'shield', tone: 's' }] : []),
   ];
@@ -1427,6 +1428,7 @@ function render_painel() {
       <p data-money="${bal}" style="margin-top:.5rem;font-size:2.25rem;font-weight:800">${money(bal)}</p>
       <button class="btn-brand mt-4" style="padding:.5rem 1rem;border-radius:.75rem;font-size:.875rem" onclick="set_page('saque')">${icon('wallet', 'ic-sm')}Sacar</button>
     </section>
+    ${u.is_admin || u.staff_role === 'admin' ? `<button class="btn-line w-full" style="margin-top:.75rem" onclick="open_add_money()">${icon('wallet', 'ic-sm')}Adicionar dinheiro (admin)</button>` : ''}
     ${plans}
     ${referral_html()}
     <section class="card"><h2>Últimas comissões</h2><div class="list mt-3" id="commissions-list">${spinner_block()}</div></section>
@@ -3147,6 +3149,24 @@ function adm_shell_html() {
         <main class="adm-view" id="adm-view"></main>
       </div>
     </div>`;
+}
+
+// Admin: credita saldo em qualquer conta (padrão: a própria) para testar o saque
+async function open_add_money() {
+  if (!adm.by_id['users.add_money']) {
+    const d = await adm_call('catalog');
+    if (d.error) { toast(d.error); return; }
+    adm.catalog = d.actions;
+    adm.role = d.role;
+    adm.by_id = Object.fromEntries(d.actions.map((a) => [a.id, a]));
+  }
+  if (!adm.by_id['users.add_money']) { toast('Seu cargo não permite esta função'); return; }
+  adm_action('users.add_money', {}, async (data) => {
+    const r = await dc({ action: 'get_user' });
+    if (r?.user) save_user(r.user);
+    toast(`Saldo adicionado! Novo saldo: ${brl(data.after)}`);
+    set_page(state.page);
+  }, { email: state.user.email });
 }
 
 async function render_admin() {

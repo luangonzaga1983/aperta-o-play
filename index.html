@@ -202,6 +202,19 @@ body.menu-open .drawer-mask { opacity: 1; pointer-events: auto; }
 .mist { animation: mist-in 380ms ease-out; }
 @keyframes mist-in { from { opacity: 0; filter: blur(6px); transform: scale(1.01); } to { opacity: 1; filter: none; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .mist, .premium::after, .pill-glow::after, .pulse-dot { animation: none; } .track, .drawer { transition: none; } }
+/* Botão "Planos" chamativo + borda do card girando */
+@property --ang { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@keyframes ang-spin { to { --ang: 360deg; } }
+@keyframes plans-pulse {
+  0%, 100% { box-shadow: 0 0 14px -2px color-mix(in oklab, var(--primary) 70%, transparent), 0 0 0 0 color-mix(in oklab, var(--primary) 55%, transparent); }
+  50% { box-shadow: 0 0 30px 2px color-mix(in oklab, var(--primary) 95%, transparent), 0 0 0 8px transparent; }
+}
+@keyframes plans-sweep { 0% { transform: translateX(-140%) skewX(-18deg); } 60%, 100% { transform: translateX(260%) skewX(-18deg); } }
+.plans-cta { position: relative; overflow: hidden; isolation: isolate; animation: plans-pulse 2.2s ease-in-out infinite; }
+.plans-cta::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 40%; pointer-events: none; background: linear-gradient(100deg, transparent, rgb(255 255 255 / .6), transparent); animation: plans-sweep 2.8s ease-in-out infinite; }
+.glow-card { position: relative; box-shadow: 0 0 26px -10px color-mix(in oklab, var(--primary) 80%, transparent); }
+.glow-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px; pointer-events: none; background: conic-gradient(from var(--ang), transparent 0 50%, var(--primary) 72%, var(--accent) 88%, transparent 100%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; animation: ang-spin 4s linear infinite; filter: drop-shadow(0 0 6px var(--primary)); }
+@media (prefers-reduced-motion: reduce) { .plans-cta, .plans-cta::after, .glow-card::before { animation: none; } }
 .adm { display: flex; min-height: 100vh; background: var(--background); }
 .adm-side { width: 15.5rem; flex-shrink: 0; border-right: 1px solid var(--border); background: var(--card); padding: 1rem .75rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
 .adm-main { flex: 1; min-width: 0; }
@@ -1390,15 +1403,15 @@ function render_painel() {
   const bal = Number(u.balance || 0);
   const eye = state.hidden ? 'eye_off' : 'eye';
   const plans = u.plan
-    ? `<div class="card"><h2>Plano ativo: ${brl(u.plan)}</h2>
+    ? `<div class="card glow-card"><h2>Plano ativo: ${brl(u.plan)}</h2>
          <div class="mt-4"><div class="plan-row static"><div><p class="plan-price">${brl(u.plan)}</p><p class="tiny">por mês</p></div><p class="plan-comm">comissão <b>${brl((PLANS.find((p) => p.price === u.plan) || {}).commission || 0)}</b></p></div></div>
          <button class="btn-wa w-full mt-4" style="justify-content:center" onclick="open_premium_group()">${wa_icon()}Grupo Premium</button>
-         <button class="btn-line w-full mt-3" onclick="open_plans()">Planos</button>
+         <button class="btn-line w-full mt-3 plans-cta" onclick="open_plans()">Planos</button>
        </div>`
-    : `<div class="card">
+    : `<div class="card glow-card">
          <h2>Ative seu plano</h2>
          <p class="muted mt-2">Escolha um plano, pague no Pix e libere seu link de indicação.</p>
-         <button class="btn-brand w-full mt-4" onclick="open_plans()">Planos</button>
+         <button class="btn-brand w-full mt-4 plans-cta" onclick="open_plans()">Planos</button>
        </div>`;
 
   mount(shell('', `

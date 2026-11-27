@@ -107,6 +107,22 @@ const find_account = (identifier) => String(identifier).includes("@") ? find_use
 
 const shown_name = (entry) => entry.login || entry.name || String(entry.email || "").split("@")[0];
 
+// Limites de saque saneados: nunca deixa uma configuração torta travar todos os saques
+// (ex.: máximo menor que o mínimo, vazio, texto ou negativo).
+const brl_text = (n) => `R$ ${Number(n).toFixed(2).replace(".", ",")}`;
+function withdraw_limits(settings) {
+  const min = Math.max(1, Number(settings?.min_withdraw) || 1);
+  let max = Number(settings?.max_withdraw) || 0;
+  if (!(max > 0) || max < min) max = 0; // 0 = sem limite (máximo inválido é ignorado)
+  return { min_withdraw: min, max_withdraw: max };
+}
+function parse_amount(value) {
+  let text = String(value ?? "").trim().replace(/[R$\s]/g, "");
+  if (text.includes(",")) text = text.replace(/\./g, "").replace(",", ".");
+  const n = Number(text);
+  return Number.isFinite(n) ? Math.round(n * 100) / 100 : NaN;
+}
+
 async function update_user(msg_id, data) {
   return discord_patch(`/channels/${CHANNEL_USUARIOS}/messages/${msg_id}`, { content: fit_content(data) });
 }
@@ -387,7 +403,7 @@ export default async function handler(req, res) {
 
   if (action === "get_config") {
     const settings = await get_settings();
-    return res.status(200).json({ google_client_id: GOOGLE_CLIENT_ID || null, payouts: PAYOUTS_ENABLED, maintenance: settings.maintenance, maintenance_message: settings.maintenance_message, support_whatsapp: settings.support_whatsapp || SUPPORT_WHATSAPP_DEFAULT, chat_enabled: !!process.env.DISCORD_CHANNEL_SUPORTE });
+    return res.status(200).json({ google_client_id: GOOGLE_CLIENT_ID || null, payouts: PAYOUTS_ENABLED, maintenance: settings.maintenance, maintenance_message: settings.maintenance_message, support_whatsapp: settings.support_whatsapp || SUPPORT_WHATSAPP_DEFAULT, chat_enabled: !!process.env.DISCORD_CHANNEL_SUPORTE, withdrawals_open: settings.withdrawals_open !== false, ...withdraw_limits(settings) });
   }
 
   if (action === "get_announcements") {
@@ -726,28 +742,33 @@ export default async function handler(req, res) {
     if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
 
     const settings = await get_settings();
-    if (!settings.withdrawals_open) return res.status(403).json({ error: "Os saques estão temporariamente pausados." });
+    if (settings.withdrawals_open === false) return res.status(403).json({ error: "Os saques estão temporariamente pausados. Tente novamente mais tarde." });
     if (user.adm?.withdraw_blocked) return res.status(403).json({ error: "Saques bloqueados para esta conta. Fale com o suporte." });
 
-    const amount = Number(body.amount);
-    if (!(amount > 0) || amount > (user.balance || 0)) return res.status(400).json({ error: "Saldo insuficiente" });
-    if (amount < Math.max(1, settings.min_withdraw)) return res.status(400).json({ error: `O valor mínimo de saque é R$ ${Math.max(1, settings.min_withdraw).toFixed(2).replace(".", ",")}` });
-    if (settings.max_withdraw > 0 && amount > settings.max_withdraw) return res.status(400).json({ error: `O valor máximo por saque é R$ ${settings.max_withdraw.toFixed(2).replace(".", ",")}` });
+    const amount = parse_amount(body.amount);
+    if (!(amount > 0)) return res.status(400).json({ error: "Informe um valor válido para sacar." });
+    const { min_withdraw, max_withdraw } = withdraw_limits(settings);
+    const balance = Math.round(Number(user.balance || 0) * 100) / 100;
+    if (amount < min_withdraw) return res.status(400).json({ error: `O valor mínimo de saque é ${brl_text(min_withdraw)}.` });
+    if (amount > balance) return res.status(400).json({ error: balance < min_withdraw ? `Seu saldo (${brl_text(balance)}) ainda é menor que o saque mínimo de ${brl_text(min_withdraw)}.` : `Saldo insuficiente. Você tem ${brl_text(balance)} disponível.` });
+    if (max_withdraw > 0 && amount > max_withdraw) return res.status(400).json({ error: `O valor máximo por saque é ${brl_text(max_withdraw)}.` });
 
     // usa a chave enviada ou a salva no perfil
     const type = PIX_TYPES[String(body.pix_type || user.pix_type || "").toLowerCase()];
     const raw_key = body.pix_key || user.pix_key;
-    if (!type || !valid_pix_key(type, raw_key)) return res.status(400).json({ error: "Chave Pix inválida" });
+    if (!raw_key) return res.status(400).json({ error: "Salve sua chave Pix antes de sacar." });
+    if (!type || !valid_pix_key(type, raw_key)) return res.status(400).json({ error: "A chave Pix salva é inválida. Salve a chave novamente." });
     const key = normalize_pix_key(type, raw_key);
     const owner_doc = type === "CPF" || type === "CNPJ" ? key : only_digits(body.owner_doc || user.owner_doc);
-    if (!valid_doc(owner_doc)) return res.status(400).json({ error: "Informe o CPF do titular da chave Pix" });
+    if (!valid_doc(owner_doc)) return res.status(400).json({ error: "Informe o CPF do titular da chave Pix (salve a chave novamente com o CPF)." });
 
     try {
       const r = await process_withdrawal({ email: user.email, amount, key, type, owner_doc, source: "user" });
       return res.status(200).json({ ok: true, status: r.status });
     } catch (e) {
-      if (e instanceof MpError) return res.status(e.status >= 400 && e.status < 600 ? e.status : 400).json({ error: e.message });
-      throw e;
+      if (e instanceof MpError) return res.status(e.status === 429 ? 429 : 400).json({ error: e.message });
+      console.error("[saque]", e);
+      return res.status(500).json({ error: "Não foi possível processar o saque agora. Seu saldo não foi alterado; tente de novo em instantes." });
     }
   }
 

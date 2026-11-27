@@ -1619,7 +1619,11 @@ const mask_key = (k) => !k ? '' : (k.length <= 8 ? k : `${k.slice(0, 3)}••�
 
 async function render_saque() {
   const cfg = await get_cfg();
+  try { const fresh = await dc({ action: 'get_user' }); if (fresh?.user) { const keep = state.user?.token; state.user = { ...fresh.user, token: fresh.user.token || keep }; localStorage.setItem('ap_user', JSON.stringify(state.user)); } } catch {}
   const u = state.user;
+  const min_w = Math.max(1, Number(cfg.min_withdraw) || 1);
+  const max_w = Number(cfg.max_withdraw) || 0;
+  const paused = cfg.withdrawals_open === false;
   const bal = Number(u.balance || 0);
   const auto = !!cfg.payouts;
   const saved = u.pix_key ? `${PIX_LABEL[u.pix_type] || u.pix_type} · ${mask_key(u.pix_key)}` : null;
@@ -1642,7 +1646,7 @@ async function render_saque() {
           <option value="random" ${u.pix_type === 'EVP' ? 'selected' : ''}>Chave aleatória</option>
         </select>
       </label>
-      <label class="field">Chave Pix<input type="text" id="chave-valor" placeholder="Sua chave Pix" required></label>
+      <label class="field">Chave Pix<input type="text" id="chave-valor" placeholder="${saved ? 'Deixe vazio para manter a chave salva' : 'Sua chave Pix'}" ${saved ? '' : 'required'}></label>
       <div id="chave-doc-wrap" style="display:${['CPF', 'CNPJ', undefined].includes(u.pix_type) ? 'none' : 'block'}">
         <label class="field">CPF do titular da chave<input type="text" id="chave-doc" inputmode="numeric" placeholder="000.000.000-00" maxlength="18" oninput="this.value = fmt_cpf(this.value)"></label>
       </div>
@@ -1653,13 +1657,15 @@ async function render_saque() {
       <button class="btn-brand w-full mt-4" id="chave-btn">Salvar chave Pix</button>
     </form>
 
-    <form class="card" onsubmit="solicitar_saque(event)">
+    <form class="card" onsubmit="solicitar_saque(event)" novalidate>
       <h2>Sacar por Pix</h2>
       <p class="tiny mt-2" style="font-size:.75rem">${auto ? 'O Pix é enviado na hora para a sua chave salva.' : 'O pagamento é processado em até 24h após a solicitação.'}</p>
       <div id="saque-alert" class="mt-3"></div>
       <p class="muted xs">Destino: <b>${saved ? esc(saved) : 'nenhuma chave salva'}</b></p>
-      <label class="field">Valor<input type="number" id="saque-valor" inputmode="decimal" placeholder="0,00" min="1" max="${bal}" step="0.01" required></label>
-      <button class="btn-brand w-full mt-5" id="saque-btn" ${saved ? '' : 'disabled'}>Sacar agora</button>
+      <p class="tiny" style="font-size:.75rem;margin-top:.35rem">Saque mínimo: <b>${brl(min_w)}</b>${max_w ? ` · máximo por saque: <b>${brl(max_w)}</b>` : ''}</p>
+      ${paused ? '<div class="notice err mt-3">Os saques estão temporariamente pausados. Tente novamente mais tarde.</div>' : bal < min_w ? `<div class="notice mt-3">Seu saldo ainda é menor que o saque mínimo de ${brl(min_w)}.</div>` : ''}
+      <label class="field">Valor<input type="text" id="saque-valor" inputmode="decimal" placeholder="0,00" autocomplete="off" value="${bal >= min_w ? String(bal.toFixed(2)).replace('.', ',') : ''}"></label>
+      <button class="btn-brand w-full mt-5" id="saque-btn" ${saved && !paused && bal >= min_w ? '' : 'disabled'}>Sacar agora</button>
     </form>
     <section class="card"><h2>Histórico de saques</h2><div id="saques-list" class="list mt-3">${spinner_block()}</div></section>`));
 
@@ -1670,14 +1676,13 @@ async function salvar_chave(e) {
   e.preventDefault();
   const alert_el = document.getElementById('chave-alert');
   const btn = document.getElementById('chave-btn');
+  const key = document.getElementById('chave-valor').value.trim();
+  const body = { action: 'update_profile', auto_payout: document.getElementById('chave-auto').checked };
+  if (key) { body.pix_type = document.getElementById('chave-tipo').value; body.pix_key = key; body.owner_doc = document.getElementById('chave-doc').value; }
+  else if (!state.user.pix_key) { alert_el.innerHTML = '<div class="notice err">Informe a sua chave Pix.</div>'; return; }
   btn.disabled = true;
-  const data = await dc({
-    action: 'update_profile',
-    pix_type: document.getElementById('chave-tipo').value,
-    pix_key: document.getElementById('chave-valor').value.trim(),
-    owner_doc: document.getElementById('chave-doc').value,
-    auto_payout: document.getElementById('chave-auto').checked,
-  });
+  let data;
+  try { data = await dc(body); } catch { data = { error: 'Sem conexão com o servidor. Verifique a internet e tente de novo.' }; }
   btn.disabled = false;
   if (data.error) { alert_el.innerHTML = `<div class="notice err">${esc(data.error)}</div>`; return; }
   save_user(data.user);
@@ -1687,26 +1692,37 @@ async function salvar_chave(e) {
 
 async function solicitar_saque(e) {
   e.preventDefault();
-  const valor = parseFloat(document.getElementById('saque-valor').value);
   const alert_el = document.getElementById('saque-alert');
   const fail = (msg) => { alert_el.innerHTML = `<div class="notice err">${msg}</div>`; };
-
-  if (!valor || valor <= 0)       { fail('Valor inválido'); return; }
-  if (valor > state.user.balance) { fail('Saldo insuficiente'); return; }
-
   const btn = document.getElementById('saque-btn');
+  if (btn.disabled) return;
+
+  // aceita "10,50", "10.50" e "R$ 1.234,56"
+  let raw = String(document.getElementById('saque-valor').value).trim().replace(/[R$\s]/g, '');
+  if (raw.includes(',')) raw = raw.replace(/\./g, '').replace(',', '.');
+  const valor = Math.round(Number(raw) * 100) / 100;
+  if (!raw || !Number.isFinite(valor) || valor <= 0) { fail('Digite o valor que deseja sacar. Exemplo: 25,00'); return; }
+  const cfg = await get_cfg();
+  const min_w = Math.max(1, Number(cfg.min_withdraw) || 1);
+  const max_w = Number(cfg.max_withdraw) || 0;
+  const bal = Math.round(Number(state.user.balance || 0) * 100) / 100;
+  if (valor < min_w) { fail(`O valor mínimo de saque é ${brl(min_w)}.`); return; }
+  if (valor > bal) { fail(`Saldo insuficiente. Você tem ${brl(bal)} disponível.`); return; }
+  if (max_w > 0 && valor > max_w) { fail(`O valor máximo por saque é ${brl(max_w)}.`); return; }
+
+  alert_el.innerHTML = '';
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Enviando…';
 
-  const data = await dc({ action: 'request_withdrawal', amount: valor });
+  let data;
+  try { data = await dc({ action: 'request_withdrawal', amount: valor }); }
+  catch { data = { error: 'Não deu para confirmar o saque (conexão ou servidor demorou). Confira o histórico abaixo antes de tentar de novo, para não sacar duas vezes.' }; }
 
   btn.disabled = false;
   btn.innerHTML = 'Sacar agora';
+  if (data.error) { fail(esc(data.error)); load_withdrawals(); return; }
 
-  if (data.error) { fail(esc(data.error)); return; }
-
-  const fresh = await dc({ action: 'get_user' });
-  if (fresh.user) save_user(fresh.user);
+  try { const fresh = await dc({ action: 'get_user' }); if (fresh.user) save_user(fresh.user); } catch {}
   const msg = {
     approved:   'Saque enviado! O Pix já foi para a sua conta.',
     processing: 'Saque em processamento. Você será pago em instantes.',
@@ -1716,13 +1732,15 @@ async function solicitar_saque(e) {
 }
 
 async function load_withdrawals() {
-  const data = await dc({ action: 'get_withdrawals' });
+  let data;
+  try { data = await dc({ action: 'get_withdrawals' }); } catch { data = { error: true }; }
   const el = document.getElementById('saques-list');
   if (!el) return;
+  if (data.error || !Array.isArray(data.withdrawals)) { el.innerHTML = '<p class="muted" style="padding:1rem 0;text-align:center">Não foi possível carregar o histórico agora.</p>'; return; }
   if (!data.withdrawals?.length) { el.innerHTML = '<p class="muted" style="padding:1rem 0;text-align:center">Nenhum saque ainda.</p>'; return; }
   const tone  = { pending: 'yellow', processing: 'yellow', approved: 'green', rejected: 'red' };
   const label = { pending: 'Pendente', processing: 'Processando', approved: 'Pago', rejected: 'Recusado' };
-  el.innerHTML = data.withdrawals.map((w) => `
+  el.innerHTML = [...data.withdrawals].sort((x, y) => new Date(y.created_at) - new Date(x.created_at)).map((w) => `
     <div class="li">
       <span class="avatar-ic">${icon('wallet', 'ic-sm')}</span>
       <div class="grow"><p class="name">${brl(w.amount)} · ${esc((w.pix_type || '').toUpperCase())}</p><p class="tiny">${fmt_date(w.created_at)}</p></div>

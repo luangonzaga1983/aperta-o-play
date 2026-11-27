@@ -319,6 +319,177 @@ body.menu-open .drawer-mask { opacity: 1; pointer-events: auto; }
 .mat-actions { display: flex; gap: .375rem; margin-top: auto; }
 .mat-actions .btn-brand { flex: 1; padding: .5rem; font-size: .8125rem; }
 .mat-wa { display: flex; align-items: center; justify-content: center; width: 2.25rem; flex-shrink: 0; border-radius: 9999px; background: var(--whatsapp); color: var(--primary-foreground); }
+
+.vid-list { display: flex; flex-direction: column; gap: 1rem; }
+.vid-card { border-radius: 1.25rem; border: 1px solid var(--border); background: color-mix(in oklab, var(--card) 70%, transparent); padding: .875rem; }
+.vid-media { position: relative; display: block; width: 100%; border-radius: .875rem; overflow: hidden; background: #000; aspect-ratio: 9 / 16; max-height: 26rem; }
+.vid-media video, .vid-media iframe, .vid-media img { width: 100%; height: 100%; border: 0; object-fit: contain; background: #000; }
+.vid-title { margin-top: .75rem; font-size: 1.125rem; font-weight: 800; }
+.vid-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }
+.vid-label { margin-top: 1rem; font-size: .75rem; font-weight: 700; color: var(--muted-foreground); }
+.chip-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+.chip { border-radius: 9999px; border: 1px solid var(--border); background: var(--secondary); padding: .5rem .875rem; font-size: .8125rem; font-weight: 600; }
+.chip:active { transform: scale(.97); }
+.promo { width: 100%; max-width: 28rem; margin: 0 auto; padding: 1rem 0 3rem; }
+.promo-ref { margin-top: 1rem; border-radius: 1rem; border: 1px solid var(--border); background: color-mix(in oklab, var(--card) 80%, transparent); padding: .875rem 1rem; }
+.promo-ref .k { font-size: .6875rem; font-weight: 700; letter-spacing: .04em; color: var(--muted-foreground); }
+.promo-ref .n { font-size: 1.25rem; font-weight: 800; margin-top: .125rem; }
+.promo-plan { display: flex; justify-content: space-between; align-items: center; padding: .875rem 0; border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent); }
+.promo-plan:last-child { border-bottom: none; }
+
+
+/* ===== chat de suporte ===== */
+.cbadge { display: none; min-width: 1.1rem; height: 1.1rem; padding: 0 .3rem; border-radius: 9999px; background: var(--destructive); color: #fff; font-size: .65rem; font-weight: 800; align-items: center; justify-content: center; margin-left: auto; }
+.cbadge.on { display: inline-flex; }
+.fab { position: fixed; }
+.fab .fab-dot { position: absolute; top: -.35rem; right: -.35rem; min-width: 1.15rem; height: 1.15rem; padding: 0 .3rem; border-radius: 9999px; background: var(--destructive); color: #fff; font-size: .65rem; font-weight: 800; display: none; align-items: center; justify-content: center; }
+.fab .fab-dot.on { display: inline-flex; }
+.chat-box { display: flex; flex-direction: column; height: calc(100dvh - 15.5rem); min-height: 22rem; margin-top: 1rem; border: 1px solid var(--border); border-radius: 1.25rem; background: color-mix(in oklab, var(--card) 70%, transparent); overflow: hidden; }
+.chat-top { display: flex; align-items: center; gap: .75rem; padding: .75rem 1rem; border-bottom: 1px solid var(--border); }
+.chat-top .live { width: .55rem; height: .55rem; border-radius: 9999px; background: var(--muted-foreground); }
+.chat-top .live.on { background: var(--whatsapp); box-shadow: 0 0 0 4px color-mix(in oklab, var(--whatsapp) 25%, transparent); }
+.chat-msgs { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: .4rem; overscroll-behavior: contain; }
+.msg { max-width: 82%; padding: .5rem .75rem; border-radius: 1rem; font-size: .9rem; line-height: 1.35; white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg small { display: block; margin-top: .15rem; font-size: .65rem; opacity: .65; text-align: right; }
+.msg.me { align-self: flex-end; background: var(--primary); color: var(--primary-foreground); border-bottom-right-radius: .3rem; }
+.msg.them { align-self: flex-start; background: var(--secondary); border-bottom-left-radius: .3rem; }
+.msg.sending { opacity: .6; }
+.msg.failed { outline: 1px solid var(--destructive); }
+.chat-day { align-self: center; font-size: .7rem; color: var(--muted-foreground); margin: .5rem 0 .25rem; }
+.chat-empty { margin: auto; text-align: center; color: var(--muted-foreground); font-size: .875rem; padding: 1rem; }
+.chat-form { display: flex; gap: .5rem; align-items: flex-end; padding: .75rem; border-top: 1px solid var(--border); }
+.chat-form textarea { flex: 1; resize: none; max-height: 7rem; min-height: 2.6rem; border-radius: 1.2rem; border: 1px solid var(--border); background: color-mix(in oklab, var(--background) 60%, transparent); padding: .6rem 1rem; outline: none; font-size: 1rem; font-family: inherit; color: inherit; }
+.chat-form textarea:focus { box-shadow: 0 0 0 2px var(--primary); }
+.chat-form button { width: 2.6rem; height: 2.6rem; flex-shrink: 0; border-radius: 9999px; background: var(--primary); color: var(--primary-foreground); display: inline-flex; align-items: center; justify-content: center; }
+.chat-form button:disabled { opacity: .5; }
+.sup-opt { display: flex; align-items: center; gap: .85rem; width: 100%; text-align: left; padding: .9rem 1rem; margin-top: .75rem; border: 1px solid var(--border); border-radius: 1rem; background: var(--secondary); }
+.sup-opt b { display: block; } .sup-opt small { color: var(--muted-foreground); }
+.sup-ic { display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 9999px; flex-shrink: 0; }
+.sup-ic.wa { background: var(--whatsapp); color: var(--primary-foreground); } .sup-ic.ap { background: var(--primary); color: var(--primary-foreground); }
+.achat { display: grid; grid-template-columns: 20rem 1fr; gap: 1rem; margin-top: 1rem; height: calc(100dvh - 11rem); min-height: 28rem; }
+.achat-list { border: 1px solid var(--border); border-radius: 1rem; overflow-y: auto; background: color-mix(in oklab, var(--card) 70%, transparent); }
+.achat-item { display: flex; align-items: center; gap: .7rem; width: 100%; text-align: left; padding: .7rem .85rem; border-bottom: 1px solid var(--border); }
+.achat-item:hover, .achat-item.on { background: var(--secondary); }
+.achat-item .grow { min-width: 0; flex: 1; } .achat-item p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.achat-pane .chat-box { height: 100%; margin-top: 0; }
+.achat-back { display: none; }
+@media (max-width: 800px) {
+  .achat { grid-template-columns: 1fr; height: calc(100dvh - 9rem); }
+  .achat.open .achat-list { display: none; } .achat:not(.open) .achat-pane { display: none; }
+  .achat-back { display: inline-flex; }
+}
+.nbell { position: relative; display: inline-flex; }
+.nbadge { position: absolute; top: -.45rem; right: -.5rem; min-width: 1.05rem; height: 1.05rem; padding: 0 .25rem; border-radius: 9999px; background: var(--destructive); color: #fff; font-size: .625rem; font-weight: 800; display: none; align-items: center; justify-content: center; }
+.nbadge.on { display: inline-flex; }
+.tone-row { display: flex; align-items: center; gap: .75rem; width: 100%; padding: .625rem .75rem; border-radius: .875rem; border: 1px solid var(--border); background: var(--secondary); text-align: left; margin-top: .5rem; }
+.tone-row.sel { border-color: var(--primary); background: color-mix(in oklab, var(--primary) 12%, transparent); }
+.tone-row .dot { width: 1rem; height: 1rem; border-radius: 9999px; border: 2px solid var(--muted-foreground); flex-shrink: 0; }
+.tone-row.sel .dot { border-color: var(--primary); background: var(--primary); }
+.tone-play { margin-left: auto; font-size: .75rem; font-weight: 700; color: var(--primary); }
+.n-item { display: flex; gap: .75rem; padding: .75rem 0; border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent); }
+.n-item:last-child { border-bottom: none; }
+.n-item.new .n-title::after { content: ''; display: inline-block; width: .5rem; height: .5rem; margin-left: .4rem; border-radius: 9999px; background: var(--primary); }
+.n-title { font-size: .875rem; font-weight: 700; }
+.n-text { font-size: .8125rem; color: var(--muted-foreground); margin-top: .125rem; word-break: break-word; }
+.n-switch { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .5rem 0; font-size: .875rem; }
+.n-switch input { width: 1.25rem; height: 1.25rem; accent-color: var(--primary); }
+
+/* ===================== Tema v2: mais vivo ===================== */
+:root {
+  --background: oklch(0.12 0.028 205);
+  --card: oklch(0.17 0.032 200);
+  --primary: oklch(0.85 0.19 158);
+  --accent: oklch(0.72 0.24 330);
+  --border: oklch(0.3 0.05 185);
+  --gradient-brand: linear-gradient(135deg, oklch(0.89 0.19 150) 0%, oklch(0.81 0.17 182) 55%, oklch(0.73 0.16 215) 100%);
+  --gradient-hot: linear-gradient(135deg, oklch(0.76 0.23 335), oklch(0.68 0.21 290));
+  --shadow-glow: 0 0 44px -10px color-mix(in oklab, var(--primary) 60%, transparent);
+  --gradient-page:
+    radial-gradient(90% 46% at 12% -6%, color-mix(in oklab, var(--primary) 22%, transparent), transparent 62%),
+    radial-gradient(70% 42% at 104% 6%, color-mix(in oklab, var(--accent) 17%, transparent), transparent 64%),
+    radial-gradient(90% 50% at 50% 112%, color-mix(in oklab, oklch(0.7 0.17 215) 14%, transparent), transparent 62%);
+}
+.bg-page { background-attachment: fixed; }
+
+.btn-brand { background-image: var(--gradient-brand); font-weight: 700; position: relative; overflow: hidden; box-shadow: 0 10px 26px -10px color-mix(in oklab, var(--primary) 75%, transparent), inset 0 1px 0 rgb(255 255 255 / .38); transition: transform .12s, box-shadow .2s, filter .2s; }
+.btn-brand:hover { filter: brightness(1.07); }
+.btn-brand.big { padding: .95rem 2.25rem; font-size: 1.125rem; animation: glowpulse 2.8s ease-in-out infinite; }
+@keyframes glowpulse { 0%, 100% { box-shadow: 0 10px 28px -10px color-mix(in oklab, var(--primary) 70%, transparent), inset 0 1px 0 rgb(255 255 255 / .38); } 50% { box-shadow: 0 14px 44px -6px color-mix(in oklab, var(--primary) 95%, transparent), inset 0 1px 0 rgb(255 255 255 / .38); } }
+.btn-line { background: color-mix(in oklab, var(--card) 70%, transparent); border-color: color-mix(in oklab, var(--primary) 28%, var(--border)); transition: transform .12s, border-color .2s, background .2s; }
+.btn-line:hover { border-color: var(--primary); background: color-mix(in oklab, var(--primary) 10%, var(--card)); }
+
+.card { background-image: linear-gradient(160deg, color-mix(in oklab, white 7%, transparent), transparent 60%); border-color: color-mix(in oklab, var(--primary) 16%, var(--border)); box-shadow: 0 20px 44px -26px rgb(0 0 0 / .85), inset 0 1px 0 color-mix(in oklab, white 9%, transparent); }
+.card h2 { font-weight: 700; letter-spacing: -.01em; }
+.page-title { font-size: 1.5rem; font-weight: 800; letter-spacing: -.02em; }
+
+.bal-card { background-image: radial-gradient(120% 150% at 100% 0%, color-mix(in oklab, var(--primary) 40%, transparent), transparent 55%), radial-gradient(90% 100% at 0% 100%, color-mix(in oklab, var(--accent) 16%, transparent), transparent 60%), linear-gradient(150deg, color-mix(in oklab, white 12%, var(--card)), var(--card)); border: 1px solid color-mix(in oklab, var(--primary) 42%, transparent); }
+.bal-card p[data-money] { font-size: 2.75rem !important; letter-spacing: -.03em; line-height: 1.1; background-image: var(--gradient-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.pill-glow { box-shadow: 0 8px 22px -10px color-mix(in oklab, var(--primary) 80%, transparent); }
+
+.plan-row { border-radius: 1.1rem; transition: border-color .2s, box-shadow .2s, transform .12s, background .2s; }
+.plan-row.static { background-image: linear-gradient(160deg, color-mix(in oklab, white 6%, transparent), transparent); }
+.plan-row:not(.static):hover { border-color: color-mix(in oklab, var(--primary) 60%, var(--border)); }
+.plan-row.sel { background: color-mix(in oklab, var(--primary) 10%, var(--card)); }
+
+.field input, .field select, .input { background: color-mix(in oklab, white 4%, var(--background)); transition: box-shadow .15s, border-color .15s; }
+.field input:focus, .field select:focus, .input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 28%, transparent); }
+.auth-card { background-image: linear-gradient(160deg, color-mix(in oklab, white 7%, transparent), transparent 55%); border-color: color-mix(in oklab, var(--primary) 30%, var(--border)); }
+.stat { background-image: linear-gradient(160deg, color-mix(in oklab, var(--primary) 12%, transparent), transparent); border: 1px solid color-mix(in oklab, var(--primary) 16%, var(--border)); }
+.stat .v { background-image: var(--gradient-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.list > .li { padding: .85rem 0; }
+.badge { border: 1px solid color-mix(in oklab, currentColor 22%, transparent); }
+
+.hero h1 { font-size: 2.6rem; letter-spacing: -.03em; line-height: 1.07; }
+.hero h1 .text-primary { background-image: var(--gradient-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero h1 .text-accent { background-image: var(--gradient-hot); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.section-title { letter-spacing: -.02em; }
+.feat-grid { display: grid; gap: .75rem; margin-top: 2.5rem; text-align: left; }
+.feat { display: flex; align-items: flex-start; gap: .9rem; padding: 1rem; border-radius: 1.25rem; border: 1px solid color-mix(in oklab, var(--primary) 20%, var(--border)); background-image: linear-gradient(160deg, color-mix(in oklab, white 7%, transparent), transparent 70%); background-color: color-mix(in oklab, var(--card) 60%, transparent); }
+.feat .ico { display: flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; flex-shrink: 0; border-radius: .9rem; color: var(--primary-foreground); background-image: var(--gradient-brand); box-shadow: 0 8px 20px -8px color-mix(in oklab, var(--primary) 80%, transparent); }
+.feat .ico.hot { background-image: var(--gradient-hot); color: #fff; box-shadow: 0 8px 20px -8px color-mix(in oklab, var(--accent) 80%, transparent); }
+.feat b { display: block; font-size: 1rem; }
+.feat p { margin-top: .15rem; font-size: .8125rem; color: var(--muted-foreground); }
+
+.drawer { background-image: radial-gradient(100% 40% at 0% 0%, color-mix(in oklab, var(--primary) 16%, transparent), transparent 70%); backdrop-filter: blur(18px); }
+.menu-item { border-radius: 1rem; min-height: 4.5rem; background-image: linear-gradient(160deg, color-mix(in oklab, white 5%, transparent), transparent); }
+.menu-item.on { box-shadow: var(--shadow-glow); }
+.drawer-me { display: flex; align-items: center; gap: .75rem; width: 100%; margin-top: 1.1rem; padding: .7rem .8rem; border-radius: 1rem; text-align: left; border: 1px solid color-mix(in oklab, var(--primary) 25%, var(--border)); background: color-mix(in oklab, var(--primary) 8%, transparent); }
+.drawer-me span { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.drawer-me b { font-size: 1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drawer-me small { font-size: .75rem; color: var(--muted-foreground); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.av { position: relative; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; border-radius: 9999px; background-image: var(--gradient-brand); color: var(--primary-foreground); font-weight: 800; }
+.av b { font-weight: 800; }
+.av img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.av.xl { box-shadow: 0 0 0 4px var(--card), 0 0 0 6px var(--primary), 0 14px 40px -8px color-mix(in oklab, var(--primary) 70%, transparent); }
+.hd-avatar { display: inline-flex; border-radius: 9999px; box-shadow: 0 0 0 2px color-mix(in oklab, var(--primary) 55%, transparent); }
+
+.prof-hero { position: relative; margin-top: 1.25rem; padding: 0 1rem 1.4rem; text-align: center; overflow: hidden; border-radius: 1.75rem; border: 1px solid color-mix(in oklab, var(--primary) 24%, var(--border)); background-color: color-mix(in oklab, var(--card) 85%, transparent); box-shadow: 0 24px 50px -28px rgb(0 0 0 / .9); }
+.prof-cover { height: 6.5rem; margin: 0 -1rem; background-image: radial-gradient(60% 120% at 85% 0%, rgb(255 255 255 / .35), transparent 60%), var(--gradient-brand); }
+.prof-av { position: relative; display: inline-block; margin-top: -3rem; }
+.prof-cam { position: absolute; right: -.15rem; bottom: .1rem; display: flex; align-items: center; justify-content: center; width: 2.2rem; height: 2.2rem; border-radius: 9999px; color: #fff; background-image: var(--gradient-hot); border: 3px solid var(--card); box-shadow: 0 6px 16px -4px color-mix(in oklab, var(--accent) 80%, transparent); }
+.prof-name { margin-top: .75rem; font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; }
+.prof-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: .4rem; margin-top: .7rem; }
+.f2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.kv > div { display: flex; justify-content: space-between; gap: 1rem; padding: .65rem 0; border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent); font-size: .875rem; }
+.kv > div:last-child { border-bottom: none; }
+.kv span { color: var(--muted-foreground); }
+.kv b { font-weight: 600; text-align: right; word-break: break-all; }
+
+.tabbar { position: fixed; left: 50%; bottom: calc(.75rem + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 45; width: min(calc(100% - 1.5rem), 26rem); display: grid; grid-template-columns: repeat(5, 1fr); gap: .15rem; padding: .4rem; border-radius: 1.6rem; background: color-mix(in oklab, var(--card) 78%, transparent); backdrop-filter: blur(22px) saturate(160%); -webkit-backdrop-filter: blur(22px) saturate(160%); border: 1px solid color-mix(in oklab, var(--primary) 24%, var(--border)); box-shadow: 0 22px 50px -14px rgb(0 0 0 / .75); }
+.tab { position: relative; display: flex; flex-direction: column; align-items: center; gap: .15rem; padding: .5rem 0 .4rem; border-radius: 1.2rem; font-size: .6875rem; font-weight: 600; color: var(--muted-foreground); transition: color .15s, background .15s, transform .1s; }
+.tab:active { transform: scale(.94); }
+.tab .ic { width: 1.4rem; height: 1.4rem; }
+.tab.on { color: var(--primary-foreground); background-image: var(--gradient-brand); box-shadow: 0 8px 22px -8px color-mix(in oklab, var(--primary) 85%, transparent); }
+.tab .nbadge { top: .1rem; right: 50%; margin-right: -1.5rem; }
+.fab { bottom: 6rem; border-radius: 1.4rem; background-image: var(--gradient-brand); }
+#toast { bottom: 6rem; background-image: linear-gradient(160deg, color-mix(in oklab, white 8%, transparent), transparent); border-color: color-mix(in oklab, var(--primary) 35%, var(--border)); box-shadow: 0 16px 40px -12px rgb(0 0 0 / .8); }
+
+.vid-card, .mat { border-color: color-mix(in oklab, var(--primary) 18%, var(--border)); background-image: linear-gradient(160deg, color-mix(in oklab, white 6%, transparent), transparent 60%); }
+.chip { transition: border-color .15s, background .15s; }
+.chip:hover { border-color: var(--primary); background: color-mix(in oklab, var(--primary) 12%, var(--secondary)); }
+
+@media (prefers-reduced-motion: reduce) { .btn-brand.big { animation: none; } }
 </style>
 </head>
 <body>
@@ -329,6 +500,7 @@ body.menu-open .drawer-mask { opacity: 1; pointer-events: auto; }
 <script>
 const API_DISCORD = '/api/discord';
 const API_PAY     = '/api/pay';
+const API_CHAT    = '/api/chat';
 const LOGO        = 'data:image/jpeg;base64,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';
 
 const PLANS = [
@@ -364,6 +536,7 @@ const ICONS = {
   key: '<path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/>',
   bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
   chat: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+  send: '<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
   video: '<path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/>',
   download: '<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>',
   images: '<path d="M18 22H4a2 2 0 0 1-2-2V6"/><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18"/><circle cx="12" cy="8" r="2"/><rect width="16" height="16" x="6" y="2" rx="2"/>',
@@ -371,6 +544,10 @@ const ICONS = {
   gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>',
   user: '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
 };
+
+ICONS.camera = '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>';
+ICONS.mail = '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>';
+ICONS.sparkles = '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>';
 
 const WA_PATH = 'M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2Zm5.8 14.03c-.24.68-1.42 1.31-1.96 1.36-.5.05-1.13.07-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.01-2.41.27-.29.58-.36.78-.36h.56c.18 0 .42-.07.66.5.24.58.82 2.01.89 2.15.07.15.12.32.02.51-.1.19-.14.31-.29.48-.14.17-.3.38-.43.51-.14.14-.29.3-.13.59.17.29.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.3 1.42.29.14.46.12.63-.07.17-.19.72-.84.92-1.13.19-.29.38-.24.65-.14.26.1 1.68.79 1.97.94.29.14.48.22.55.34.07.12.07.69-.17 1.37Z';
 
@@ -447,13 +624,15 @@ async function api(endpoint, body) {
 }
 const dc  = (body) => api(API_DISCORD, body);
 const pay = (body) => api(API_PAY, body);
+const chatapi = (body) => api(API_CHAT, body);
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const brl = (v) => Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 const money = (v) => state.hidden ? 'R$ ••••' : brl(v);
 const fmt_date = (s) => new Date(s).toLocaleDateString('pt-BR');
 const is_staff = () => !!(state.user?.is_admin || state.user?.staff_role);
-const user_name = () => state.user.email.split('@')[0];
+function display_name(u) { return (u && (u.login || u.name)) || String(u?.email || '').split('@')[0]; }
+const user_name = () => display_name(state.user);
 const ref_url = (code) => `${location.origin}/r/${encodeURIComponent(code)}`;
 const mount = (html) => { document.getElementById('app').innerHTML = html; window.scrollTo(0, 0); render_imp_bar(); };
 
@@ -602,10 +781,13 @@ function shell(title, body) {
   const u = state.user;
   const items = [
     { id: 'painel',    title: 'Meu dashboard',  detail: 'Saldo e comissões',        icon: 'dashboard', tone: 'p' },
+    { id: 'perfil',    title: 'Meu perfil',     detail: 'Foto, dados, e-mail e senha', icon: 'user',   tone: 'a' },
     { id: 'indicados', title: 'Meus afiliados', detail: 'Minha rede de indicações', icon: 'users',     tone: 'a' },
+    { id: 'notificacoes', title: 'Notificações', detail: 'Vendas, avisos e sons', icon: 'bell', tone: 'a' },
     { id: 'banners',   title: 'Galeria de banners',   detail: 'Materiais de divulgação',  icon: 'images', tone: 'p' },
     { id: 'videos',    title: 'Vídeos de divulgação', detail: 'Vídeos para compartilhar', icon: 'video',  tone: 'a' },
     { id: 'saque',     title: 'Saque Pix',      detail: 'Sacar minhas comissões',   icon: 'wallet',    tone: 'p' },
+    { id: 'suporte',   title: 'Suporte',        detail: 'Chat ao vivo ou WhatsApp', icon: 'chat',    tone: 'a', go: 'open_support()' },
     { id: 'senha',     title: 'Mudar senha',    detail: 'Segurança da minha conta', icon: 'key',       tone: 'p' },
     ...(u.is_admin ? [
       { id: 'adm_banners', title: 'Gerenciar banners', detail: 'Enviar, ver desempenho e excluir', icon: 'image_plus', tone: 's', go: "adm.view='banners'; set_page('admin')" },
@@ -626,8 +808,7 @@ function shell(title, body) {
       <div class="drawer-head">
         <button class="drawer-x" onclick="toggle_menu(false)" aria-label="Fechar menu">${icon('x')}</button>
         <div class="row gap-3">${logo_html(48, !!u.plan)}<span style="min-width:0"><span class="brand-text" style="display:block;font-size:1.25rem">Aperta o Play</span>${premium_html()}</span></div>
-        <h2>Dashboard afiliado</h2>
-        <p class="muted">Minha conta</p>
+        <button class="drawer-me" onclick="set_page('perfil')">${avatar_html(u, 46)}<span><b>${esc(display_name(u))}</b><small>${esc(u.email)}</small></span>${icon('chev_r', 'ic-sm')}</button>
       </div>
       <nav>${menu}</nav>
       <div class="drawer-cta"><button onclick="set_page('indicados')"><span class="row gap-3">${icon('share')}Indique e ganhe</span>${icon('arrow_up_right')}</button></div>
@@ -640,15 +821,203 @@ function shell(title, body) {
             ${logo_html(40, !!u.plan)}${premium_html(true)}
           </div>
           <div class="row gap-4" style="color:var(--muted-foreground)">
-            <button onclick="show_notices()" aria-label="Avisos">${icon('bell')}</button>
-            ${is_staff() ? `<button onclick="set_page('admin')" aria-label="Administração">${icon('shield')}</button>` : ''}
+            <button class="hd-avatar" onclick="set_page('perfil')" aria-label="Meu perfil">${avatar_html(u, 36)}</button>
+            <button class="nbell" onclick="set_page('notificacoes')" aria-label="Notificações">${icon('bell')}<span class="nbadge${notif.unread ? ' on' : ''}">${notif.unread > 9 ? '9+' : notif.unread}</span></button>
+            ${is_staff() ? `<button class="nbell" onclick="open_admin_home()" aria-label="Administração">${icon('shield')}<span class="nbadge js-chat-n${staffchat.unread ? ' on' : ''}">${staffchat.unread > 9 ? '9+' : staffchat.unread}</span></button>` : ''}
             <button onclick="logout()" aria-label="Sair">${icon('log_out')}</button>
           </div>
         </header>
         ${title ? `<h1 class="page-title" style="margin-top:1.25rem">${title}</h1>` : ''}
         ${body}
       </div>
-    </div>`;
+    </div>
+    ${tabbar_html()}`;
+}
+
+const TABS = [
+  { id: 'painel', label: 'Início', icon: 'dashboard' },
+  { id: 'indicados', label: 'Rede', icon: 'users' },
+  { id: 'videos', label: 'Vídeos', icon: 'video' },
+  { id: 'notificacoes', label: 'Avisos', icon: 'bell', badge: true },
+  { id: 'perfil', label: 'Perfil', icon: 'user' },
+];
+function tabbar_html() {
+  return `<nav class="tabbar" aria-label="Navegação principal">${TABS.map((t) => `
+    <button class="tab ${state.page === t.id ? 'on' : ''}" onclick="set_page('${t.id}')" ${state.page === t.id ? 'aria-current="page"' : ''}>
+      ${icon(t.icon)}<span>${t.label}</span>${t.badge ? `<span class="nbadge${notif.unread ? ' on' : ''}">${notif.unread > 9 ? '9+' : notif.unread}</span>` : ''}
+    </button>`).join('')}</nav>`;
+}
+
+// ---------- perfil ----------
+function avatar_html(u, size = 40, cls = '') {
+  const initial = esc(display_name(u).trim().charAt(0).toUpperCase() || '?');
+  const style = `width:${size}px;height:${size}px;font-size:${Math.round(size * 0.42)}px`;
+  const img = u.avatar ? `<img src="/api/avatar?id=${esc(u.avatar)}" alt="" loading="lazy" onerror="this.remove()">` : '';
+  return `<span class="av ${cls}" style="${style}"><b>${initial}</b>${img}</span>`;
+}
+
+function render_profile() {
+  const u = state.user;
+  const since = u.created_at ? new Date(u.created_at).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) : '';
+  const role = u.is_admin ? 'Dono' : ({ admin: 'Administrador', support: 'Suporte', finance: 'Financeiro' }[u.staff_role] || '');
+  const email_locked = u.is_admin ? 'O e-mail do dono é definido na variável ADMIN_EMAIL da Vercel.' : (u.google ? 'Sua conta entra pelo Google e usa o e-mail do Google. Fale com o suporte para trocar.' : (!u.has_password ? 'Crie uma senha abaixo antes de trocar o e-mail.' : ''));
+  mount(shell('', `
+    <section class="prof-hero">
+      <div class="prof-cover"></div>
+      <div class="prof-av">${avatar_html(u, 96, 'xl')}<button class="prof-cam" onclick="document.getElementById('avatar-file').click()" aria-label="Trocar foto">${icon('camera', 'ic-sm')}</button></div>
+      <input type="file" id="avatar-file" accept="image/*" hidden onchange="pick_avatar(this)">
+      <h1 class="prof-name">${esc(display_name(u))}</h1>
+      <p class="muted">${esc(u.email)}</p>
+      <div class="prof-badges">
+        ${u.plan ? `<span class="badge green">Plano ${brl(u.plan)}</span>` : '<span class="badge yellow">Sem plano ativo</span>'}
+        ${role ? `<span class="badge green">${role}</span>` : ''}
+        ${u.referral_code ? `<span class="badge">Código ${esc(u.referral_code)}</span>` : ''}
+      </div>
+      ${since ? `<p class="tiny" style="margin-top:.6rem">Membro desde ${esc(since)}</p>` : ''}
+      ${u.avatar ? '<button class="link-u" style="margin-top:.5rem" onclick="remove_avatar()">Remover foto</button>' : ''}
+    </section>
+
+    <section class="card">
+      <h2>Dados pessoais</h2>
+      <form onsubmit="save_profile(event)" class="mt-3">
+        <div id="prof-alert"></div>
+        <label class="field">Login (nome de usuário)<input type="text" id="pf-login" maxlength="20" minlength="3" value="${esc(u.login || '')}" placeholder="seu.login" autocapitalize="none" autocorrect="off" spellcheck="false" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9._-]/g, '')"></label>
+        <label class="field">Nome<input type="text" id="pf-name" maxlength="60" value="${esc(u.name || '')}" placeholder="Como você quer ser chamado" autocomplete="name" required></label>
+        <label class="field">WhatsApp<input type="tel" id="pf-whatsapp" value="${esc(u.whatsapp || '')}" placeholder="(11) 91234-5678" autocomplete="tel"></label>
+        <div class="f2">
+          <label class="field">Cidade<input type="text" id="pf-city" maxlength="40" value="${esc(u.city || '')}" autocomplete="address-level2"></label>
+          <label class="field">Nascimento<input type="date" id="pf-birth" value="${esc(u.birth || '')}"></label>
+        </div>
+        <label class="field">Sobre você<input type="text" id="pf-bio" maxlength="100" value="${esc(u.bio || '')}" placeholder="Uma frase curta (opcional)"></label>
+        <button class="btn-brand w-full mt-4" id="pf-btn">Salvar dados</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>E-mail de acesso</h2>
+      <p class="muted mt-2">Atual: <b style="color:var(--foreground)">${esc(u.email)}</b></p>
+      ${email_locked ? `<div class="notice mt-3">${esc(email_locked)}</div>` : `
+      <form onsubmit="save_email(event)" class="mt-3">
+        <div id="em-alert"></div>
+        <label class="field">Novo e-mail<input type="email" id="em-new" autocomplete="email" required></label>
+        <label class="field">Sua senha (para confirmar)<input type="password" id="em-pass" autocomplete="current-password" required></label>
+        <p class="tiny" style="margin-top:.5rem">Suas comissões, saques e indicações continuam na conta. Você entra com o novo e-mail daqui em diante.</p>
+        <button class="btn-line w-full mt-4" id="em-btn">Trocar e-mail</button>
+      </form>`}
+    </section>
+
+    <section class="card">
+      <h2>Senha</h2>
+      <p class="muted mt-2">${u.has_password ? 'Informe a senha atual e escolha uma nova.' : 'Sua conta entra pelo Google. Crie uma senha para também entrar com e-mail.'}</p>
+      <form onsubmit="save_password(event)" class="mt-3">
+        <div id="pw-alert"></div>
+        ${u.has_password ? '<label class="field">Senha atual<input type="password" id="pw-old" autocomplete="current-password" required></label>' : ''}
+        <label class="field">Nova senha<input type="password" id="pw-new" autocomplete="new-password" minlength="6" required></label>
+        <label class="field">Repita a nova senha<input type="password" id="pw-new2" autocomplete="new-password" minlength="6" required></label>
+        <button class="btn-line w-full mt-4" id="pw-btn">Salvar nova senha</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Saque e indicação</h2>
+      <div class="kv mt-3">
+        <div><span>Chave Pix</span><b>${u.pix_key ? `${esc(String(u.pix_type || '').toUpperCase())} · ${esc(u.pix_key)}` : 'não cadastrada'}</b></div>
+        <div><span>Recebimento automático</span><b>${u.auto_payout ? 'ligado' : 'desligado'}</b></div>
+        <div><span>Meu link</span><b>${esc(location.host)}/r/${esc(u.referral_code || '')}</b></div>
+      </div>
+      <div class="row gap-2 mt-4" style="flex-wrap:wrap">
+        <button class="btn-line" onclick="set_page('saque')">${icon('wallet', 'ic-sm')}Dados de saque</button>
+        <button class="btn-line" onclick="copy_text(ref_url(state.user.referral_code), 'Link copiado!')">${icon('copy', 'ic-sm')}Copiar meu link</button>
+      </div>
+    </section>
+
+    <button class="btn-bad w-full mt-5" style="padding:.85rem" onclick="logout()">${icon('log_out', 'ic-sm')}Sair da conta</button>`));
+}
+
+async function pick_avatar(input) {
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { toast('Escolha um arquivo de imagem.'); return; }
+  toast('Enviando foto…', 10000);
+  try {
+    const bitmap = await createImageBitmap(file);
+    const side = Math.min(bitmap.width, bitmap.height);
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 384;
+    canvas.getContext('2d').drawImage(bitmap, (bitmap.width - side) / 2, (bitmap.height - side) / 2, side, side, 0, 0, 384, 384);
+    const data = await dc({ action: 'upload_avatar', image_base64: canvas.toDataURL('image/jpeg', 0.86).split(',')[1] });
+    if (data.error) { toast(data.error, 4500); return; }
+    save_user(data.user);
+    toast('Foto atualizada!');
+    render();
+  } catch {
+    toast('Não foi possível ler essa imagem. Tente outra.', 4500);
+  }
+}
+
+async function remove_avatar() {
+  if (!confirm('Remover sua foto de perfil?')) return;
+  const data = await dc({ action: 'remove_avatar' });
+  if (data.error) { toast(data.error, 4000); return; }
+  save_user(data.user);
+  toast('Foto removida.');
+  render();
+}
+
+function form_busy(btn_id, busy, label) {
+  const btn = document.getElementById(btn_id);
+  if (!btn) return;
+  btn.disabled = busy;
+  btn.innerHTML = busy ? '<span class="spinner"></span> Salvando…' : label;
+}
+
+async function save_profile(e) {
+  e.preventDefault();
+  const alert_box = document.getElementById('prof-alert');
+  form_busy('pf-btn', true);
+  const new_login = document.getElementById('pf-login').value.trim().toLowerCase();
+  if (new_login && new_login !== (state.user.login || '')) {
+    const r = await dc({ action: 'set_login', login: new_login });
+    if (r.error) { form_busy('pf-btn', false, 'Salvar dados'); alert_box.innerHTML = `<div class="notice err">${esc(r.error)}</div>`; return; }
+    save_user(r.user);
+  }
+  const body = { action: 'update_profile', name: document.getElementById('pf-name').value, city: document.getElementById('pf-city').value, birth: document.getElementById('pf-birth').value, bio: document.getElementById('pf-bio').value };
+  const whatsapp = document.getElementById('pf-whatsapp').value.trim();
+  if (whatsapp && whatsapp !== (state.user.whatsapp || '')) body.whatsapp = whatsapp;
+  const data = await dc(body);
+  form_busy('pf-btn', false, 'Salvar dados');
+  if (data.error) { alert_box.innerHTML = `<div class="notice err">${esc(data.error)}</div>`; return; }
+  save_user(data.user);
+  toast('Perfil salvo!');
+  render();
+}
+
+async function save_email(e) {
+  e.preventDefault();
+  const alert_box = document.getElementById('em-alert');
+  form_busy('em-btn', true);
+  const data = await dc({ action: 'change_email', new_email: document.getElementById('em-new').value, password: document.getElementById('em-pass').value });
+  form_busy('em-btn', false, 'Trocar e-mail');
+  if (data.error) { alert_box.innerHTML = `<div class="notice err">${esc(data.error)}</div>`; return; }
+  save_user(data.user);
+  notif.known = null;
+  toast('E-mail alterado! Use o novo e-mail para entrar.', 5000);
+  render();
+}
+
+async function save_password(e) {
+  e.preventDefault();
+  const alert_box = document.getElementById('pw-alert');
+  const next = document.getElementById('pw-new').value;
+  if (next !== document.getElementById('pw-new2').value) { alert_box.innerHTML = '<div class="notice err">As senhas não são iguais</div>'; return; }
+  form_busy('pw-btn', true);
+  const data = await dc({ action: 'change_password', current_password: document.getElementById('pw-old')?.value || '', new_password: next });
+  form_busy('pw-btn', false, 'Salvar nova senha');
+  if (data.error) { alert_box.innerHTML = `<div class="notice err">${esc(data.error)}</div>`; return; }
+  save_user({ ...state.user, has_password: true });
+  toast('Senha alterada!');
+  render();
 }
 
 function referral_html() {
@@ -712,7 +1081,7 @@ function render() {
   clearInterval(state.carousel_timer);
   document.body.classList.remove('menu-open');
   document.getElementById('modal-root').innerHTML = '';
-  if (!state.user && ['painel', 'indicados', 'saque', 'admin', 'senha', 'banners', 'videos'].includes(state.page)) state.page = 'home';
+  if (!state.user && ['painel', 'indicados', 'saque', 'admin', 'senha', 'banners', 'videos', 'notificacoes', 'perfil', 'suporte'].includes(state.page)) state.page = 'home';
   if (state.page === 'admin' && !is_staff()) state.page = 'painel';
   switch (state.page) {
     case 'auth':      render_auth(); break;
@@ -723,6 +1092,10 @@ function render() {
     case 'banners':   render_materials('banners'); break;
     case 'videos':    render_materials('videos'); break;
     case 'invite':    render_invite(); break;
+    case 'promo':     render_promo(); break;
+    case 'notificacoes': render_notifications(); break;
+    case 'perfil':    render_profile(); break;
+    case 'suporte':   render_support(); break;
     case 'admin':     render_admin(); break;
     default:          render_home();
   }
@@ -746,6 +1119,11 @@ function render_home() {
         <h1>Nova forma de ganhar uma <span class="text-primary">renda</span> <span class="text-accent">extra</span> sem sair de casa.</h1>
         <p class="lead">Trabalhe no <b>home office</b> indicando o Aperta o Play. Ative por <b>${brl(PLANS[0].price)}</b> e ganhe <b class="hl">${brl(PLANS[0].commission)} na hora</b> para cada pessoa que entrar com o seu link — saque por Pix quando quiser.</p>
         ${cta}
+        <div class="feat-grid">
+          <div class="feat"><span class="ico">${icon('banknote')}</span><div><b>Comissão na hora</b><p>Cada ativação pelo seu link cai no saldo na mesma hora.</p></div></div>
+          <div class="feat"><span class="ico hot">${icon('wallet')}</span><div><b>Saque por Pix</b><p>Receba direto na sua conta, quando quiser.</p></div></div>
+          <div class="feat"><span class="ico">${icon('video')}</span><div><b>Material pronto</b><p>Vídeos e banners para divulgar com o seu link em um toque.</p></div></div>
+        </div>
         <section style="margin-top:3.5rem;text-align:left">
           <h2 class="section-title">Como funciona</h2>
           <p class="muted" style="margin-top:.5rem;text-align:center">Escolha um plano, pague no Pix e ganhe comissão toda vez que alguém ativar pelo seu link.</p>
@@ -778,7 +1156,8 @@ function render_auth() {
           <div id="g-btn" class="center" style="min-height:44px"></div>
           <p class="tiny center" style="margin:1rem 0 0">ou use seu e-mail</p>
         </div>
-        <label class="field">E-mail<input type="email" id="auth-email" name="email" autocomplete="email" autocapitalize="none" required placeholder="seu@email.com"></label>
+        ${login ? '<label class="field">E-mail ou login<input type="text" id="auth-email" name="email" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required placeholder="seu@email.com ou seu login"></label>' : `<label class="field">Login<input type="text" id="auth-login" name="login" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" minlength="3" maxlength="20" pattern="[A-Za-z0-9._\\-]{3,20}" required placeholder="ex: joao.silva" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9._-]/g, '')"><span class="tiny">Será o seu nome de usuário. 3 a 20 letras, números, ponto, hífen ou _</span></label>
+        <label class="field">E-mail<input type="email" id="auth-email" name="email" autocomplete="email" autocapitalize="none" required placeholder="seu@email.com"></label>`}
         ${login ? '' : `<label class="field">WhatsApp<input type="tel" id="auth-wa" inputmode="numeric" autocomplete="tel" placeholder="(11) 99999-9999" maxlength="15" oninput="this.value = fmt_phone(this.value)" required></label>`}
         <div class="field">
           <label for="auth-pass">Senha</label>
@@ -847,8 +1226,39 @@ async function google_done(resp) {
 }
 
 // pede o WhatsApp de quem entrou pelo Google (ou de contas antigas sem WhatsApp)
+function maybe_ask_login() {
+  if (!state.user || state.user.login || state._asked_login) return false;
+  state._asked_login = true;
+  const suggestion = String(state.user.email || '').split('@')[0].toLowerCase().replace(/[^a-z0-9._-]/g, '').slice(0, 20);
+  open_modal(`
+    <h3 class="modal-title">Escolha seu login</h3>
+    <p class="muted center mt-2 xs">Ele será o seu nome de usuário: aparece no topo do app e serve para entrar.</p>
+    <form onsubmit="save_login(event)">
+      <div id="lg-alert" class="mt-3"></div>
+      <label class="field">Login<input type="text" id="lg-input" value="${esc(suggestion)}" minlength="3" maxlength="20" autocapitalize="none" autocorrect="off" spellcheck="false" required oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9._-]/g, '')"></label>
+      <p class="tiny" style="margin-top:.4rem">3 a 20 letras, números, ponto, hífen ou _</p>
+      <button class="btn-brand w-full mt-4" id="lg-btn">Salvar login</button>
+    </form>`);
+  return true;
+}
+
+async function save_login(e) {
+  e.preventDefault();
+  const btn = document.getElementById('lg-btn');
+  btn.disabled = true;
+  const data = await dc({ action: 'set_login', login: document.getElementById('lg-input').value });
+  btn.disabled = false;
+  if (data.error) { document.getElementById('lg-alert').innerHTML = `<div class="notice err">${esc(data.error)}</div>`; return; }
+  save_user(data.user);
+  close_modal();
+  toast('Login salvo!');
+  render();
+  setTimeout(maybe_ask_whatsapp, 400);
+}
+
 function maybe_ask_whatsapp() {
   if (!state.user || state.user.whatsapp || state._asked_wa) return;
+  if (!state.user.login) { maybe_ask_login(); return; }
   state._asked_wa = true;
   open_modal(`
     <h3 class="modal-title">Qual é o seu WhatsApp?</h3>
@@ -876,10 +1286,14 @@ function toggle_pass() {
   const el = document.getElementById('auth-pass');
   const typed = el.value;
   const email = document.getElementById('auth-email').value;
+  const typed_login = document.getElementById('auth-login')?.value || '';
+  const typed_wa = document.getElementById('auth-wa')?.value || '';
   state.show_pass = !state.show_pass;
   render_auth();
   document.getElementById('auth-pass').value = typed;
   document.getElementById('auth-email').value = email;
+  if (document.getElementById('auth-login')) document.getElementById('auth-login').value = typed_login;
+  if (document.getElementById('auth-wa')) document.getElementById('auth-wa').value = typed_wa;
 }
 
 function auth_err(msg) {
@@ -892,8 +1306,10 @@ async function auth_submit(e, mode) {
   const password = document.getElementById('auth-pass').value;
   const ref_code = document.getElementById('auth-ref')?.value.trim();
   const whatsapp = document.getElementById('auth-wa')?.value.replace(/\D/g, '');
+  const login_name = document.getElementById('auth-login')?.value.trim().toLowerCase();
 
   if (!email || !password) { auth_err('Preencha todos os campos'); return; }
+  if (mode !== 'login' && !/^[a-z0-9._-]{3,20}$/.test(login_name || '')) { auth_err('Escolha um login de 3 a 20 caracteres (letras, números, ponto, hífen ou _)'); return; }
   if (mode !== 'login' && (!whatsapp || whatsapp.length < 10)) { auth_err('Informe um WhatsApp válido com DDD'); return; }
 
   const btn = document.getElementById('auth-btn');
@@ -902,7 +1318,7 @@ async function auth_submit(e, mode) {
 
   const data = mode === 'login'
     ? await dc({ action: 'login', email, password })
-    : await dc({ action: 'register', email, password, whatsapp, referral_code: ref_code });
+    : await dc({ action: 'register', email, login: login_name, password, whatsapp, referral_code: ref_code });
 
   if (data.error) {
     auth_err(data.error);
@@ -946,13 +1362,14 @@ function render_painel() {
     ${plans}
     ${referral_html()}
     <section class="card"><h2>Últimas comissões</h2><div class="list mt-3" id="commissions-list">${spinner_block()}</div></section>
-    <button class="fab" onclick="open_support()">${icon('chat')}<span><b>Suporte</b><small>conversas</small></span></button>`));
+    <button class="fab" onclick="open_support()">${icon('chat')}<span><b>Suporte</b><small>conversas</small></span><span class="fab-dot" id="fab-dot"></span></button>`));
 
   carousel_reset_timer();
   load_banners();
   load_commissions_panel();
   maybe_ask_whatsapp();
   load_announcements();
+  chat_fab_refresh();
 }
 
 async function load_announcements() {
@@ -1099,7 +1516,7 @@ async function load_affiliates() {
   const rows = list.map((a) => {
     const phone = String(a.whatsapp || '').replace(/\D/g, '');
     const wa = phone ? `<a class="aff-wa" href="https://wa.me/55${phone.replace(/^55/, '')}" target="_blank" rel="noopener noreferrer" aria-label="Chamar no WhatsApp">${wa_icon('ic-sm')}</a>` : '';
-    return `<div class="aff"><span class="avatar-ic">${icon('user', 'ic-sm')}</span><div style="min-width:0;flex:1"><p class="name" style="font-weight:600;overflow:hidden;text-overflow:ellipsis">${esc(a.name)}</p><p class="tiny">${esc(a.email)} · ${fmt_date(a.created_at)}</p></div><div style="text-align:right"><span class="badge ${a.plan ? 'green' : 'yellow'}">${a.plan ? `Ativo ${brl(a.plan)}` : 'Sem plano'}</span><p class="tiny" style="margin-top:.25rem">${a.earned ? `+ ${brl(a.earned)}` : ''}</p></div>${wa}</div>`;
+    return `<div class="aff">${avatar_html({ name: a.name, avatar: a.avatar }, 44)}<div style="min-width:0;flex:1"><p class="name" style="font-weight:600;overflow:hidden;text-overflow:ellipsis">${esc(a.name)}</p><p class="tiny">${esc(a.email)} · ${fmt_date(a.created_at)}</p></div><div style="text-align:right"><span class="badge ${a.plan ? 'green' : 'yellow'}">${a.plan ? `Ativo ${brl(a.plan)}` : 'Sem plano'}</span><p class="tiny" style="margin-top:.25rem">${a.earned ? `+ ${brl(a.earned)}` : ''}</p></div>${wa}</div>`;
   }).join('');
   box.innerHTML = `<div class="stat-grid" style="margin-top:0"><div class="stat"><p class="label">Afiliados</p><p class="v">${list.length}</p></div><div class="stat"><p class="label">Com plano</p><p class="v text-primary">${active}</p></div></div><p class="muted mt-3">Total ganho com eles: <b class="text-primary">${brl(earned)}</b></p><div class="mt-3">${rows}</div>`;
 }
@@ -1148,9 +1565,24 @@ async function show_notices() {
 async function open_support() {
   const cfg = await get_cfg();
   const phone = String(cfg?.support_whatsapp || '').replace(/\D/g, '');
-  if (!phone) { toast('Suporte indisponível no momento.'); return; }
-  window.open(`https://wa.me/${phone.startsWith('55') ? phone : '55' + phone}?text=${encodeURIComponent('Olá! Preciso de ajuda no Aperta o Play (' + state.user.email + ')')}`, '_blank', 'noopener');
+  const chat_on = cfg?.chat_enabled !== false;
+  if (!phone && !chat_on) { toast('Suporte indisponível no momento.'); return; }
+  open_modal(`
+    <h3 class="modal-title">Falar com o suporte</h3>
+    <p class="muted center mt-2 xs">Escolha como prefere ser atendido.</p>
+    ${chat_on ? `<button class="sup-opt" onclick="support_chat()"><span class="sup-ic ap">${icon('chat')}</span><span><b>Chat no aplicativo</b><small>Ao vivo, com histórico salvo${chat.unread ? ` · ${chat.unread} nova(s)` : ''}</small></span></button>` : ''}
+    ${phone ? `<button class="sup-opt" onclick="support_whatsapp()"><span class="sup-ic wa">${wa_icon()}</span><span><b>WhatsApp</b><small>Abrir conversa no WhatsApp</small></span></button>` : ''}`);
 }
+
+async function support_whatsapp() {
+  const cfg = await get_cfg();
+  const phone = String(cfg?.support_whatsapp || '').replace(/\D/g, '');
+  close_modal();
+  if (!phone) return;
+  window.open(`https://wa.me/${phone.startsWith('55') ? phone : '55' + phone}?text=${encodeURIComponent('Olá! Preciso de ajuda no Aperta o Play (' + (state.user.login || state.user.email) + ')')}`, '_blank', 'noopener');
+}
+
+function support_chat() { close_modal(); set_page('suporte'); }
 
 const PIX_LABEL = { CPF: 'CPF', CNPJ: 'CNPJ', EMAIL: 'E-mail', PHONE: 'Telefone', EVP: 'Chave aleatória' };
 const mask_key = (k) => !k ? '' : (k.length <= 8 ? k : `${k.slice(0, 3)}•••${k.slice(-4)}`);
@@ -1308,7 +1740,9 @@ function paint_materials(kind) {
   if (!box) return;
   const list = state.materials[kind];
   if (!list.length) { box.innerHTML = '<p class="muted" style="padding:1rem 0;text-align:center">Nenhum material publicado ainda.</p>'; return; }
-  box.innerHTML = `<div class="mat-grid">${list.map((m) => material_card(kind, m)).join('')}</div>`;
+  box.innerHTML = kind === 'videos'
+    ? `<div class="vid-list">${list.map(video_card).join('')}</div>`
+    : `<div class="mat-grid">${list.map((m) => material_card(kind, m)).join('')}</div>`;
 }
 
 async function render_materials(kind) {
@@ -1372,6 +1806,344 @@ async function share_material(btn) {
     }
   }
   window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
+}
+
+
+// ---------- notificações + sons de venda ----------
+const notif = { unread: 0, items: [], known: null, timer: null, busy: false };
+const NOTIF_TONES = [
+  { id: 'caixa', label: 'Caixa registradora' },
+  { id: 'moeda', label: 'Moeda' },
+  { id: 'sino',  label: 'Sino' },
+  { id: 'ding',  label: 'Ding' },
+  { id: 'sucesso', label: 'Sucesso' },
+];
+const notif_key = (name) => `ap_${name}_${(state.user?.email || '').toLowerCase()}`;
+const notif_store = (name, fallback) => { try { return JSON.parse(localStorage.getItem(notif_key(name)) ?? 'null') ?? fallback; } catch { return fallback; } };
+const notif_save = (name, value) => { try { localStorage.setItem(notif_key(name), JSON.stringify(value)); } catch {} };
+const notif_prefs = () => ({ sound: true, tone: 'caixa', volume: 0.8, desktop: false, ...notif_store('notif_prefs', {}) });
+
+let audio_ctx = null;
+function audio_unlock() {
+  try {
+    audio_ctx = audio_ctx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audio_ctx.state === 'suspended') audio_ctx.resume();
+  } catch {}
+}
+['pointerdown', 'keydown', 'touchstart'].forEach((ev) => window.addEventListener(ev, audio_unlock, { passive: true }));
+
+function play_tone(id, volume) {
+  audio_unlock();
+  const ctx = audio_ctx;
+  if (!ctx) return;
+  const vol = Math.max(0, Math.min(1, volume ?? notif_prefs().volume));
+  const t0 = ctx.currentTime + 0.02;
+  const master = ctx.createGain();
+  master.gain.value = vol;
+  master.connect(ctx.destination);
+  // uma nota: oscilador com ataque rápido e queda exponencial
+  const note = (freq, at, dur, type = 'sine', peak = 0.5) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t0 + at);
+    gain.gain.setValueAtTime(0.0001, t0 + at);
+    gain.gain.exponentialRampToValueAtTime(peak, t0 + at + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + at + dur);
+    osc.connect(gain);
+    gain.connect(master);
+    osc.start(t0 + at);
+    osc.stop(t0 + at + dur + 0.05);
+  };
+  if (id === 'caixa') {
+    // "tchim": estalo curto de ruído + dois sinos agudos
+    const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.08), ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+    const src = ctx.createBufferSource();
+    const g = ctx.createGain();
+    src.buffer = buf;
+    g.gain.value = 0.35;
+    src.connect(g);
+    g.connect(master);
+    src.start(t0);
+    [[2093, 0.06], [2637, 0.14]].forEach(([f, at]) => { note(f, at, 0.9, 'sine', 0.45); note(f * 2.4, at, 0.5, 'sine', 0.12); });
+  } else if (id === 'moeda') {
+    note(988, 0, 0.12, 'square', 0.22);
+    note(1319, 0.09, 0.55, 'square', 0.22);
+  } else if (id === 'sino') {
+    [[1, 0.5], [2.01, 0.25], [2.76, 0.18], [5.4, 0.08]].forEach(([m, pk]) => note(660 * m, 0, 1.6, 'sine', pk));
+  } else if (id === 'ding') {
+    note(1175, 0, 0.7, 'sine', 0.5);
+    note(1760, 0, 0.35, 'sine', 0.15);
+  } else if (id === 'sucesso') {
+    [523, 659, 784, 1047].forEach((f, i) => note(f, i * 0.11, 0.45, 'triangle', 0.4));
+  }
+}
+
+function preview_tone(id) {
+  play_tone(id, notif_prefs().volume);
+}
+
+function notif_update_badge() {
+  document.querySelectorAll('.nbadge').forEach((el) => {
+    el.textContent = notif.unread > 9 ? '9+' : String(notif.unread);
+    el.classList.toggle('on', notif.unread > 0);
+  });
+}
+
+function notif_alert(title, body, tag = 'ap-sale') {
+  const prefs = notif_prefs();
+  if (!prefs.desktop || !('Notification' in window) || Notification.permission !== 'granted') return;
+  const opts = { body, icon: '/icons/icon-192.png', badge: '/icons/icon-192.png', tag, renotify: true };
+  try {
+    if (navigator.serviceWorker?.ready) navigator.serviceWorker.ready.then((reg) => reg.showNotification(title, opts)).catch(() => new Notification(title, opts));
+    else new Notification(title, opts);
+  } catch {}
+}
+
+async function refresh_balance() {
+  const r = await dc({ action: 'get_user' });
+  if (r?.user) { save_user(r.user); if (state.page === 'painel') render(); }
+}
+
+async function notif_tick() {
+  if (!state.user || notif.busy || document.hidden) return;
+  notif.busy = true;
+  try {
+    const data = await dc({ action: 'poll_notifications' });
+    if (!data.sales) return;
+    const ids = data.sales.map((s) => s.id);
+    let known = notif.known || notif_store('notif_known', null);
+    if (!known) {
+      // primeira vez neste aparelho: o histórico não toca som nem vira "novo"
+      notif.known = ids;
+      notif_save('notif_known', ids);
+      if (notif_store('notif_seen', null) === null) notif_save('notif_seen', Date.now());
+      return;
+    }
+    const fresh = data.sales.filter((s) => !known.includes(s.id)).sort((a, b) => a.at - b.at);
+    notif.known = known = [...new Set([...ids, ...known])].slice(0, 200);
+    notif_save('notif_known', known);
+    const seen = notif_store('notif_seen', 0);
+    notif.unread = state.page === 'notificacoes' ? 0 : data.sales.filter((s) => s.at > seen).length;
+    notif_update_badge();
+    if (!fresh.length) return;
+    notif.items = [...fresh.map((s) => ({ ...s, is_new: true })), ...notif.items];
+    const total = fresh.reduce((sum, s) => sum + (s.amount || 0), 0);
+    const msg = fresh.length > 1 ? `${fresh.length} vendas novas! +${brl(total)}` : `Venda confirmada! +${brl(total)}`;
+    toast(`💰 ${msg}`, 6000);
+    const prefs = notif_prefs();
+    if (prefs.sound) play_tone(prefs.tone, prefs.volume);
+    notif_alert('Aperta o Play', msg);
+    if (state.page === 'notificacoes') paint_notifications();
+    refresh_balance();
+  } finally {
+    notif.busy = false;
+  }
+}
+
+function notif_start() {
+  if (notif.timer) return;
+  setTimeout(notif_tick, 2500);
+  notif.timer = setInterval(notif_tick, 25000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) notif_tick(); });
+}
+
+function notif_text(n) {
+  if (n.type === 'sale') return { icon: 'banknote', title: 'Venda confirmada', text: `Você ganhou ${brl(n.amount)} de comissão${n.plan ? ` (plano de ${brl(n.plan)})` : ''}.` };
+  if (n.type === 'referral') return { icon: 'users', title: 'Novo afiliado na sua rede', text: `${n.name} se cadastrou pelo seu link.` };
+  if (n.type === 'withdrawal') {
+    const label = { pending: 'pendente', processing: 'em processamento', approved: 'pago', rejected: 'recusado' }[n.status] || n.status;
+    return { icon: 'wallet', title: 'Saque', text: `Saque de ${brl(n.amount)}: ${label}.` };
+  }
+  return { icon: 'bell', title: n.title || 'Aviso', text: n.text || '' };
+}
+
+function paint_notifications() {
+  const box = document.getElementById('notif-list');
+  if (!box) return;
+  const seen = notif_store('notif_seen', 0);
+  if (!notif.items.length) { box.innerHTML = '<p class="muted" style="padding:1rem 0;text-align:center">Nenhuma notificação ainda.</p>'; return; }
+  box.innerHTML = notif.items.map((n) => {
+    const t = notif_text(n);
+    return `<div class="n-item ${n.is_new || n.at > seen ? 'new' : ''}"><span class="avatar-ic">${icon(t.icon, 'ic-sm')}</span><div class="grow" style="min-width:0"><p class="n-title">${esc(t.title)}</p><p class="n-text">${esc(t.text)}</p><p class="tiny" style="margin-top:.25rem">${new Date(n.at).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</p></div></div>`;
+  }).join('');
+}
+
+function notif_pref_set(name, value) {
+  notif_save('notif_prefs', { ...notif_prefs(), [name]: value });
+}
+
+function pick_tone(id) {
+  notif_pref_set('tone', id);
+  preview_tone(id);
+  document.querySelectorAll('.tone-row').forEach((el) => el.classList.toggle('sel', el.dataset.id === id));
+}
+
+async function toggle_desktop(el) {
+  if (!el.checked) { notif_pref_set('desktop', false); return; }
+  if (!('Notification' in window)) { toast('Este navegador não suporta notificações.'); el.checked = false; return; }
+  const perm = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+  if (perm !== 'granted') { toast('Permissão negada. Ative nas configurações do navegador.', 4500); el.checked = false; return; }
+  notif_pref_set('desktop', true);
+  toast('Avisos do aparelho ativados.');
+}
+
+async function render_notifications() {
+  const prefs = notif_prefs();
+  const tones = NOTIF_TONES.map((t) => `
+    <button class="tone-row ${prefs.tone === t.id ? 'sel' : ''}" data-id="${t.id}" onclick="pick_tone('${t.id}')">
+      <span class="dot"></span><span style="font-weight:600;font-size:.875rem">${t.label}</span><span class="tone-play">Ouvir</span>
+    </button>`).join('');
+  mount(shell('Notificações', `
+    <div class="card mt-4">
+      <h2>Som de venda</h2>
+      <label class="n-switch mt-2"><span>Tocar som quando entrar uma venda</span><input type="checkbox" ${prefs.sound ? 'checked' : ''} onchange="notif_pref_set('sound', this.checked)"></label>
+      <label class="n-switch"><span>Avisar no aparelho (com o app aberto ou em segundo plano)</span><input type="checkbox" ${prefs.desktop && 'Notification' in window && Notification.permission === 'granted' ? 'checked' : ''} onchange="toggle_desktop(this)"></label>
+      <label class="field" style="margin-top:.75rem">Volume
+        <input type="range" min="0.1" max="1" step="0.05" value="${prefs.volume}" oninput="notif_pref_set('volume', Number(this.value))" onchange="preview_tone(notif_prefs().tone)" style="padding:0">
+      </label>
+      <div style="margin-top:.5rem">${tones}</div>
+      <p class="tiny" style="margin-top:.75rem">As escolhas de som ficam salvas neste aparelho.</p>
+    </div>
+    <div class="card mt-4"><h2>Últimas notificações</h2><div id="notif-list" style="margin-top:.5rem">${spinner_block()}</div></div>`));
+  const seen_before = notif_store('notif_seen', 0);
+  const data = await dc({ action: 'get_notifications' });
+  if (state.page !== 'notificacoes') return;
+  const polled_new = notif.items.filter((n) => n.is_new);
+  const merged = (data.items || []).map((n) => ({ ...n, is_new: polled_new.some((p) => p.id === n.id) || (seen_before && n.at > seen_before) }));
+  notif.items = merged;
+  paint_notifications();
+  notif.unread = 0;
+  notif_update_badge();
+  notif_save('notif_seen', Date.now());
+  const known = notif.known || notif_store('notif_known', null);
+  if (known) { const all = [...new Set([...merged.filter((n) => n.type === 'sale').map((n) => n.id), ...known])].slice(0, 200); notif.known = all; notif_save('notif_known', all); }
+}
+
+// ---------- vídeos de divulgação: link por vídeo + página pública ----------
+const SHARE_TARGETS = [['status', 'Status WhatsApp'], ['wa', 'WhatsApp'], ['fb', 'Facebook'], ['ig', 'Instagram'], ['tg', 'Telegram'], ['tt', 'TikTok']];
+const promo_url = (m) => `${location.origin}/d/${m.id}/${encodeURIComponent(state.user.referral_code)}`;
+
+function video_card(m) {
+  const yt = video_id(m.url);
+  const media = yt
+    ? `<img src="https://img.youtube.com/vi/${yt}/hqdefault.jpg" alt="" loading="lazy"><span class="mat-play" style="cursor:pointer" data-k="videos" data-id="${esc(m.id)}" onclick="open_video(this)">${icon('play', 'ic').replace('fill="none"', 'fill="currentColor"')}</span>`
+    : `<video src="${esc(m.url)}" controls playsinline preload="metadata"></video>`;
+  const chips = SHARE_TARGETS.map(([k, label]) => `<button class="chip" data-id="${esc(m.id)}" data-t="${k}" onclick="share_promo(this)">${label}</button>`).join('');
+  return `
+    <article class="vid-card">
+      <div class="vid-media">${media}</div>
+      <p class="vid-title">${esc(m.title || 'Vídeo')}</p>
+      <div class="mat-stats" style="margin-top:.25rem"><span>${icon('eye', 'ic-sm')}${m.views || 0}</span><span>${icon('download', 'ic-sm')}${m.downloads || 0}</span><span>${icon('share', 'ic-sm')}${m.shares || 0}</span></div>
+      <div class="vid-row">
+        ${yt ? '' : `<button class="btn-line" data-id="${esc(m.id)}" onclick="download_video(this)">${icon('download', 'ic-sm')}Baixar</button>`}
+        <button class="btn-brand" data-id="${esc(m.id)}" onclick="copy_promo(this)">${icon('copy', 'ic-sm')}Copiar meu link</button>
+      </div>
+      <p class="vid-label">Compartilhar</p>
+      <div class="chip-row">${chips}</div>
+      <p style="margin-top:1rem"><button class="link-u text-primary" data-id="${esc(m.id)}" onclick="view_promo(this)" style="font-weight:600">Ver página de divulgação</button></p>
+    </article>`;
+}
+
+const video_by_btn = (btn) => (state.materials.videos || []).find((m) => m.id === btn.dataset.id);
+
+function plan_required() {
+  if (state.user.plan) return false;
+  toast('Ative seu plano para liberar o seu link de indicação.');
+  return true;
+}
+
+function copy_promo(btn) {
+  const m = video_by_btn(btn);
+  if (!m || plan_required()) return;
+  copy_text(promo_url(m), 'Seu link foi copiado!');
+}
+
+function view_promo(btn) {
+  const m = video_by_btn(btn);
+  if (!m || plan_required()) return;
+  window.open(promo_url(m), '_blank', 'noopener');
+}
+
+async function share_promo(btn) {
+  const m = video_by_btn(btn);
+  if (!m || plan_required()) return;
+  const link = promo_url(m);
+  const text = `🔥 ${m.title || 'Aperta o Play'}\nEntre pelo meu link: ${link}`;
+  const enc = encodeURIComponent;
+  track_material('videos', m, 'shares');
+  switch (btn.dataset.t) {
+    case 'wa': window.open('https://wa.me/?text=' + enc(text), '_blank', 'noopener'); break;
+    case 'fb': window.open('https://www.facebook.com/sharer/sharer.php?u=' + enc(link), '_blank', 'noopener'); break;
+    case 'tg': window.open(`https://t.me/share/url?url=${enc(link)}&text=${enc(m.title || 'Aperta o Play')}`, '_blank', 'noopener'); break;
+    case 'status':
+      if (navigator.share) { try { await navigator.share({ text, url: link }); } catch {} } else copy_text(link, 'Link copiado! Cole no seu Status do WhatsApp.');
+      break;
+    case 'ig': copy_text(link, 'Link copiado! Cole na bio ou no story do Instagram.'); break;
+    case 'tt': copy_text(link, 'Link copiado! Cole na bio do TikTok.'); break;
+  }
+}
+
+async function download_video(btn) {
+  const m = video_by_btn(btn);
+  if (!m) return;
+  track_material('videos', m, 'downloads');
+  try {
+    const blob = await (await fetch(m.url)).blob();
+    const href = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = href;
+    a.download = `${(m.title || 'video').replace(/[^\w-]+/g, '_')}.${blob.type.split('/')[1] || 'mp4'}`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(href), 4000);
+  } catch {
+    window.open(m.url, '_blank', 'noopener');
+  }
+}
+
+async function render_promo() {
+  const { id, code } = state.promo;
+  mount(`<div class="bg-page mist" style="padding:1.25rem"><div class="promo" id="promo-box">${spinner_block()}</div></div>`);
+  const [vd, inv] = await Promise.all([
+    dc({ action: 'get_public_video', id }),
+    code ? dc({ action: 'get_inviter', code }) : Promise.resolve({ found: false }),
+  ]);
+  const box = document.getElementById('promo-box');
+  if (!box) return;
+  const key = `ap_view_${id}`;
+  let seen = false;
+  try { seen = !!sessionStorage.getItem(key); sessionStorage.setItem(key, '1'); } catch {}
+  if (vd.found && !seen) dc({ action: 'track_video_view', id });
+
+  const who = inv.found ? esc(inv.name) : '';
+  const yt = vd.found ? video_id(vd.url) : '';
+  const player = !vd.found ? '' : `<div class="vid-media" style="margin-top:1rem">${yt
+    ? `<iframe src="https://www.youtube.com/embed/${yt}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>`
+    : `<video src="${esc(vd.url)}" controls playsinline preload="metadata"></video>`}</div>`;
+  const plans = PLANS.map((p, i) => `
+    <div class="promo-plan">
+      <div><p style="font-weight:800">${brl(p.price)}</p><p class="tiny">${i === 0 ? 'pagamento único' : 'por mês'}</p></div>
+      <div style="text-align:right"><p class="tiny">Comissão</p><p class="text-primary" style="font-weight:800">${brl(p.commission)}</p></div>
+    </div>`).join('');
+  box.innerHTML = `
+    <div class="row gap-3">${logo_html(40)}<span class="brand-text" style="font-size:1.25rem">Aperta o Play</span></div>
+    ${inv.found ? `<div class="promo-ref"><p class="k">PÁGINA DE INDICAÇÃO</p><p class="n">${who}</p><p class="tiny" style="margin-top:.25rem">Código <b class="text-primary">${esc(code)}</b> — se cadastrando por aqui, você entra como afiliado dessa pessoa.</p></div>` : ''}
+    <h1 style="font-size:1.875rem;font-weight:800;margin-top:1.5rem">Aperta o Play</h1>
+    ${vd.found ? `<p class="muted" style="margin-top:.25rem;font-weight:600">${esc(vd.title)}</p>` : '<div class="notice mt-3">Este vídeo não está mais disponível, mas você ainda pode criar sua conta.</div>'}
+    ${player}
+    <button class="btn-brand big w-full mt-4" onclick="promo_cta()">${state.user ? 'Ir para o meu painel' : (inv.found ? `Criar minha conta como afiliado de ${who}` : 'Criar minha conta')}</button>
+    <h2 style="font-size:1.125rem;font-weight:800;margin-top:2rem">Planos e comissões</h2>
+    <p class="muted" style="margin:.5rem 0 .75rem">Cadastre-se, ative um plano pelo Pix e indique outras pessoas. A comissão é creditada quando um pagamento do indicado é confirmado.</p>
+    ${plans}`;
+}
+
+function promo_cta() {
+  if (state.user) { history.replaceState({}, '', '/'); set_page('painel'); return; }
+  open_auth('register');
 }
 
 async function save_ref_code(e) {
@@ -1571,13 +2343,14 @@ const adm_nav = [
   { id: 'security', label: 'Segurança', icon: 'shield', need: 'security.multi_accounts' },
   { id: 'audit', label: 'Auditoria', icon: 'lock', need: 'audit.list' },
   { id: 'system', label: 'Sistema', icon: 'shield_check', need: 'system.health' },
+  { id: 'chats', label: 'Chats', icon: 'chat', chat: true },
   { id: 'banners', label: 'Banners', icon: 'image_plus', owner: true },
   { id: 'videos', label: 'Vídeos', icon: 'video', owner: true },
   { id: 'functions', label: 'Todas as funções', icon: 'menu' },
 ];
 
 const adm_money_keys = new Set(['balance', 'amount', 'plan_price', 'expected', 'actual', 'diff', 'revenue', 'earned', 'withdrawn', 'paid', 'pending', 'processing', 'rejected', 'liabilities', 'cash_estimate', 'gross', 'average_ticket', 'open_amount', 'user_balance', 'total_diff', 'reverted_total', 'balances', 'today', 'week', 'month', 'all']);
-const adm_labels = { email: 'E-mail', created_ms: 'Criado em', created_at: 'Criado em', plan: 'Plano', balance: 'Saldo', state: 'Situação', status: 'Status', whatsapp: 'WhatsApp', msg_id: 'ID', reg_ip: 'IP cadastro', reg_country: 'País', reg_city: 'Cidade', reg_device: 'Aparelho', last_login_at: 'Último acesso', last_ip: 'Último IP', last_country: 'País (último)', logins: 'Acessos', referrals: 'Indicados', referred_by: 'Indicado por', referral_code: 'Código', has_pix: 'Pix', plan_price: 'Valor', payment_id: 'Pagamento', paid_at: 'Pago em', affiliate: 'Afiliado', from_user: 'Origem', pix_key: 'Chave Pix', pix_type: 'Tipo', owner_doc: 'CPF titular', ip: 'IP', cc: 'País', ct: 'Cidade', rg: 'Região', ts: 'Quando', first_ts: 'Primeira vez', last_ts: 'Última vez', count: 'Vezes', actor: 'Admin', action: 'Ação', target: 'Alvo' };
+const adm_labels = { login: 'Login', email: 'E-mail', created_ms: 'Criado em', created_at: 'Criado em', plan: 'Plano', balance: 'Saldo', state: 'Situação', status: 'Status', whatsapp: 'WhatsApp', msg_id: 'ID', reg_ip: 'IP cadastro', reg_country: 'País', reg_city: 'Cidade', reg_device: 'Aparelho', last_login_at: 'Último acesso', last_ip: 'Último IP', last_country: 'País (último)', logins: 'Acessos', referrals: 'Indicados', referred_by: 'Indicado por', referral_code: 'Código', has_pix: 'Pix', plan_price: 'Valor', payment_id: 'Pagamento', paid_at: 'Pago em', affiliate: 'Afiliado', from_user: 'Origem', pix_key: 'Chave Pix', pix_type: 'Tipo', owner_doc: 'CPF titular', ip: 'IP', cc: 'País', ct: 'Cidade', rg: 'Região', ts: 'Quando', first_ts: 'Primeira vez', last_ts: 'Última vez', count: 'Vezes', actor: 'Admin', action: 'Ação', target: 'Alvo' };
 
 const pad = (n, size = 2) => String(n).padStart(size, '0');
 const to_ms = (v) => (typeof v === 'number' ? v : Date.parse(v) || 0);
@@ -1619,6 +2392,7 @@ const adm_badge_tone = (v) => {
   return '';
 };
 const adm_badge = (v) => `<span class="badge ${adm_badge_tone(v)}">${esc(v)}</span>`;
+const adm_avatar = (r, size = 32) => avatar_html({ login: r.login, name: r.name, email: r.email, avatar: r.avatar }, size);
 const adm_user_link = (email) => `<a class="adm-ulink" data-e="${esc(email)}" onclick="adm_open_user(this.dataset.e)">${esc(email)}</a>`;
 const adm_btn = (label, id, preset = {}, cls = 'adm-mini') => adm.by_id[id] ? `<button class="${cls}" data-a="${esc(id)}" data-p="${esc(JSON.stringify(preset))}" onclick="adm_act(this)">${label}</button>` : '';
 const adm_copy_btn = (text) => `<button class="adm-mini" data-c="${esc(text)}" onclick="copy_text(this.dataset.c)">copiar</button>`;
@@ -1957,7 +2731,7 @@ function adm_search(query) {
 }
 
 const adm_user_columns = [
-  { key: 'email', label: 'E-mail', render: (r) => `${adm_user_link(r.email)}${r.role ? ` ${adm_badge(r.role)}` : ''}` },
+  { key: 'email', label: 'Usuário', render: (r) => `<span style="display:flex;align-items:center;gap:.5rem">${adm_avatar(r, 34)}<span style="min-width:0">${adm_user_link(r.email)}${r.role ? ` ${adm_badge(r.role)}` : ''}${r.login ? `<br><span class="tiny">@${esc(r.login)}</span>` : ''}</span></span>` },
   { key: 'plan', label: 'Plano', render: (r) => r.plan ? `<span class="badge green">R$ ${r.plan}</span>` : '<span class="tiny">—</span>' },
   { key: 'balance', label: 'Saldo', render: (r) => brl(r.balance) },
   { key: 'state', label: 'Situação', render: (r) => adm_badge(r.state) + (r.withdraw_blocked ? ' <span class="badge yellow">saque bloq.</span>' : '') },
@@ -2264,13 +3038,13 @@ function adm_go(view, param = null) {
 }
 
 function adm_shell_html() {
-  const items = adm_nav.filter((i) => (i.owner ? adm.role === 'owner' : !i.need || adm.by_id[i.need]));
+  const items = adm_nav.filter((i) => (i.chat ? can_chat() : i.owner ? adm.role === 'owner' : !i.need || adm.by_id[i.need]));
   return `
     <div class="adm">
       <div class="adm-mask" onclick="document.body.classList.remove('adm-menu')"></div>
       <aside class="adm-side">
         <div class="row gap-3" style="padding:.25rem .5rem 1rem">${logo_html(36, false)}<span><span class="brand-text" style="display:block">Aperta o Play</span><span class="tiny">Admin · ${esc(adm.role)}</span></span></div>
-        <nav class="adm-nav">${items.map((i) => `<button data-view="${i.id}" onclick="adm_go('${i.id}')">${icon(i.icon, 'ic-sm')}<span>${i.label}</span></button>`).join('')}</nav>
+        <nav class="adm-nav">${items.map((i) => `<button data-view="${i.id}" onclick="adm_go('${i.id}')">${icon(i.icon, 'ic-sm')}<span>${i.label}</span>${i.chat ? `<span class="cbadge js-chat-n${staffchat.unread ? ' on' : ''}">${staffchat.unread > 99 ? '99+' : staffchat.unread}</span>` : ''}</button>`).join('')}</nav>
         <div class="divider"></div>
         <button class="adm-navlink" onclick="set_page('painel')">← Voltar ao site</button>
         <button class="adm-navlink" onclick="logout()">Sair</button>
@@ -2300,7 +3074,7 @@ async function render_admin() {
 }
 
 const adm_user_action_groups = [
-  ['Contato e conta', ['users.set_email', 'users.set_whatsapp', 'users.clear_whatsapp', 'users.set_name', 'users.unlink_google']],
+  ['Contato e conta', ['users.set_email', 'users.set_whatsapp', 'users.clear_whatsapp', 'users.set_login', 'users.set_name', 'users.unlink_google']],
   ['Acesso e senha', ['users.set_password', 'users.generate_password', 'users.force_logout', 'users.impersonate', 'users.ban', 'users.unban', 'users.suspend']],
   ['Dinheiro', ['users.adjust_balance', 'users.grant_plan', 'users.revoke_plan', 'users.set_pix', 'users.clear_pix', 'users.set_auto_payout', 'users.block_withdrawals', 'users.unblock_withdrawals', 'finance.fix_balance']],
   ['Indicações', ['users.set_referrer', 'users.clear_referrer', 'users.set_referral_code', 'users.regenerate_referral_code']],
@@ -2358,7 +3132,12 @@ function adm_user_summary(c, d) {
         ])}`)}
       ${adm_card('Dados da conta', adm_kv([
         ['E-mail', `${esc(u.email)} ${adm_copy_btn(u.email)}`],
+        ['Foto', adm_avatar(u, 56)],
+        ['Login', u.login ? `@${esc(u.login)}` : null],
         ['Nome', u.name ? esc(u.name) : null],
+        ['Cidade', u.city ? esc(u.city) : null],
+        ['Nascimento', u.birth ? esc(new Date(u.birth + 'T12:00:00').toLocaleDateString('pt-BR')) : null],
+        ['Sobre', u.bio ? esc(u.bio) : null],
         ['WhatsApp', u.whatsapp ? `${esc(u.whatsapp)} <a class="adm-ulink" target="_blank" rel="noopener" href="https://wa.me/${esc(String(u.whatsapp).replace(/\D/g, ''))}">abrir conversa</a>` : null],
         ['Login por', u.google ? 'Google' : 'E-mail e senha'],
         ['Senha definida', u.has_password ? 'sim' : 'não (só Google)'],
@@ -2456,10 +3235,11 @@ async function adm_user_view(el, email) {
     adm_btn('Nova senha', 'users.set_password', { email }, 'btn-line rect'),
     u.state === 'active' ? adm_btn('Banir', 'users.ban', { email }, 'btn-bad') : adm_btn('Reativar', 'users.unban', { email }, 'btn-ok'),
     adm_btn('Entrar como', 'users.impersonate', { email }, 'btn-line rect'),
+    can_chat() ? `<button class="btn-line rect" onclick="adm_chat_with('${esc(u.msg_id)}')">Abrir chat</button>` : '',
   ].join('');
   el.innerHTML = `
     <button class="adm-back" onclick="adm_go('users')">← Usuários</button>
-    <div class="adm-head"><div><h1 class="page-title" style="word-break:break-all">${esc(u.email)}</h1><div class="adm-chips">${adm_user_chips(u)}</div></div><div class="adm-quick">${quick}</div></div>
+    <div class="adm-head"><div style="display:flex;gap:.9rem;align-items:center">${adm_avatar(u, 64)}<div><h1 class="page-title" style="word-break:break-all">${esc(u.email)}</h1>${u.login ? `<p class="muted">@${esc(u.login)}</p>` : ''}<div class="adm-chips">${adm_user_chips(u)}</div></div></div><div class="adm-quick">${quick}</div></div>
     <div id="adm-user-body"></div>`;
   const pages = (fn) => (c) => fn(c, d);
   adm_tabbed(document.getElementById('adm-user-body'), [
@@ -2474,11 +3254,388 @@ async function adm_user_view(el, email) {
   ], 'summary');
 }
 
+// ---------- chat de suporte (ao vivo) ----------
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const id_gt = (a, b) => (a.length !== b.length ? a.length > b.length : a > b);
+const id_max = (a, b) => (id_gt(a, b) ? a : b);
+const chat = { msgs: [], last: '0', seen: '0', loop: 0, unread: null, more: false, disabled: false };
+const staffchat = { running: false, after: '0', unread: 0, retry_at: 0 };
+const adm_chat = { cid: null, convs: [], msgs: [], more: false, person: null, user_seen: '0' };
+const can_chat = () => !!(state.user && (state.user.is_admin || ['admin', 'support'].includes(state.user.staff_role)));
+const fmt_clock = (ms) => new Date(ms).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+const fmt_day = (ms) => new Date(ms).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+const base_title = document.title;
+
+function chat_msgs_html(msgs, mine, seen_id, more_fn) {
+  if (!msgs.length) return '<div class="chat-empty">Nenhuma mensagem ainda.<br>Escreva abaixo para começar.</div>';
+  let out = more_fn ? `<button class="link-u" style="align-self:center" onclick="${more_fn}">Carregar mensagens anteriores</button>` : '';
+  let day = '';
+  for (const m of msgs) {
+    const d = new Date(m.at).toDateString();
+    if (d !== day) { day = d; out += `<div class="chat-day">${esc(fmt_day(m.at))}</div>`; }
+    const own = m.from === mine;
+    const read = own && !m.pending && !m.failed && seen_id !== '0' && !String(m.id).startsWith('tmp') && !id_gt(m.id, seen_id);
+    out += `<div class="msg ${own ? 'me' : 'them'}${m.pending ? ' sending' : ''}${m.failed ? ' failed' : ''}">${esc(m.text)}<small>${m.failed ? 'não enviada' : m.pending ? 'enviando…' : esc(fmt_clock(m.at))}${read ? ' · ✓ visto' : ''}</small></div>`;
+  }
+  return out;
+}
+
+function chat_scroll_paint(box, html, force) {
+  if (!box) return;
+  const near = box.scrollHeight - box.scrollTop - box.clientHeight < 120;
+  box.innerHTML = html;
+  if (force || near) box.scrollTop = box.scrollHeight;
+}
+
+function chat_grow(el) { el.style.height = 'auto'; el.style.height = `${Math.min(el.scrollHeight, 112)}px`; }
+
+function chat_alert_user(text) {
+  const prefs = notif_prefs();
+  if (prefs.sound) play_tone(prefs.tone, prefs.volume);
+  notif_alert('Suporte Aperta o Play', text, 'ap-chat');
+}
+
+// ----- lado do usuário -----
+async function render_support() {
+  const gen = ++chat.loop;
+  const cfg = await get_cfg();
+  const phone = String(cfg?.support_whatsapp || '').replace(/\D/g, '');
+  mount(shell('Suporte', `
+    <div class="chat-box">
+      <div class="chat-top"><span class="sup-ic ap">${icon('chat', 'ic-sm')}</span><div style="flex:1;min-width:0"><b>Suporte Aperta o Play</b><p class="tiny" id="chat-status">Conectando…</p></div><span class="live" id="chat-live"></span></div>
+      <div class="chat-msgs" id="chat-msgs">${spinner_block()}</div>
+      <form class="chat-form" onsubmit="chat_submit(event)">
+        <textarea id="chat-input" rows="1" maxlength="900" placeholder="Escreva sua mensagem…" onkeydown="chat_key(event)" oninput="chat_grow(this)"></textarea>
+        <button aria-label="Enviar">${icon('send', 'ic-sm')}</button>
+      </form>
+    </div>
+    ${phone ? `<button class="link-u" style="display:block;margin:1rem auto 0" onclick="support_whatsapp()">Prefere o WhatsApp? Falar por lá</button>` : ''}`));
+  const r = await chatapi({ action: 'chat_open' });
+  if (gen !== chat.loop) return;
+  const box = document.getElementById('chat-msgs');
+  if (!box) return;
+  if (r.error) {
+    box.innerHTML = `<div class="chat-empty">${esc(r.code === 'no_channel' ? 'O chat do aplicativo ainda não foi ativado. Use o WhatsApp.' : r.error)}</div>`;
+    document.getElementById('chat-status').textContent = 'Indisponível';
+    return;
+  }
+  chat.msgs = r.messages; chat.last = r.latest || '0'; chat.seen = r.staff_seen || '0'; chat.more = r.more; chat.unread = 0;
+  chat_fab_refresh();
+  chat_paint(true);
+  document.getElementById('chat-input')?.focus();
+  chat_loop(gen);
+}
+
+function chat_paint(force) {
+  chat_scroll_paint(document.getElementById('chat-msgs'), chat_msgs_html(chat.msgs, 'user', chat.seen, chat.more ? 'chat_older()' : ''), force);
+}
+
+function chat_set_status(on) {
+  const status = document.getElementById('chat-status');
+  if (status) status.textContent = on ? 'Ao vivo · respondemos aqui mesmo' : 'Reconectando…';
+  document.getElementById('chat-live')?.classList.toggle('on', on);
+}
+
+async function chat_older() {
+  const first = chat.msgs.find((m) => !String(m.id).startsWith('tmp'));
+  if (!first) return;
+  const r = await chatapi({ action: 'chat_open', before: first.id });
+  if (r.error) { toast(r.error); return; }
+  chat.msgs = [...r.messages, ...chat.msgs]; chat.more = r.more;
+  const box = document.getElementById('chat-msgs');
+  const before = box ? box.scrollHeight : 0;
+  chat_paint(false);
+  if (box) box.scrollTop = box.scrollHeight - before;
+}
+
+async function chat_loop(gen) {
+  let fails = 0;
+  while (gen === chat.loop && state.page === 'suporte' && state.user) {
+    const r = await chatapi({ action: 'chat_poll', after: chat.last, seen: chat.seen, focused: !document.hidden }).catch(() => null);
+    if (gen !== chat.loop || state.page !== 'suporte') return;
+    if (!r || r.error) {
+      if (r?.code === 'auth') return;
+      fails++; chat_set_status(false);
+      await sleep(Math.min(8000, 1000 * fails));
+      continue;
+    }
+    fails = 0; chat_set_status(true);
+    let changed = false;
+    for (const m of r.messages) {
+      chat.last = id_max(chat.last, m.id);
+      if (chat.msgs.some((x) => x.id === m.id)) continue;
+      chat.msgs.push(m); changed = true;
+      if (m.from === 'staff') chat_alert_user(m.text);
+    }
+    if (r.staff_seen && r.staff_seen !== chat.seen) { chat.seen = r.staff_seen; changed = true; }
+    if (changed) chat_paint(false);
+  }
+}
+
+function chat_key(e) {
+  if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); document.querySelector('.chat-form')?.requestSubmit(); }
+}
+
+async function chat_submit(e) {
+  e.preventDefault();
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = ''; chat_grow(input);
+  const draft = { id: `tmp${Date.now()}`, from: 'user', text, at: Date.now(), pending: true };
+  chat.msgs.push(draft); chat_paint(true);
+  const r = await chatapi({ action: 'chat_send', text });
+  if (r.error) { draft.pending = false; draft.failed = true; chat_paint(false); toast(r.error, 4000); return; }
+  const at = chat.msgs.indexOf(draft);
+  if (chat.msgs.some((x) => x.id === r.message.id)) chat.msgs.splice(at, 1); else chat.msgs[at] = r.message;
+  chat_paint(true);
+}
+
+// ----- avisos de resposta quando o chat está fechado -----
+function chat_fab_refresh() {
+  const dot = document.getElementById('fab-dot');
+  if (!dot) return;
+  const n = chat.unread || 0;
+  dot.textContent = n > 9 ? '9+' : String(n);
+  dot.classList.toggle('on', n > 0);
+}
+
+async function chat_unread_tick() {
+  if (!state.user || chat.disabled || state.page === 'suporte') return;
+  const r = await chatapi({ action: 'chat_unread' }).catch(() => null);
+  if (!r) return;
+  if (r.code === 'no_channel') { chat.disabled = true; return; }
+  if (r.error) return;
+  const first = chat.unread === null;
+  const grew = !first && r.unread > chat.unread;
+  chat.unread = r.unread;
+  chat_fab_refresh();
+  if (grew && r.last) {
+    if (!document.hidden) toast(`💬 Suporte: ${r.last.text.slice(0, 90)}`, 6000);
+    chat_alert_user(r.last.text);
+  }
+}
+
+function chat_background_start() {
+  setTimeout(chat_unread_tick, 4000);
+  setInterval(chat_unread_tick, 20000);
+  setInterval(() => { if (can_chat() && !staffchat.running && Date.now() >= staffchat.retry_at) staff_chat_run(); }, 4000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { chat_unread_tick(); if (document.title !== base_title && !staffchat.unread) document.title = base_title; } });
+}
+
+// ----- lado da equipe -----
+function staff_badge() {
+  const n = staffchat.unread;
+  document.querySelectorAll('.js-chat-n').forEach((el) => { el.textContent = n > 99 ? '99+' : n > 9 && el.classList.contains('nbadge') ? '9+' : String(n); el.classList.toggle('on', n > 0); });
+  document.title = n > 0 ? `(${n}) ${base_title}` : base_title;
+}
+
+function open_admin_home() {
+  if (staffchat.unread > 0 && can_chat()) adm.view = 'chats';
+  set_page('admin');
+}
+
+async function staff_chat_run() {
+  if (staffchat.running) return;
+  staffchat.running = true;
+  const me = state.user?.email;
+  try {
+    const first = await chatapi({ action: 'staff_inbox' });
+    if (first.code === 'no_channel') { staffchat.retry_at = Date.now() + 120000; return; }
+    if (first.error) { staffchat.retry_at = Date.now() + 15000; return; }
+    staffchat.after = first.latest || '0'; staffchat.unread = first.unread_total; staff_badge();
+    if (adm_chat_visible()) { adm_chat.convs = first.conversations; adm_chat_paint_list(); }
+    let fails = 0;
+    while (state.user && state.user.email === me && can_chat()) {
+      const r = await chatapi({ action: 'staff_poll', after: staffchat.after }).catch(() => null);
+      if (!r || r.error) {
+        if (r?.code === 'auth' || r?.code === 'no_channel') return;
+        fails++; await sleep(Math.min(8000, 1000 * fails)); continue;
+      }
+      fails = 0;
+      for (const m of r.messages) staffchat.after = id_max(staffchat.after, m.id);
+      staffchat.unread = r.unread_total;
+      r.messages.forEach(staff_chat_apply);
+      const incoming = r.messages.filter((m) => m.from === 'user');
+      if (incoming.length) staff_chat_notify(incoming);
+      staff_badge();
+    }
+  } finally {
+    staffchat.running = false;
+  }
+}
+
+function staff_chat_apply(m) {
+  const viewing_thread = adm_chat_visible() && adm_chat.cid === m.cid;
+  let conv = adm_chat.convs.find((c) => c.cid === m.cid);
+  if (!conv && m.person) { conv = { ...m.person, unread: 0, total: 0, last: m }; adm_chat.convs.unshift(conv); }
+  if (conv) {
+    const known = conv.last && conv.last.id === m.id;
+    if (!known) {
+      conv.last = { id: m.id, from: m.from, text: m.text, at: m.at };
+      conv.total = (conv.total || 0) + 1;
+      if (m.from === 'user' && !(viewing_thread && !document.hidden)) conv.unread = (conv.unread || 0) + 1;
+    }
+    adm_chat.convs.sort((a, b) => (id_gt(a.last.id, b.last.id) ? -1 : 1));
+  }
+  if (viewing_thread && !adm_chat.msgs.some((x) => x.id === m.id)) {
+    adm_chat.msgs = adm_chat.msgs.filter((x) => !(x.pending && x.text === m.text && x.from === m.from));
+    adm_chat.msgs.push({ id: m.id, from: m.from, text: m.text, at: m.at });
+    adm_chat_paint_msgs(false);
+    if (m.from === 'user' && !document.hidden) adm_chat_mark_seen();
+  }
+  if (adm_chat_visible()) adm_chat_paint_list();
+}
+
+function staff_chat_notify(list) {
+  const last = list[list.length - 1];
+  const who = last.person?.login || last.person?.name || String(last.person?.email || '').split('@')[0] || 'Usuário';
+  const watching = adm_chat_visible() && adm_chat.cid === last.cid && !document.hidden;
+  const prefs = notif_prefs();
+  if (prefs.sound) play_tone(prefs.tone, prefs.volume);
+  if (!watching) toast(`💬 ${who}: ${last.text.slice(0, 80)}`, 6000);
+  if (!watching || document.hidden) notif_alert(`Suporte · ${who}`, last.text, 'ap-chat');
+}
+
+const adm_chat_visible = () => state.page === 'admin' && adm.view === 'chats' && !!document.getElementById('achat');
+
+async function enable_chat_alerts() {
+  if (!('Notification' in window)) { toast('Este navegador não suporta notificações.'); return; }
+  const perm = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+  if (perm !== 'granted') { toast('Permissão negada. Ative nas configurações do navegador.', 4500); return; }
+  notif_pref_set('desktop', true);
+  toast('Avisos do aparelho ativados.');
+  document.getElementById('achat-alerts')?.remove();
+}
+
+function adm_chat_paint_list() {
+  const box = document.getElementById('achat-list');
+  if (!box) return;
+  if (!adm_chat.convs.length) { box.innerHTML = '<p class="muted" style="padding:1.25rem;text-align:center">Nenhuma conversa ainda. Quando um usuário escrever no chat, ela aparece aqui na hora.</p>'; return; }
+  box.innerHTML = adm_chat.convs.map((c) => {
+    const name = c.login || c.name || String(c.email || 'usuário').split('@')[0];
+    const preview = `${c.last.from === 'staff' ? 'Você: ' : ''}${c.last.text}`;
+    return `<button class="achat-item ${c.cid === adm_chat.cid ? 'on' : ''}" onclick="adm_chat_open('${esc(c.cid)}')">${adm_avatar(c, 40)}<span class="grow"><p style="font-weight:600">${esc(name)}</p><p class="tiny">${esc(preview)}</p></span><span style="text-align:right"><span class="tiny">${esc(fmt_clock(c.last.at))}</span>${c.unread ? `<span class="cbadge on" style="display:flex;margin:.2rem 0 0 auto">${c.unread > 99 ? '99+' : c.unread}</span>` : ''}</span></button>`;
+  }).join('');
+}
+
+async function adm_chat_load_list() {
+  const r = await chatapi({ action: 'staff_inbox' });
+  const box = document.getElementById('achat-list');
+  if (!box) return;
+  if (r.error) { box.innerHTML = `<div class="notice err" style="margin:1rem">${esc(r.code === 'no_channel' ? 'Falta configurar DISCORD_CHANNEL_SUPORTE na Vercel (canal onde as conversas ficam salvas).' : r.error)}</div>`; return; }
+  adm_chat.convs = r.conversations;
+  staffchat.unread = r.unread_total; staff_badge();
+  adm_chat_paint_list();
+}
+
+function adm_chat_paint_msgs(force) {
+  chat_scroll_paint(document.getElementById('achat-msgs'), chat_msgs_html(adm_chat.msgs, 'staff', adm_chat.user_seen, adm_chat.more ? 'adm_chat_older()' : ''), force);
+}
+
+async function adm_chat_open(cid) {
+  adm_chat.cid = cid;
+  document.getElementById('achat')?.classList.add('open');
+  adm_chat_paint_list();
+  const pane = document.getElementById('achat-pane');
+  if (!pane) return;
+  pane.innerHTML = `<div class="chat-box">${spinner_block()}</div>`;
+  const r = await chatapi({ action: 'staff_thread', cid });
+  if (adm_chat.cid !== cid || !document.getElementById('achat-pane')) return;
+  if (r.error) { pane.innerHTML = `<div class="notice err">${esc(r.error)}</div>`; return; }
+  adm_chat.msgs = r.messages; adm_chat.more = r.more; adm_chat.person = r.person; adm_chat.user_seen = r.user_seen || '0';
+  const p = r.person;
+  const name = p.login || p.name || String(p.email || 'usuário').split('@')[0];
+  const wa = String(p.whatsapp || '').replace(/\D/g, '');
+  pane.innerHTML = `
+    <div class="chat-box">
+      <div class="chat-top">
+        <button class="btn-ghost-ic achat-back" onclick="document.getElementById('achat').classList.remove('open')" aria-label="Voltar">${icon('chev_l')}</button>
+        ${adm_avatar(p, 40)}
+        <div style="flex:1;min-width:0"><b>${esc(name)}</b><p class="tiny" style="overflow:hidden;text-overflow:ellipsis">${esc(p.email || '')}${p.plan ? ` · plano R$ ${esc(p.plan)}` : ' · sem plano'}</p></div>
+        ${wa ? `<a class="aff-wa" href="https://wa.me/55${wa.replace(/^55/, '')}" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp">${wa_icon('ic-sm')}</a>` : ''}
+        ${p.email ? `<button class="btn-line rect" style="padding:.35rem .75rem" data-e="${esc(p.email)}" onclick="adm_open_user(this.dataset.e)">Perfil</button>` : ''}
+      </div>
+      <div class="chat-msgs" id="achat-msgs"></div>
+      <form class="chat-form" onsubmit="adm_chat_submit(event)">
+        <textarea id="achat-input" rows="1" maxlength="900" placeholder="Responder ${esc(name)}…" onkeydown="adm_chat_key(event)" oninput="chat_grow(this)"></textarea>
+        <button aria-label="Enviar">${icon('send', 'ic-sm')}</button>
+      </form>
+    </div>`;
+  adm_chat_paint_msgs(true);
+  document.getElementById('achat-input')?.focus();
+  adm_chat_mark_seen();
+}
+
+async function adm_chat_older() {
+  const first = adm_chat.msgs.find((m) => !String(m.id).startsWith('tmp'));
+  if (!first) return;
+  const r = await chatapi({ action: 'staff_thread', cid: adm_chat.cid, before: first.id });
+  if (r.error) { toast(r.error); return; }
+  adm_chat.msgs = [...r.messages, ...adm_chat.msgs]; adm_chat.more = r.more;
+  const box = document.getElementById('achat-msgs');
+  const before = box ? box.scrollHeight : 0;
+  adm_chat_paint_msgs(false);
+  if (box) box.scrollTop = box.scrollHeight - before;
+}
+
+async function adm_chat_mark_seen() {
+  const cid = adm_chat.cid;
+  const last = [...adm_chat.msgs].reverse().find((m) => !String(m.id).startsWith('tmp'));
+  const conv = adm_chat.convs.find((c) => c.cid === cid);
+  if (conv && conv.unread) { conv.unread = 0; adm_chat_paint_list(); }
+  if (!last) return;
+  const r = await chatapi({ action: 'staff_seen', cid, upto: last.id });
+  if (!r.error) { staffchat.unread = r.unread_total; staff_badge(); }
+}
+
+function adm_chat_key(e) {
+  if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); e.target.closest('form').requestSubmit(); }
+}
+
+async function adm_chat_submit(e) {
+  e.preventDefault();
+  const input = document.getElementById('achat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const cid = adm_chat.cid;
+  input.value = ''; chat_grow(input);
+  const draft = { id: `tmp${Date.now()}`, from: 'staff', text, at: Date.now(), pending: true };
+  adm_chat.msgs.push(draft); adm_chat_paint_msgs(true);
+  const r = await chatapi({ action: 'staff_send', cid, text });
+  if (r.error) { draft.pending = false; draft.failed = true; adm_chat_paint_msgs(false); toast(r.error, 4000); return; }
+  if (adm_chat.cid !== cid) return;
+  const at = adm_chat.msgs.indexOf(draft);
+  if (at < 0) return;
+  if (adm_chat.msgs.some((x) => x.id === r.message.id)) adm_chat.msgs.splice(at, 1); else adm_chat.msgs[at] = r.message;
+  adm_chat_paint_msgs(true);
+  const conv = adm_chat.convs.find((c) => c.cid === cid);
+  if (conv) { conv.last = r.message; adm_chat.convs.sort((a, b) => (id_gt(a.last.id, b.last.id) ? -1 : 1)); adm_chat_paint_list(); }
+}
+
+function adm_chat_with(cid) { adm_chat.cid = cid; adm_go('chats'); }
+
+adm_views.chats = async (el) => {
+  const alerts = 'Notification' in window && Notification.permission !== 'granted' ? `<div class="notice" id="achat-alerts" style="margin-top:1rem">Para ser avisado de novas mensagens mesmo com o app em segundo plano, <button class="link-u" onclick="enable_chat_alerts()">ative os avisos do aparelho</button>.</div>` : '';
+  el.innerHTML = `<h1 class="page-title">Chats de suporte</h1>${alerts}
+    <div class="achat ${adm_chat.cid ? 'open' : ''}" id="achat">
+      <div class="achat-list" id="achat-list">${spinner_block()}</div>
+      <div class="achat-pane" id="achat-pane"><div class="chat-box"><div class="chat-empty">Escolha uma conversa à esquerda.</div></div></div>
+    </div>`;
+  await adm_chat_load_list();
+  if (adm_chat.cid) adm_chat_open(adm_chat.cid);
+};
+
 const path_ref = (location.pathname.match(/^\/r\/([A-Za-z0-9]{3,12})\/?$/) || [])[1];
-const ref_param = new URLSearchParams(location.search).get('ref') || path_ref;
+const path_promo = location.pathname.match(/^\/d\/(\d{5,25})(?:\/([A-Za-z0-9]{3,12}))?\/?$/);
+const ref_param = new URLSearchParams(location.search).get('ref') || path_ref || (path_promo && path_promo[2]);
 if (ref_param) localStorage.setItem('ap_ref', ref_param.slice(0, 12));
 capture_first_touch();
-if (ref_param && !state.user) {
+if (path_promo) {
+  state.promo = { id: path_promo[1], code: String(path_promo[2] || '').toUpperCase() };
+  state.page = 'promo';
+  state.auth_mode = 'register';
+} else if (ref_param && !state.user) {
   state.page = 'invite';
   state.auth_mode = 'register';
 } else if (state.user) {
@@ -2486,6 +3643,8 @@ if (ref_param && !state.user) {
 }
 
 render();
+notif_start();
+chat_background_start();
 </script>
 </body>
 </html>

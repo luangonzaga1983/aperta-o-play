@@ -1,6 +1,6 @@
 export const config = { api: { bodyParser: { sizeLimit: "10mb" } } };
 
-import { fit_content, get_settings, get_config, list_config, log_event } from "../lib/store.js";
+import { fit_content, get_settings, get_config, list_config, log_event, snowflake_time, read_channel, get_row, patch_row, invalidate, get_blocklist } from "../lib/store.js";
 import { request_context, compact_context, log_context } from "../lib/telemetry.js";
 import { check_signup, check_login, blocked_message } from "../lib/gate.js";
 import {
@@ -17,6 +17,7 @@ const CHANNEL_SAQUES     = process.env.DISCORD_CHANNEL_SAQUES;
 const CHANNEL_COMISSOES  = process.env.DISCORD_CHANNEL_COMISSOES;
 const CHANNEL_BANNERS    = process.env.DISCORD_CHANNEL_BANNERS;
 const ADMIN_EMAIL        = (process.env.ADMIN_EMAIL || "").toLowerCase();
+const SUPPORT_WHATSAPP_DEFAULT = String(process.env.SUPPORT_WHATSAPP || "553195738547").replace(/\D/g, "");
 
 const discord_headers = {
   Authorization: `Bot ${BOT_TOKEN}`,
@@ -85,6 +86,27 @@ async function find_user_by_referral(code) {
   return null;
 }
 
+const LOGIN_RE = /^[a-z0-9._-]{3,20}$/;
+const norm_login = (value) => String(value || "").trim().toLowerCase().replace(/^@/, "");
+
+async function find_user_by_login(login) {
+  const target = norm_login(login);
+  if (!LOGIN_RE.test(target)) return null;
+  const messages = await fetch_all_messages(CHANNEL_USUARIOS);
+  for (const msg of messages) {
+    try {
+      const data = JSON.parse(msg.content);
+      if (String(data.login || "").toLowerCase() === target) return { ...data, msg_id: msg.id };
+    } catch {}
+  }
+  return null;
+}
+
+// aceita e-mail ou login
+const find_account = (identifier) => String(identifier).includes("@") ? find_user(String(identifier).trim()) : find_user_by_login(identifier);
+
+const shown_name = (entry) => entry.login || entry.name || String(entry.email || "").split("@")[0];
+
 async function update_user(msg_id, data) {
   return discord_patch(`/channels/${CHANNEL_USUARIOS}/messages/${msg_id}`, { content: fit_content(data) });
 }
@@ -119,6 +141,41 @@ const parse_material = (message) => {
   try { return JSON.parse(message.content) || {}; } catch { return {}; }
 };
 
+
+// notificações: tudo é calculado a partir dos registros que já existem (nada novo é gravado)
+const sale_item = (message, email) => {
+  try {
+    const d = JSON.parse(message.content);
+    if (!d || d.affiliate !== email || d.reverted) return null;
+    return { id: `s${message.id}`, type: "sale", at: Date.parse(d.created_at) || snowflake_time(message.id), amount: d.amount, plan: d.plan };
+  } catch { return null; }
+};
+
+
+const clean_text = (value, max) => String(value ?? "").replace(/<[^>]*>/g, "").replace(/[<>]/g, "").replace(/\s+/g, " ").trim().slice(0, max);
+
+// ao trocar o e-mail, o histórico (indicações, pagamentos, saques, comissões) acompanha a conta.
+// É seguro repetir: cada registro só é alterado se ainda apontar para o e-mail antigo.
+async function cascade_email(old_email, new_email, deadline) {
+  const [users, payments, withdrawals, commissions] = await Promise.all(
+    ["users", "payments", "withdrawals", "commissions"].map((key) => read_channel(key, { fresh: true })),
+  );
+  const jobs = [
+    ...users.filter((row) => row.referred_by === old_email).map((row) => ["users", row, { referred_by: new_email }]),
+    ...payments.filter((row) => row.email === old_email).map((row) => ["payments", row, { email: new_email }]),
+    ...withdrawals.filter((row) => row.email === old_email).map((row) => ["withdrawals", row, { email: new_email }]),
+    ...commissions.filter((row) => row.affiliate === old_email).map((row) => ["commissions", row, { affiliate: new_email }]),
+    ...commissions.filter((row) => row.from_user === old_email).map((row) => ["commissions", row, { from_user: new_email }]),
+  ];
+  for (const [key, row, change] of jobs) {
+    if (Date.now() > deadline) return false;
+    const current = await get_row(key, row.msg_id);
+    if (current) await patch_row(key, row.msg_id, { ...current, ...change });
+  }
+  invalidate();
+  return true;
+}
+
 const public_user = (user, token) => {
   const { password_hash, msg_id, owner_doc, reg, last, login_count, adm, ...safe } = user;
   const staff_role = user.email === ADMIN_EMAIL ? "owner" : ["admin", "support", "finance"].includes(adm?.role) ? adm.role : null;
@@ -138,7 +195,7 @@ export default async function handler(req, res) {
     const messages = await fetch_all_messages(CHANNEL_BANNERS);
     const limit = body.all ? 50 : 10;
     const banners = messages
-      .filter(m => m.attachments?.length > 0)
+      .filter(m => m.attachments?.length > 0 && parse_material(m).kind !== "avatar")
       .slice(0, limit)
       .map(m => {
         const meta = parse_material(m);
@@ -188,7 +245,7 @@ export default async function handler(req, res) {
       .map(m => ({ id: m.id, meta: parse_material(m) }))
       .filter(entry => entry.meta.kind === "video" && entry.meta.url)
       .slice(0, 50)
-      .map(entry => ({ id: entry.id, title: entry.meta.title || "Vídeo", url: entry.meta.url, downloads: entry.meta.downloads || 0, shares: entry.meta.shares || 0, created_at: entry.meta.created_at || null }));
+      .map(entry => ({ id: entry.id, title: entry.meta.title || "Vídeo", url: entry.meta.url, downloads: entry.meta.downloads || 0, shares: entry.meta.shares || 0, views: entry.meta.views || 0, created_at: entry.meta.created_at || null }));
     return res.status(200).json({ videos });
   }
 
@@ -223,6 +280,28 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true });
   }
 
+  // página pública de divulgação: não exige login, só lê um vídeo já publicado
+  if (action === "get_public_video") {
+    const id = String(body.id || "");
+    if (!/^\d{5,25}$/.test(id)) return res.status(200).json({ found: false });
+    const message = await discord_get(`/channels/${CHANNEL_BANNERS}/messages/${id}`);
+    const meta = message?.id ? parse_material(message) : {};
+    if (meta.kind !== "video" || !meta.url) return res.status(200).json({ found: false });
+    return res.status(200).json({ found: true, title: meta.title || "Vídeo", url: meta.url });
+  }
+
+  // conta um acesso na página de divulgação (guardado no próprio registro do vídeo)
+  if (action === "track_video_view") {
+    const id = String(body.id || "");
+    if (!/^\d{5,25}$/.test(id)) return res.status(200).json({ ok: false });
+    const message = await discord_get(`/channels/${CHANNEL_BANNERS}/messages/${id}`);
+    const meta = message?.id ? parse_material(message) : {};
+    if (meta.kind !== "video") return res.status(200).json({ ok: false });
+    meta.views = (meta.views || 0) + 1;
+    await discord_patch(`/channels/${CHANNEL_BANNERS}/messages/${message.id}`, { content: JSON.stringify(meta) });
+    return res.status(200).json({ ok: true });
+  }
+
   if (action === "get_inviter") {
     const code = String(body.code || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12);
     if (code.length < 3) return res.status(200).json({ found: false });
@@ -237,7 +316,7 @@ export default async function handler(req, res) {
       } catch {}
     }
     if (!inviter) return res.status(200).json({ found: false });
-    const raw = String(inviter.name || inviter.email.split("@")[0]).replace(/[^\p{L}\p{N} ._-]/gu, "").trim();
+    const raw = String(inviter.login || inviter.name || inviter.email.split("@")[0]).replace(/[^\p{L}\p{N} ._-]/gu, "").trim();
     const first = raw.split(/[ ._-]/)[0] || "Um amigo";
     const referred = people.filter(entry => entry.referred_by === inviter.email);
     return res.status(200).json({
@@ -264,9 +343,51 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, user: public_user(next) });
   }
 
+  // só as 100 mensagens mais recentes de comissões: barato o bastante para consultar a cada ~25s
+  if (action === "poll_notifications") {
+    const user = await auth(body);
+    if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
+    const batch = await discord_get(`/channels/${CHANNEL_COMISSOES}/messages?limit=100`);
+    const sales = Array.isArray(batch) ? batch.map((m) => sale_item(m, user.email)).filter(Boolean) : [];
+    return res.status(200).json({ sales });
+  }
+
+  if (action === "get_notifications") {
+    const user = await auth(body);
+    if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
+    const [commission_messages, withdrawal_messages, user_messages, announcements] = await Promise.all([
+      fetch_all_messages(CHANNEL_COMISSOES), fetch_all_messages(CHANNEL_SAQUES), fetch_all_messages(CHANNEL_USUARIOS),
+      list_config("announcement").catch(() => []),
+    ]);
+    const items = [];
+    for (const message of commission_messages) { const item = sale_item(message, user.email); if (item) items.push(item); }
+    for (const message of withdrawal_messages) {
+      try {
+        const d = JSON.parse(message.content);
+        if (d.email !== user.email) continue;
+        items.push({ id: `w${message.id}`, type: "withdrawal", at: Date.parse(d.created_at) || snowflake_time(message.id), amount: d.amount, status: d.status });
+      } catch {}
+    }
+    for (const message of user_messages) {
+      try {
+        const d = JSON.parse(message.content);
+        if (d.referred_by !== user.email) continue;
+        const raw = String(d.login || d.name || d.email.split("@")[0]).replace(/[^\p{L}\p{N} ._-]/gu, "").trim();
+        items.push({ id: `r${message.id}`, type: "referral", at: Date.parse(d.created_at) || snowflake_time(message.id), name: raw.split(/[ ._-]/)[0] || "Alguém" });
+      } catch {}
+    }
+    for (const row of announcements) {
+      if (row.target && row.target !== user.email) continue;
+      if (row.expires_at && Date.parse(row.expires_at) <= Date.now()) continue;
+      items.push({ id: `a${row.msg_id}`, type: "notice", at: row.msg_at, title: row.title, text: row.text, level: row.level || "info" });
+    }
+    items.sort((a, b) => b.at - a.at);
+    return res.status(200).json({ items: items.slice(0, 80) });
+  }
+
   if (action === "get_config") {
     const settings = await get_settings();
-    return res.status(200).json({ google_client_id: GOOGLE_CLIENT_ID || null, payouts: PAYOUTS_ENABLED, maintenance: settings.maintenance, maintenance_message: settings.maintenance_message, support_whatsapp: settings.support_whatsapp });
+    return res.status(200).json({ google_client_id: GOOGLE_CLIENT_ID || null, payouts: PAYOUTS_ENABLED, maintenance: settings.maintenance, maintenance_message: settings.maintenance_message, support_whatsapp: settings.support_whatsapp || SUPPORT_WHATSAPP_DEFAULT, chat_enabled: !!process.env.DISCORD_CHANNEL_SUPORTE });
   }
 
   if (action === "get_announcements") {
@@ -281,7 +402,9 @@ export default async function handler(req, res) {
     const { password, referral_code } = body;
     const email = String(body.email || "").trim().toLowerCase();
     const whatsapp = norm_phone(body.whatsapp);
+    const login = norm_login(body.login);
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !password) return res.status(400).json({ error: "Dados inválidos" });
+    if (!LOGIN_RE.test(login)) return res.status(400).json({ error: "Escolha um login de 3 a 20 caracteres (letras, números, ponto, hífen ou _)" });
     if (String(password).length < 6) return res.status(400).json({ error: "A senha precisa ter pelo menos 6 caracteres" });
     if (!whatsapp) return res.status(400).json({ error: "Informe um WhatsApp válido com DDD" });
     const context = request_context(req, body.client);
@@ -289,6 +412,7 @@ export default async function handler(req, res) {
     if (gate_error) return res.status(403).json({ error: gate_error });
     const existing = await find_user(email);
     if (existing) return res.status(400).json({ error: "E-mail já cadastrado" });
+    if (await find_user_by_login(login)) return res.status(400).json({ error: "Esse login já está em uso. Escolha outro." });
 
     let referred_by = null;
     if (referral_code) {
@@ -298,6 +422,7 @@ export default async function handler(req, res) {
 
     const user = {
       email,
+      login,
       whatsapp,
       password_hash: hash_password(password),
       balance: 0,
@@ -318,15 +443,16 @@ export default async function handler(req, res) {
 
   if (action === "login") {
     const { password } = body;
-    const login_email = String(body.email || "").trim().toLowerCase();
+    const identifier = String(body.login || body.email || "").trim().toLowerCase();
     const context = request_context(req, body.client);
+    const user = identifier ? await find_account(identifier) : null;
+    const login_email = user?.email || identifier;
     const gate_error = await check_login(context, login_email);
     if (gate_error) return res.status(403).json({ error: gate_error });
-    const user = await find_user(login_email);
     if (user && !user.password_hash) return res.status(401).json({ error: "Esta conta usa o Google. Toque em “Continuar com Google”." });
     if (!user || !verify_password(password, user.password_hash)) {
       await log_event("login_failed", { email: login_email, reason: user ? "senha" : "conta inexistente", ...log_context(context) });
-      return res.status(401).json({ error: "E-mail ou senha incorretos" });
+      return res.status(401).json({ error: "Login/e-mail ou senha incorretos" });
     }
     const blocked = blocked_message(user);
     if (blocked) {
@@ -413,11 +539,27 @@ export default async function handler(req, res) {
       try {
         const entry = JSON.parse(message.content);
         if (entry.referred_by !== user.email) continue;
-        affiliates.push({ name: entry.name || entry.email.split("@")[0], email: mask_email(entry.email), whatsapp: entry.whatsapp || null, plan: entry.plan || null, created_at: entry.created_at || null, plan_activated_at: entry.plan_activated_at || null, earned: Number((earned[entry.email] || 0).toFixed(2)) });
+        affiliates.push({ name: shown_name(entry), login: entry.login || null, avatar: entry.avatar || null, email: mask_email(entry.email), whatsapp: entry.whatsapp || null, plan: entry.plan || null, created_at: entry.created_at || null, plan_activated_at: entry.plan_activated_at || null, earned: Number((earned[entry.email] || 0).toFixed(2)) });
       } catch {}
     }
     affiliates.sort((a, b) => Date.parse(b.created_at || 0) - Date.parse(a.created_at || 0));
     return res.status(200).json({ affiliates });
+  }
+
+  if (action === "set_login") {
+    const user = await auth(body);
+    if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
+    const login = norm_login(body.login);
+    if (!LOGIN_RE.test(login)) return res.status(400).json({ error: "Use de 3 a 20 caracteres: letras, números, ponto, hífen ou _" });
+    if (login !== user.login) {
+      const taken = await find_user_by_login(login);
+      if (taken && taken.email !== user.email) return res.status(400).json({ error: "Esse login já está em uso. Escolha outro." });
+    }
+    const { msg_id, ...data } = user;
+    const next = { ...data, login };
+    await update_user(msg_id, next);
+    if (login !== user.login) await log_event("profile_update", { email: user.email, fields: ["login"], ...log_context(request_context(req, body.client)) });
+    return res.status(200).json({ ok: true, user: public_user(next) });
   }
 
   if (action === "get_user") {
@@ -455,7 +597,103 @@ export default async function handler(req, res) {
       next.auto_payout = !!body.auto_payout;
     }
 
+    if (body.name !== undefined) {
+      const name = clean_text(body.name, 60);
+      if (name.length < 2) return res.status(400).json({ error: "Informe seu nome (mínimo 2 letras)" });
+      next.name = name;
+    }
+    if (body.city !== undefined) {
+      const city = clean_text(body.city, 40);
+      if (city) next.city = city; else delete next.city;
+    }
+    if (body.bio !== undefined) {
+      const bio = clean_text(body.bio, 100);
+      if (bio) next.bio = bio; else delete next.bio;
+    }
+    if (body.birth !== undefined) {
+      const birth = String(body.birth || "").trim();
+      if (!birth) delete next.birth;
+      else {
+        const time = Date.parse(`${birth}T12:00:00Z`);
+        const age = (Date.now() - time) / 31557600000;
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(birth) || Number.isNaN(time) || age < 13 || age > 110) return res.status(400).json({ error: "Data de nascimento inválida" });
+        next.birth = birth;
+      }
+    }
+
+    try { fit_content(next); } catch { return res.status(400).json({ error: "Os dados do perfil ficaram grandes demais. Encurte algum campo." }); }
     await update_user(msg_id, next);
+    const changed = Object.keys(next).filter((key) => ["name", "city", "bio", "birth", "whatsapp", "pix_key", "auto_payout"].includes(key) && next[key] !== data[key]);
+    if (changed.length) await log_event("profile_update", { email: user.email, fields: changed, ...log_context(request_context(req, body.client)) });
+    return res.status(200).json({ ok: true, user: public_user(next) });
+  }
+
+  if (action === "change_email") {
+    const user = await auth(body);
+    if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
+    const old_email = user.email;
+    const new_email = String(body.new_email || "").trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(new_email)) return res.status(400).json({ error: "Informe um e-mail válido" });
+    if (new_email === old_email) return res.status(400).json({ error: "O novo e-mail é igual ao atual" });
+    if (old_email === ADMIN_EMAIL) return res.status(403).json({ error: "O e-mail do dono do site é definido na variável ADMIN_EMAIL da Vercel. Troque lá e depois aqui." });
+    if (new_email === ADMIN_EMAIL) return res.status(403).json({ error: "Este e-mail não pode ser utilizado." });
+    if (user.google) return res.status(403).json({ error: "Sua conta entra pelo Google e usa o e-mail do Google. Fale com o suporte para trocar." });
+    if (!user.password_hash || !verify_password(String(body.password || ""), user.password_hash)) return res.status(403).json({ error: "Senha incorreta" });
+
+    const blocklist = await get_blocklist();
+    if (blocklist.emails.includes(new_email) || blocklist.domains.includes(new_email.split("@")[1])) return res.status(403).json({ error: "Este e-mail não pode ser utilizado." });
+    if (await find_user(new_email)) return res.status(400).json({ error: "Já existe uma conta com esse e-mail" });
+
+    // um Pix ainda aguardando pagamento ficaria preso ao e-mail antigo
+    const payments = await read_channel("payments", { fresh: true });
+    if (payments.some((row) => row.email === old_email && row.status === "pending" && Date.now() - Date.parse(row.created_at || 0) < 90 * 60 * 1000)) {
+      return res.status(409).json({ error: "Você tem um Pix aguardando pagamento. Conclua ou espere ele expirar e tente de novo." });
+    }
+
+    const finished = await cascade_email(old_email, new_email, Date.now() + 7000);
+    if (!finished) return res.status(503).json({ error: "Demorou mais que o esperado. Tente de novo: nada se perde e continua de onde parou." });
+
+    const { msg_id, ...data } = user;
+    const next = { ...data, email: new_email, adm: { ...(data.adm || {}), valid_after: Date.now() } };
+    await update_user(msg_id, next);
+    invalidate();
+    await log_event("email_change", { email: new_email, from: old_email, to: new_email, ...log_context(request_context(req, body.client)) });
+    return res.status(200).json({ ok: true, user: public_user(next, make_token(new_email)) });
+  }
+
+  if (action === "upload_avatar") {
+    const user = await auth(body);
+    if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
+    const b64 = String(body.image_base64 || "").replace(/^data:[^,]+,/, "");
+    if (!b64 || b64.length > 700000) return res.status(400).json({ error: "Imagem muito grande" });
+    const binary = Buffer.from(b64, "base64");
+    if (binary.length < 200 || binary.length > 500000 || !(binary[0] === 0xff && binary[1] === 0xd8 && binary[2] === 0xff)) return res.status(400).json({ error: "Envie uma imagem JPG ou PNG válida" });
+
+    const form = new FormData();
+    form.append("payload_json", JSON.stringify({ content: JSON.stringify({ kind: "avatar", owner: user.email, at: new Date().toISOString() }) }));
+    form.append("files[0]", new Blob([binary], { type: "image/jpeg" }), `avatar_${Date.now()}.jpg`);
+    const posted = await discord_post_form(CHANNEL_BANNERS, form);
+    if (!posted.id) return res.status(500).json({ error: "Não foi possível salvar a foto agora" });
+
+    const { msg_id, ...data } = user;
+    const previous = data.avatar;
+    const next = { ...data, avatar: posted.id };
+    await update_user(msg_id, next);
+    if (previous) await fetch(`${DISCORD_API}/channels/${CHANNEL_BANNERS}/messages/${previous}`, { method: "DELETE", headers: discord_headers }).catch(() => {});
+    await log_event("avatar_update", { email: user.email, avatar: posted.id });
+    return res.status(200).json({ ok: true, user: public_user(next) });
+  }
+
+  if (action === "remove_avatar") {
+    const user = await auth(body);
+    if (!user) return res.status(401).json({ error: "Sessão expirada. Entre novamente.", code: "auth" });
+    const { msg_id, ...data } = user;
+    const previous = data.avatar;
+    const next = { ...data };
+    delete next.avatar;
+    await update_user(msg_id, next);
+    if (previous) await fetch(`${DISCORD_API}/channels/${CHANNEL_BANNERS}/messages/${previous}`, { method: "DELETE", headers: discord_headers }).catch(() => {});
+    await log_event("avatar_update", { email: user.email, avatar: null });
     return res.status(200).json({ ok: true, user: public_user(next) });
   }
 

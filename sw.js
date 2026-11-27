@@ -33,3 +33,13 @@ self.addEventListener("fetch", (event) => {
       .catch(() => caches.match(request).then((cached) => cached || caches.match("/icons/icon-192.png")))
   );
 });
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      const open = list.find((client) => "focus" in client);
+      return open ? open.focus() : self.clients.openWindow("/");
+    })
+  );
+});
